@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Delete Farm Expense
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{% static 'css/farm_expense.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="farm-expense-page">
+
+    <div class="farm-expense-delete-card">
+
+
+        <div class="farm-expense-delete-icon">
+
+            <i class="bi bi-trash"></i>
+
+        </div>
+
+
+        <h4>
+            Delete Farm Expense?
+        </h4>
+
+
+        <p>
+            Are you sure you want to delete this expense?
+            This action cannot be undone.
+        </p>
+
+
+        <div class="farm-expense-delete-details">
+
+            <div>
+                <strong>Category:</strong>
+                {{ expense.category }}
+            </div>
+
+            <div>
+                <strong>Amount:</strong>
+                ₹{{ expense.amount }}
+            </div>
+
+            <div>
+                <strong>Date:</strong>
+                {{ expense.created_at|date:"d-m-Y" }}
+            </div>
+
+            {% if expense.note %}
+
+            <div>
+                <strong>Note:</strong>
+                {{ expense.note }}
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="farm-expense-delete-actions">
+
+                <a href="{% url 'finance:farm_expense_list' %}"
+                   class="farm-expense-cancel-btn">
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="farm-expense-delete-confirm-btn">
+
+                    <i class="bi bi-trash"></i>
+
+                    Delete Expense
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

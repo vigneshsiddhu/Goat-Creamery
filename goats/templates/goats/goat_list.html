@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+Goats
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/goat_list.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<div class="goat-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="goat-page-header">
+
+        <div class="goat-header-content">
+
+            <h2>
+                Goats
+            </h2>
+
+            <p>
+                Manage your goats
+            </p>
+
+        </div>
+
+        <div class="goat-header-actions">
+
+            <a
+                href="{% url 'goats:create' %}"
+                class="goat-add-btn"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                Add Goat
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+     GOAT SUMMARY CARDS
+====================================================== -->
+
+    <div class="goat-summary-grid">
+        <!-- TOTAL LIVE -->
+        <div class="goat-summary-card goat-summary-total">
+            <div class="goat-summary-icon">
+                <i class="bi bi-gitlab"></i>
+            </div>
+            <div class="goat-summary-content">
+                <span class="goat-summary-label">
+                    Total Live Goats
+                </span>
+                <strong class="goat-summary-value">
+                    {{ total_live }}
+                </strong>
+            </div>
+        </div>
+        <!-- ADULT MALE -->
+        <div class="goat-summary-card goat-summary-male">
+            <div class="goat-summary-icon">
+                <i class="bi bi-gender-male"></i>
+            </div>
+            <div class="goat-summary-content">
+                <span class="goat-summary-label">
+                    Adult Male
+                </span>
+                <strong class="goat-summary-value">
+                    {{ adult_male }}
+                </strong>
+            </div>
+        </div>
+        <!-- ADULT FEMALE -->
+        <div class="goat-summary-card goat-summary-female">
+            <div class="goat-summary-icon">
+                <i class="bi bi-gender-female"></i>
+            </div>
+            <div class="goat-summary-content">
+                <span class="goat-summary-label">
+                    Adult Female
+                </span>
+                <strong class="goat-summary-value">
+                    {{ adult_female }}
+                </strong>
+            </div>
+        </div>
+        <!-- KID MALE -->
+        <div class="goat-summary-card goat-summary-kid-male">
+            <div class="goat-summary-icon">
+                <i class="bi bi-gender-male"></i>
+            </div>
+            <div class="goat-summary-content">
+                <span class="goat-summary-label">
+                    Male Kids
+                </span>
+                <strong class="goat-summary-value">
+                    {{ kid_male }}
+                </strong>
+            </div>
+        </div>
+        <!-- KID FEMALE -->
+        <div class="goat-summary-card goat-summary-kid-female">
+            <div class="goat-summary-icon">
+                <i class="bi bi-gender-female"></i>
+            </div>
+            <div class="goat-summary-content">
+                <span class="goat-summary-label">
+                    Female Kids
+                </span>
+                <strong class="goat-summary-value">
+                    {{ kid_female }}
+                </strong>
+            </div>
+        </div>
+    </div>
+    <!-- =====================================================
+         GOAT TABLE
+    ====================================================== -->
+
+    <div class="goat-list-card">
+
+        <div class="goat-list-table-wrapper">
+
+            <table class="goat-list-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Token No</th>
+
+                        <th>RFID</th>
+
+                        <th>Breed</th>
+
+                        <th>Maturity</th>
+
+                        <th>Gender</th>
+
+                        <th>DOB</th>
+
+                        <th>Status</th>
+
+                        <th>Created By</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for goat in goats %}
+
+                    <tr>
+
+                        <!-- TOKEN -->
+
+                        <td>
+
+                            <span class="goat-list-name">
+                                {{ goat.token_no }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- RFID -->
+
+                        <td>
+                            {{ goat.rfid|default:"-" }}
+                        </td>
+
+
+                        <!-- BREED -->
+
+                        <td>
+                            {{ goat.breed_variety|default:"-" }}
+                        </td>
+
+
+                        <!-- MATURITY -->
+
+                        <td>
+                            {{ goat.maturity|default:"-" }}
+                        </td>
+
+
+                        <!-- GENDER -->
+
+                        <td>
+                            {{ goat.gender|default:"-" }}
+                        </td>
+
+
+                        <!-- DOB -->
+
+                        <td>
+                            {% if goat.dob %}
+                                {{ goat.dob|date:"d-m-Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if goat.live %}
+
+                                <span class="goat-list-status-active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="goat-list-status-inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- CREATED BY -->
+
+                        <td>
+
+                            {% if goat.created_by %}
+                                {{ goat.created_by.username }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="goat-list-actions">
+
+                                <a
+                                    href="{% url 'goats:update' goat.id %}"
+                                    class="goat-list-edit"
+                                >
+
+                                    <i class="bi bi-pencil"></i>
+
+                                    Edit
+
+                                </a>
+
+
+                                <a
+                                    href="{% url 'goats:delete' goat.id %}"
+                                    class="goat-list-delete"
+                                >
+
+                                    <i class="bi bi-trash"></i>
+
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="goat-list-empty"
+                        >
+
+                            <div class="goat-empty-content">
+
+                                <div class="goat-empty-icon">
+
+                                    <i class="bi bi-gitlab"></i>
+
+                                </div>
+
+                                <div class="goat-empty-title">
+
+                                    No goats found
+
+                                </div>
+
+                                <div class="goat-empty-text">
+
+                                    Start by adding your first goat.
+
+                                </div>
+
+                                <a
+                                    href="{% url 'goats:create' %}"
+                                    class="goat-empty-add"
+                                >
+
+                                    <i class="bi bi-plus-lg"></i>
+
+                                    Add Goat
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

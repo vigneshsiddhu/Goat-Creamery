@@ -1,0 +1,549 @@
+/* =========================================================
+   BUSINESS USER PAGE
+========================================================= */
+
+.business-user-page {
+
+    width: 100%;
+
+    padding: 10px 0 30px;
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.business-user-form-card {
+
+    width: 100%;
+
+    max-width: 720px;
+
+    margin: 0 auto;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 16px;
+
+    padding: 28px 30px;
+
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.07);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.business-user-form-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 20px;
+
+    margin-bottom: 25px;
+
+    border-bottom: 1px solid #E5E7EB;
+}
+
+
+.business-user-form-header h2 {
+
+    margin: 0;
+
+    color: #1F2937;
+
+    font-size: 20px;
+
+    font-weight: 700;
+}
+
+
+.business-user-form-header p {
+
+    margin: 6px 0 0;
+
+    color: #6B7280;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.business-user-back-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 12px;
+
+    background: #F8FAFC;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.business-user-back-btn:hover {
+
+    background: #F3F1FF;
+
+    border-color: #C7C1F2;
+
+    color: #6F63D9;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.business-user-form-group {
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.business-user-form-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.business-user-form-label span {
+
+    color: #DC2626;
+
+    margin-left: 2px;
+}
+
+
+/* =========================================================
+   INPUT / SELECT
+========================================================= */
+
+.business-user-form select,
+.business-user-form input {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 12px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 8px;
+
+    color: #374151;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    box-shadow: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.business-user-form select {
+
+    cursor: pointer;
+
+    appearance: auto;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.business-user-form select:hover,
+.business-user-form input:hover {
+
+    border-color: #A5B4FC;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.business-user-form select:focus,
+.business-user-form input:focus {
+
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.12);
+}
+
+
+/* =========================================================
+   HELP TEXT
+========================================================= */
+
+.business-user-help-text {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: #94A3B8;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   FIELD ERROR
+========================================================= */
+
+.business-user-field-error {
+
+    margin-top: 5px;
+
+    color: #DC2626;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   FORM ERROR
+========================================================= */
+
+.business-user-form-error {
+
+    padding: 11px 13px;
+
+    margin-bottom: 20px;
+
+    background: #FFF1F2;
+
+    border: 1px solid #FECDD3;
+
+    border-radius: 8px;
+
+    color: #BE123C;
+
+    font-size: 12px;
+}
+
+
+.business-user-form-error ul {
+
+    margin: 0;
+
+    padding-left: 18px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.business-user-form-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding-top: 8px;
+
+    margin-top: 10px;
+
+    border-top: 1px solid #E5E7EB;
+}
+
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+.business-user-cancel-btn {
+
+    min-height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 18px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 8px;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.business-user-cancel-btn:hover {
+
+    background: #F8FAFC;
+
+    border-color: #94A3B8;
+}
+
+
+/* =========================================================
+   SUBMIT
+========================================================= */
+
+.business-user-submit-btn {
+
+    min-height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 18px;
+
+    background: #6F63D9;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 8px;
+
+    color: #FFFFFF;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.business-user-submit-btn:hover {
+
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px rgba(111, 99, 217, 0.22);
+}
+
+
+.business-user-submit-btn:active {
+
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .business-user-page {
+
+        padding: 5px 0 20px;
+    }
+
+
+    .business-user-form-card {
+
+        max-width: 100%;
+
+        padding: 22px 18px;
+
+        border-radius: 14px;
+    }
+
+
+    .business-user-form-header {
+
+        align-items: flex-start;
+
+        margin-bottom: 22px;
+    }
+
+
+    .business-user-form-header h2 {
+
+        font-size: 18px;
+    }
+
+
+    .business-user-form-header p {
+
+        font-size: 11px;
+    }
+
+
+    .business-user-back-btn {
+
+        padding: 7px 9px;
+
+        font-size: 11px;
+    }
+
+
+    .business-user-form-group {
+
+        margin-bottom: 17px;
+    }
+
+
+    .business-user-form select,
+    .business-user-form input {
+
+        min-height: 45px;
+
+        font-size: 13px;
+    }
+
+
+    .business-user-form-actions {
+
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 8px;
+    }
+
+
+    .business-user-cancel-btn,
+    .business-user-submit-btn {
+
+        width: 100%;
+
+        padding: 0 10px;
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .business-user-form-card {
+
+        padding: 20px 15px;
+    }
+
+
+    .business-user-form-header {
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+
+    .business-user-back-btn {
+
+        width: 100%;
+    }
+
+
+    .business-user-form-actions {
+
+        grid-template-columns: 1fr;
+    }
+
+}

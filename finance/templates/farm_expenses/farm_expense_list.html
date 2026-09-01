@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Farm Expenses
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{% static 'css/farm_expense.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<div class="farm-expense-page">
+
+    <!-- HEADER -->
+
+    <div class="farm-expense-page-header">
+
+        <div>
+
+            <h3>Farm Expenses</h3>
+
+            <p>
+                Manage farm expenses for {{ business.name }}.
+            </p>
+
+        </div>
+
+        <a href="{% url 'finance:farm_expense_create' %}"
+           class="farm-expense-add-btn">
+
+            <i class="bi bi-plus-lg"></i>
+
+            Add Expense
+
+        </a>
+
+    </div>
+    <!-- =====================================================
+     EXPENSE SUMMARY
+    ====================================================== -->
+
+    <div class="expense-summary-grid">
+
+        <!-- LAST MONTH -->
+
+        <div class="expense-summary-card expense-card-last">
+
+            <div class="expense-summary-icon">
+                <i class="bi bi-calendar-minus"></i>
+            </div>
+
+            <div class="expense-summary-content">
+
+                <span class="expense-summary-label">
+                    {{ last_month_name }} Expenses
+                </span>
+
+                <strong class="expense-summary-value">
+                    ₹{{ last_month_total|floatformat:2 }}
+                </strong>
+
+                <span class="expense-summary-description">
+                    Previous month
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- CURRENT MONTH -->
+
+        <div class="expense-summary-card expense-card-current">
+
+            <div class="expense-summary-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+
+            <div class="expense-summary-content">
+
+                <span class="expense-summary-label">
+                    {{ current_month_name }} Expenses
+                </span>
+
+                <strong class="expense-summary-value">
+                    ₹{{ current_month_total|floatformat:2 }}
+                </strong>
+
+                <span class="expense-summary-description">
+                    Current month
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- TODAY -->
+
+        <div class="expense-summary-card expense-card-today">
+
+            <div class="expense-summary-icon">
+                <i class="bi bi-calendar-day"></i>
+            </div>
+
+            <div class="expense-summary-content">
+
+                <span class="expense-summary-label">
+                    Today's Expenses
+                </span>
+
+                <strong class="expense-summary-value">
+                    ₹{{ today_total|floatformat:2 }}
+                </strong>
+
+                <span class="expense-summary-description">
+                    Today
+                </span>
+
+            </div>
+
+        </div>
+
+
+        
+
+    </div>
+
+
+    
+    <!-- LIST CARD -->
+
+    <div class="farm-expense-list-card">
+
+        <div class="farm-expense-table-wrapper">
+
+            <table class="farm-expense-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Category</th>
+
+                        <th>Amount</th>
+
+                        <th>Comment
+                        </th>
+
+                        <th>Created By</th>
+
+                        <th>Date</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for expense in expenses %}
+
+                    <tr>
+
+                        <td>
+
+                            <span class="farm-expense-category">
+                                {{ expense.category }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="farm-expense-amount">
+                                ₹{{ expense.amount }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if expense.comment %}
+                                {{ expense.comment }}
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ expense.created_by }}
+                        </td>
+
+
+                        <td>
+                            {{ expense.created_at|date:"d-m-Y" }}
+                        </td>
+
+
+                        <td>
+
+                            <div class="farm-expense-actions">
+
+                                <a href="{% url 'finance:farm_expense_update' expense.id %}"
+                                   class="farm-expense-edit">
+
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+
+                                </a>
+
+
+                                <a href="{% url 'finance:farm_expense_delete' expense.id %}"
+                                   class="farm-expense-delete">
+
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="farm-expense-empty">
+
+                            No farm expenses found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

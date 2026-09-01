@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Dashboard - MyFarm
+{% endblock %}
+
+{% block page_title %}
+    Dashboard
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/dashboard.css' %}"
+>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-header-content">
+
+            <div class="dashboard-welcome-icon">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </div>
+
+            <div>
+
+                <span class="dashboard-eyebrow">
+                    MYFARM
+                </span>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Welcome back,
+                    <strong>{{ user.username }}</strong>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DJANGO MESSAGES
+    ====================================================== -->
+
+    <!-- {% if messages %}
+
+        <div class="dashboard-messages">
+
+            {% for message in messages %}
+
+                <div class="
+                    dashboard-message
+                    dashboard-message-{{ message.tags|default:'info' }}
+                ">
+
+                    <div class="dashboard-message-icon">
+
+                        {% if message.tags == "success" %}
+                            <i class="bi bi-check-circle-fill"></i>
+
+                        {% elif message.tags == "error" %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+
+                        {% elif message.tags == "warning" %}
+                            <i class="bi bi-exclamation-circle-fill"></i>
+
+                        {% else %}
+                            <i class="bi bi-info-circle-fill"></i>
+
+                        {% endif %}
+
+                    </div>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %} -->
+
+
+    <!-- =====================================================
+         BUSINESS ASSIGNED
+    ====================================================== -->
+
+    {% if business_user %}
+
+        <div class="dashboard-business-card">
+
+            <div class="dashboard-business-icon">
+
+                <i class="bi bi-building-fill"></i>
+
+            </div>
+
+
+            <div class="dashboard-business-info">
+
+                <span class="dashboard-section-label">
+                    CURRENT BUSINESS
+                </span>
+
+                <h2>
+                    {{ business.name }}
+                </h2>
+
+
+                <div class="dashboard-business-meta">
+
+
+                    {% if business.address %}
+
+                        <div class="dashboard-address">
+
+                            <i class="bi bi-geo-alt-fill"></i>
+
+                            <span>
+                                {{ business.address }}
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            
+
+                <div class="dashboard-admin-badge">
+                    <i class="bi bi-shield-check"></i>
+                    {{ business_user.get_role_display|default:business_user.role }}
+                </div>
+
+           
+
+        </div>
+
+
+        <!-- =================================================
+             DASHBOARD STAT CARDS
+        ================================================== -->
+
+        <div class="dashboard-section-title">
+
+            <div>
+
+                <span>
+                    OVERVIEW
+                </span>
+
+                <h2>
+                    Farm Overview
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-cards">
+
+
+            <!-- TOTAL GOATS -->
+
+            <div class="dashboard-card dashboard-card-goat">
+
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-card-icon">
+
+                        <i class="bi bi-gitlab"></i>
+
+                    </div>
+
+                    <span class="dashboard-card-label">
+                        LIVESTOCK
+                    </span>
+
+                </div>
+
+                <div class="dashboard-card-body">
+
+                    <h3>
+                        Total Goats
+                    </h3>
+
+                    <strong>
+                        0
+                    </strong>
+
+                    <p>
+                        Registered goats
+                    </p>
+
+                </div>
+
+                <div class="dashboard-card-footer">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                    Goat Register
+
+                </div>
+
+            </div>
+
+
+            <!-- MILKING GOATS -->
+
+            <div class="dashboard-card dashboard-card-milk">
+
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-card-icon">
+
+                        <i class="bi bi-heart-pulse-fill"></i>
+
+                    </div>
+
+                    <span class="dashboard-card-label">
+                        PRODUCTION
+                    </span>
+
+                </div>
+
+                <div class="dashboard-card-body">
+
+                    <h3>
+                        Milking Goats
+                    </h3>
+
+                    <strong>
+                        0
+                    </strong>
+
+                    <p>
+                        Active milking goats
+                    </p>
+
+                </div>
+
+                <div class="dashboard-card-footer">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                    Production
+
+                </div>
+
+            </div>
+
+
+            <!-- MILK -->
+
+            <div class="dashboard-card dashboard-card-water">
+
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-card-icon">
+
+                        <i class="bi bi-droplet-fill"></i>
+
+                    </div>
+
+                    <span class="dashboard-card-label">
+                        MILK
+                    </span>
+
+                </div>
+
+                <div class="dashboard-card-body">
+
+                    <h3>
+                        Today's Milk
+                    </h3>
+
+                    <strong>
+                        0
+                        <small>L</small>
+                    </strong>
+
+                    <p>
+                        Today's milk collection
+                    </p>
+
+                </div>
+
+                <div class="dashboard-card-footer">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                    Milk Records
+
+                </div>
+
+            </div>
+
+
+            <!-- SALES -->
+
+            <div class="dashboard-card dashboard-card-sales">
+
+                <div class="dashboard-card-top">
+
+                    <div class="dashboard-card-icon">
+
+                        <i class="bi bi-currency-rupee"></i>
+
+                    </div>
+
+                    <span class="dashboard-card-label">
+                        FINANCE
+                    </span>
+
+                </div>
+
+                <div class="dashboard-card-body">
+
+                    <h3>
+                        Today's Sales
+                    </h3>
+
+                    <strong>
+                        ₹0
+                    </strong>
+
+                    <p>
+                        Today's sales value
+                    </p>
+
+                </div>
+
+                <div class="dashboard-card-footer">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                    Sales
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- =================================================
+             NO BUSINESS ASSIGNED
+        ================================================== -->
+
+        <div class="dashboard-no-business">
+
+            <div class="dashboard-no-business-icon">
+
+                <i class="bi bi-building-exclamation"></i>
+
+            </div>
+
+
+            <div class="dashboard-no-business-content">
+
+                <span class="dashboard-section-label">
+                    ACCOUNT STATUS
+                </span>
+
+                <h2>
+                    No Business Assigned
+                </h2>
+
+                <p>
+                    Your account has been created successfully,
+                    but you have not yet been assigned to a business.
+                </p>
+
+                <p class="dashboard-no-business-help">
+
+                    Please contact your Business Administrator.
+                    Once you are assigned a business and role,
+                    your farm dashboard will become available.
+
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-pending-badge">
+
+                <i class="bi bi-clock-history"></i>
+
+                Awaiting Assignment
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INFORMATION CARD
+        ================================================== -->
+
+        <div class="dashboard-info-card">
+
+            <div class="dashboard-info-icon">
+
+                <i class="bi bi-info-circle-fill"></i>
+
+            </div>
+
+            <div>
+
+                <h3>
+                    What happens next?
+                </h3>
+
+                <p>
+                    A Business Super Admin needs to assign your
+                    account to a business and provide you with
+                    an appropriate role. You will then be able
+                    to access the modules permitted for your role.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

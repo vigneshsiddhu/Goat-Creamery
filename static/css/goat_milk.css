@@ -1,0 +1,2217 @@
+/* =========================================================
+   GOAT MILK CSS
+   Supports:
+   - Goat Milk List
+   - Goat Milk Create
+   - Goat Milk Update
+   - Voice Goat Milk Create
+   - Voice Confirmation Popup
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.goat-milk-page,
+.production-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.production-page-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.production-page-header-content {
+    min-width: 0;
+}
+
+.production-page-header h3 {
+    margin: 0 0 4px;
+
+    color: #1F2937;
+
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.production-page-header p {
+    margin: 0;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.goat-milk-header-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.production-add-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.production-add-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.milk-summary-cards {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   SUMMARY CARD
+========================================================= */
+
+.milk-summary-card {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 16px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SUMMARY ICON
+========================================================= */
+
+.milk-card-icon {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   SUMMARY CONTENT
+========================================================= */
+
+.milk-card-content {
+    min-width: 0;
+}
+
+.milk-card-content span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #6B7280;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.milk-card-content strong {
+    display: block;
+
+    color: #1F2937;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+.milk-card-content strong small {
+    color: #6B7280;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   SUMMARY CARD COLORS
+========================================================= */
+
+.milk-card-purple .milk-card-icon {
+    background: #F0EEFF;
+
+    color: #6F63D9;
+}
+
+.milk-card-blue .milk-card-icon {
+    background: #EEF6FF;
+
+    color: #3B82F6;
+}
+
+.milk-card-green .milk-card-icon {
+    background: #ECFDF3;
+
+    color: #16A34A;
+}
+
+.milk-card-orange .milk-card-icon {
+    background: #FFF7ED;
+
+    color: #EA580C;
+}
+
+
+/* =========================================================
+   LIST CARD
+========================================================= */
+
+.production-list-card {
+    width: 100%;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.production-table-header {
+    width: 100%;
+
+    min-height: 68px;
+
+    padding: 15px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #F8F7FF,
+            #EFEDFF
+        );
+
+    border-bottom: 1px solid #DDD9F7;
+
+    box-sizing: border-box;
+}
+
+.production-table-header h4 {
+    margin: 0;
+
+    color: #352F68;
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+.production-table-header p {
+    margin: 4px 0 0;
+
+    color: #6B6790;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RECORD COUNT
+========================================================= */
+
+.production-record-count {
+    flex-shrink: 0;
+
+    padding: 6px 10px;
+
+    background: #FFFFFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.production-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.production-table {
+    width: 100%;
+
+    min-width: 850px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    background: #FFFFFF;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.production-table thead {
+    background: #6F63D9;
+}
+
+.production-table th {
+    padding: 13px 12px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-align: left;
+
+    vertical-align: middle;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   COLUMN WIDTHS
+
+   Goat
+   Milk Weight
+   Date
+   Note
+   Created By
+   Actions
+========================================================= */
+
+.production-table th:nth-child(1),
+.production-table td:nth-child(1) {
+    width: 19%;
+}
+
+.production-table th:nth-child(2),
+.production-table td:nth-child(2) {
+    width: 13%;
+}
+
+.production-table th:nth-child(3),
+.production-table td:nth-child(3) {
+    width: 15%;
+}
+
+.production-table th:nth-child(4),
+.production-table td:nth-child(4) {
+    width: 24%;
+}
+
+.production-table th:nth-child(5),
+.production-table td:nth-child(5) {
+    width: 15%;
+}
+
+.production-table th:nth-child(6),
+.production-table td:nth-child(6) {
+    width: 14%;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.production-table tbody tr {
+    transition: background 0.15s ease;
+
+    height: 58px;
+}
+
+.production-table td {
+    padding: 13px 12px;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   ALTERNATE ROW
+========================================================= */
+
+.production-table tbody tr:nth-child(even) {
+    background: #F8F7FF;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.production-table tbody tr:hover {
+    background: #F0EEFF;
+}
+
+
+/* =========================================================
+   GOAT INFORMATION
+========================================================= */
+
+.milk-goat-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   GOAT ICON
+========================================================= */
+
+.milk-goat-icon {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   GOAT DETAILS
+========================================================= */
+
+.milk-goat-details {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.production-token {
+    display: block;
+
+    color: #1F2937;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+}
+
+.milk-goat-details small {
+    display: block;
+
+    color: #9CA3AF;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   MILK WEIGHT VALUE
+========================================================= */
+
+.milk-value {
+    display: inline-flex;
+
+    align-items: baseline;
+
+    gap: 4px;
+
+    color: #352F68;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.milk-value small {
+    color: #6B7280;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.milk-date {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+.milk-date i {
+    color: #6F63D9;
+}
+
+
+/* =========================================================
+   NOTE
+========================================================= */
+
+.milk-note {
+    display: block;
+
+    max-width: 100%;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #475569;
+
+    font-size: 12px;
+}
+
+.milk-no-note {
+    color: #9CA3AF;
+}
+
+
+/* =========================================================
+   CREATED BY
+========================================================= */
+
+.milk-created-by {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: #475569;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    max-width: 100%;
+}
+
+.milk-created-by i {
+    color: #6F63D9;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.production-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   EDIT / DELETE
+========================================================= */
+
+.production-edit,
+.production-delete {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+.production-edit {
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+}
+
+.production-edit:hover {
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border-color: #6F63D9;
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+.production-delete {
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    border: 1px solid #FECDD3;
+}
+
+.production-delete:hover {
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border-color: #DC2626;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.production-empty {
+    padding: 45px 20px !important;
+
+    text-align: center !important;
+
+    color: #6B7280 !important;
+
+    font-size: 13px;
+}
+
+.milk-empty-content {
+    width: 100%;
+
+    max-width: 400px;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+.milk-empty-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 12px;
+
+    border-radius: 13px;
+
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    font-size: 25px;
+}
+
+.milk-empty-content h4 {
+    margin: 0;
+
+    color: #1F2937;
+
+    font-size: 17px;
+
+    font-weight: 600;
+}
+
+.milk-empty-content p {
+    margin: 6px 0 16px;
+
+    color: #6B7280;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+.milk-empty-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+.milk-empty-btn:hover {
+    background: #5B50C7;
+
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   =========================================================
+   NORMAL CREATE / UPDATE FORM
+========================================================= */
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.production-form-card,
+.goat-milk-form-card {
+    width: 100%;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.production-form-header,
+.goat-milk-form-header {
+    padding: 16px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #F8F7FF,
+            #EFEDFF
+        );
+
+    border-bottom: 1px solid #DDD9F7;
+}
+
+
+/* =========================================================
+   FORM TITLE
+========================================================= */
+
+.production-form-header h5,
+.goat-milk-form-header h3 {
+    margin: 0;
+
+    color: #352F68;
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FORM DESCRIPTION
+========================================================= */
+
+.production-form-header p,
+.goat-milk-form-header p {
+    margin: 4px 0 0;
+
+    color: #6B6790;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.production-back-btn,
+.goat-milk-back-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.production-back-btn:hover,
+.goat-milk-back-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.production-form-body,
+.goat-milk-form-body {
+    padding: 22px;
+
+    background: #FBFCFE;
+}
+
+
+/* =========================================================
+   FORM ROW
+========================================================= */
+
+.production-form-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.production-form-group,
+.goat-milk-form-group {
+    margin-bottom: 17px;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.production-form-group label,
+.goat-milk-form-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.production-form-group input,
+.production-form-group select,
+.production-form-group textarea,
+
+.goat-milk-form-group input,
+.goat-milk-form-group select,
+.goat-milk-form-group textarea {
+    display: block;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.production-form-group select,
+.goat-milk-form-group select {
+    cursor: pointer;
+
+    appearance: auto;
+
+    -webkit-appearance: menulist;
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.production-form-group textarea,
+.goat-milk-form-group textarea {
+    min-height: 90px;
+
+    resize: vertical;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.production-form-group input:focus,
+.production-form-group select:focus,
+.production-form-group textarea:focus,
+
+.goat-milk-form-group input:focus,
+.goat-milk-form-group select:focus,
+.goat-milk-form-group textarea:focus {
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.10);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.production-form-error,
+.goat-milk-form-error {
+    margin-top: 5px;
+
+    color: #DC2626;
+
+    font-size: 11px;
+}
+
+.production-form-error ul,
+.goat-milk-form-error ul {
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.production-form-actions,
+.goat-milk-form-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 15px;
+
+    margin-top: 4px;
+
+    border-top: 1px solid #E2E8F0;
+}
+
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+.production-cancel-btn,
+.goat-milk-cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.production-cancel-btn:hover,
+.goat-milk-cancel-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+.production-save-btn,
+.goat-milk-save-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.production-save-btn:hover,
+.goat-milk-save-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+}
+
+
+/* =========================================================
+   MILK QUANTITY BUTTONS
+========================================================= */
+
+.milk-quantity-buttons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   MILK QUANTITY OPTION
+========================================================= */
+
+.milk-quantity-option {
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 65px;
+
+    padding: 8px 11px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   HIDE RADIO
+========================================================= */
+
+.milk-quantity-option input[type="radio"] {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SELECTED
+========================================================= */
+
+.milk-quantity-option:has(
+    input[type="radio"]:checked
+) {
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 2px rgba(111, 99, 217, 0.08);
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.milk-quantity-option:hover {
+    border-color: #6F63D9;
+
+    color: #6F63D9;
+}
+
+
+/* =========================================================
+   GOAT MILK DROPDOWN
+========================================================= */
+
+.goat-milk-select-wrapper {
+    position: relative;
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LEFT ICON
+========================================================= */
+
+.goat-milk-select-wrapper > i:first-child {
+    position: absolute;
+
+    left: 13px;
+
+    z-index: 2;
+
+    color: #6F63D9;
+
+    font-size: 15px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.goat-milk-select-wrapper select {
+    width: 100%;
+
+    height: 44px;
+
+    padding: 0 42px 0 40px;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 8px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    -moz-appearance: none;
+
+    cursor: pointer;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.goat-milk-select-wrapper select:hover {
+    border-color: #A5A0D9;
+
+    background: #FCFBFF;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.goat-milk-select-wrapper select:focus {
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.10);
+}
+
+
+/* =========================================================
+   RIGHT ARROW
+========================================================= */
+
+.goat-milk-select-arrow {
+    position: absolute;
+
+    right: 14px;
+
+    color: #6B7280;
+
+    font-size: 13px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.goat-milk-select-wrapper select option {
+    padding: 8px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   VOICE INLINE CONFIRMATION
+========================================================= */
+
+.milk-voice-confirmation {
+    margin-top: 15px;
+
+    padding: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    background: #F8F7FF;
+
+    border: 1px solid #DDD9F7;
+
+    border-radius: 8px;
+}
+
+.milk-voice-confirmation-icon {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+}
+
+.milk-voice-confirmation-content {
+    min-width: 0;
+}
+
+.milk-voice-confirmation-text {
+    color: #352F68;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   =========================================================
+   VOICE CONFIRMATION POPUP
+=========================================================
+========================================================= */
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.milk-confirmation-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 99999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: rgba(15, 23, 42, 0.65);
+
+    backdrop-filter: blur(6px);
+
+    -webkit-backdrop-filter: blur(6px);
+}
+
+
+/* =========================================================
+   POPUP
+========================================================= */
+
+.milk-confirmation-popup {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 430px;
+
+    padding: 26px;
+
+    box-sizing: border-box;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.30);
+
+    text-align: center;
+
+    animation:
+        milkPopupShow 0.2s ease-out;
+}
+
+
+/* =========================================================
+   POPUP ANIMATION
+========================================================= */
+
+@keyframes milkPopupShow {
+
+    from {
+        opacity: 0;
+
+        transform: scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   POPUP ICON
+========================================================= */
+
+.milk-confirmation-icon {
+    width: 54px;
+    height: 54px;
+
+    margin: 0 auto 14px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   POPUP TITLE
+========================================================= */
+
+.milk-confirmation-popup h4 {
+    margin: 0;
+
+    color: #1F2937;
+
+    font-size: 18px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   POPUP VOICE TEXT
+========================================================= */
+
+.milk-confirmation-text {
+    margin: 9px 0 20px;
+
+    color: #6B7280;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   POPUP DETAILS
+========================================================= */
+
+.milk-confirmation-details {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.milk-confirmation-detail {
+    padding: 13px 10px;
+
+    background: #F8F7FF;
+
+    border: 1px solid #E4E0FA;
+
+    border-radius: 8px;
+}
+
+.milk-confirmation-detail span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #6B7280;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+.milk-confirmation-detail strong {
+    display: block;
+
+    color: #352F68;
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   POPUP ACTIONS
+========================================================= */
+
+.milk-confirmation-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   POPUP BUTTON BASE
+========================================================= */
+
+.milk-confirmation-change-btn,
+.milk-confirmation-save-btn {
+    flex: 1 1 0;
+
+    min-height: 42px;
+
+    padding: 9px 13px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    box-sizing: border-box;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.1s ease;
+}
+
+
+/* =========================================================
+   CHANGE BUTTON
+========================================================= */
+
+.milk-confirmation-change-btn {
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+}
+
+.milk-confirmation-change-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+
+    border-color: #94A3B8;
+}
+
+
+/* =========================================================
+   CONFIRM & SAVE
+========================================================= */
+
+.milk-confirmation-save-btn {
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    box-shadow:
+        0 3px 8px rgba(111, 99, 217, 0.22);
+}
+
+.milk-confirmation-save-btn:hover {
+    background: #5B50C7;
+
+    color: #FFFFFF;
+
+    border-color: #5B50C7;
+
+    box-shadow:
+        0 5px 12px rgba(111, 99, 217, 0.28);
+}
+
+
+/* =========================================================
+   BUTTON ICONS
+========================================================= */
+
+.milk-confirmation-save-btn i {
+    color: #FFFFFF;
+
+    font-size: 14px;
+}
+
+.milk-confirmation-change-btn i {
+    color: #475569;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ACTIVE
+========================================================= */
+
+.milk-confirmation-save-btn:active,
+.milk-confirmation-change-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.milk-confirmation-save-btn:disabled {
+    background: #9CA3AF;
+
+    color: #FFFFFF;
+
+    border-color: #9CA3AF;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   =========================================================
+   RESPONSIVE
+=========================================================
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .milk-summary-cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .production-page {
+        padding: 15px;
+    }
+
+
+    /* HEADER */
+
+    .production-page-header {
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .production-page-header h3 {
+        font-size: 20px;
+    }
+
+    .production-page-header p {
+        font-size: 12px;
+    }
+
+
+    .production-add-btn {
+        padding: 8px 10px;
+
+        font-size: 11px;
+    }
+
+
+    /* SUMMARY */
+
+    .milk-summary-cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+    .milk-summary-card {
+        padding: 13px;
+
+        gap: 9px;
+    }
+
+    .milk-card-icon {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+    }
+
+    .milk-card-content strong {
+        font-size: 18px;
+    }
+
+
+    /* TABLE */
+
+    .production-table {
+        min-width: 850px;
+    }
+
+    .production-table th {
+        padding: 10px 8px;
+
+        font-size: 10px;
+    }
+
+    .production-table td {
+        padding: 10px 8px;
+
+        font-size: 11px;
+    }
+
+    .production-table tbody tr {
+        height: 54px;
+    }
+
+
+    /* ACTIONS */
+
+    .production-edit,
+    .production-delete {
+        padding: 5px 7px;
+
+        font-size: 10px;
+    }
+
+
+    /* FORM */
+
+    .goat-milk-form-header,
+    .production-form-header {
+        padding: 13px 14px;
+    }
+
+    .goat-milk-form-body,
+    .production-form-body {
+        padding: 15px;
+    }
+
+    .production-form-row {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .production-form-group,
+    .goat-milk-form-group {
+        margin-bottom: 14px;
+    }
+
+
+    /* RADIO */
+
+    .milk-quantity-buttons {
+        gap: 6px;
+    }
+
+    .milk-quantity-option {
+        min-width: 58px;
+
+        padding: 7px 9px;
+
+        font-size: 11px;
+    }
+
+
+    /* FORM ACTIONS */
+
+    .production-form-actions,
+    .goat-milk-form-actions {
+        justify-content: stretch;
+    }
+
+    .production-cancel-btn,
+    .production-save-btn,
+    .goat-milk-cancel-btn,
+    .goat-milk-save-btn {
+        flex: 1;
+
+        min-height: 38px;
+    }
+
+
+    /* POPUP */
+
+    .milk-confirmation-popup {
+        max-width: 400px;
+
+        padding: 24px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .production-page {
+        padding: 12px;
+    }
+
+
+    /* HEADER */
+
+    .production-page-header {
+        flex-direction: column;
+    }
+
+    .goat-milk-header-actions {
+        width: 100%;
+
+        justify-content: flex-end;
+    }
+
+    .production-add-btn {
+        width: 100%;
+    }
+
+
+    /* SUMMARY */
+
+    .milk-summary-cards {
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+
+
+    /* TABLE HEADER */
+
+    .production-table-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 13px 14px;
+    }
+
+
+    /* FORM HEADER */
+
+    .goat-milk-form-header,
+    .production-form-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .goat-milk-back-btn,
+    .production-back-btn {
+        align-self: flex-start;
+    }
+
+
+    /* FORM */
+
+    .goat-milk-form-body,
+    .production-form-body {
+        padding: 14px;
+    }
+
+
+    /* RADIO */
+
+    .milk-quantity-buttons {
+        width: 100%;
+
+        gap: 6px;
+    }
+
+    .milk-quantity-option {
+        flex: 1;
+
+        min-width: 55px;
+    }
+
+
+    /* ACTIONS */
+
+    .goat-milk-form-actions,
+    .production-form-actions {
+        flex-direction: column;
+    }
+
+    .goat-milk-cancel-btn,
+    .goat-milk-save-btn,
+    .production-cancel-btn,
+    .production-save-btn {
+        width: 100%;
+    }
+
+
+    /* POPUP */
+
+    .milk-confirmation-overlay {
+        padding: 15px;
+    }
+
+    .milk-confirmation-popup {
+        width: 100%;
+
+        max-width: 100%;
+
+        padding: 22px;
+
+        border-radius: 12px;
+    }
+
+    .milk-confirmation-details {
+        grid-template-columns: 1fr;
+    }
+
+    .milk-confirmation-actions {
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+    .milk-confirmation-change-btn,
+    .milk-confirmation-save-btn {
+        width: 100%;
+
+        min-height: 44px;
+    }
+
+    .milk-confirmation-icon {
+        width: 52px;
+        height: 52px;
+
+        font-size: 21px;
+    }
+
+    .milk-confirmation-popup h4 {
+        font-size: 17px;
+    }
+
+    .milk-confirmation-text {
+        font-size: 13px;
+    }
+}

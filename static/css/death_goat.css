@@ -1,0 +1,874 @@
+/* =========================================================
+   DEATH GOAT PAGE
+========================================================= */
+
+.death-goat-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.death-goat-page-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.death-goat-page-header h3 {
+    margin: 0 0 4px;
+
+    color: #1F2937;
+
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.death-goat-page-header p {
+    margin: 0;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.death-goat-add-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    background: #6F63D9;
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.death-goat-add-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   LIST CARD
+========================================================= */
+
+.death-goat-list-card,
+.death-goat-form-card {
+    width: 100%;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.death-goat-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.death-goat-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    background: #FFFFFF;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.death-goat-table thead {
+    background: #6F63D9;
+}
+
+.death-goat-table th {
+    padding: 14px 12px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: left;
+
+    vertical-align: middle;
+
+    white-space: normal;
+}
+
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+.death-goat-table th:nth-child(1),
+.death-goat-table td:nth-child(1) {
+    width: 13%;
+}
+
+.death-goat-table th:nth-child(2),
+.death-goat-table td:nth-child(2) {
+    width: 17%;
+}
+
+.death-goat-table th:nth-child(3),
+.death-goat-table td:nth-child(3) {
+    width: 14%;
+}
+
+.death-goat-table th:nth-child(4),
+.death-goat-table td:nth-child(4) {
+    width: 27%;
+}
+
+.death-goat-table th:nth-child(5),
+.death-goat-table td:nth-child(5) {
+    width: 12%;
+}
+
+.death-goat-table th:nth-child(6),
+.death-goat-table td:nth-child(6) {
+    width: 17%;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.death-goat-table td {
+    padding: 13px 12px;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+.death-goat-table tbody tr:nth-child(even) {
+    background: #F8F7FF;
+}
+
+.death-goat-table tbody tr:hover {
+    background: #F0EEFF;
+}
+
+
+/* =========================================================
+   GOAT TOKEN
+========================================================= */
+
+.death-goat-token {
+    color: #1F2937;
+
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   DISEASE
+========================================================= */
+
+.death-goat-disease {
+    color: #6F63D9;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   MUTED
+========================================================= */
+
+.death-goat-muted {
+    color: #9CA3AF;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.death-goat-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   EDIT / DELETE
+========================================================= */
+
+.death-goat-edit,
+.death-goat-delete {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+
+/* EDIT */
+
+.death-goat-edit {
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+}
+
+.death-goat-edit:hover {
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border-color: #6F63D9;
+}
+
+
+/* DELETE */
+
+.death-goat-delete {
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    border: 1px solid #FECDD3;
+}
+
+.death-goat-delete:hover {
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border-color: #DC2626;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.death-goat-empty {
+    padding: 40px 20px !important;
+
+    text-align: center;
+
+    color: #6B7280 !important;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.death-goat-form-header {
+    padding: 16px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #F8F7FF,
+            #EFEDFF
+        );
+
+    border-bottom: 1px solid #DDD9F7;
+}
+
+.death-goat-form-header-content {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.death-goat-form-header h5 {
+    margin: 0;
+
+    color: #352F68;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.death-goat-form-header p {
+    margin: 4px 0 0;
+
+    color: #6B6790;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.death-goat-form-body {
+    padding: 22px;
+
+    background: #FBFCFE;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.death-goat-form-group {
+    margin-bottom: 17px;
+
+    min-width: 0;
+}
+
+.death-goat-form-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.death-goat-form-group input,
+.death-goat-form-group select,
+.death-goat-form-group textarea {
+    display: block;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.death-goat-form-group textarea {
+    min-height: 90px;
+
+    resize: vertical;
+}
+
+.death-goat-form-group select {
+    cursor: pointer;
+
+    appearance: auto;
+
+    -webkit-appearance: menulist;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.death-goat-form-group input:focus,
+.death-goat-form-group select:focus,
+.death-goat-form-group textarea:focus {
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.10);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.death-goat-form-error {
+    margin-top: 5px;
+
+    color: #DC2626;
+
+    font-size: 11px;
+}
+
+.death-goat-form-error ul {
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.death-goat-form-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 15px;
+
+    margin-top: 4px;
+
+    border-top: 1px solid #E2E8F0;
+}
+
+
+/* =========================================================
+   BACK / CANCEL
+========================================================= */
+
+.death-goat-back-btn,
+.death-goat-cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.death-goat-back-btn:hover,
+.death-goat-cancel-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+.death-goat-save-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.death-goat-save-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+}
+
+
+/* =========================================================
+   DELETE CARD
+========================================================= */
+
+.death-goat-delete-card {
+    max-width: 520px;
+
+    margin: 40px auto;
+
+    padding: 30px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   DELETE ICON
+========================================================= */
+
+.death-goat-delete-icon {
+    width: 52px;
+    height: 52px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   DELETE TEXT
+========================================================= */
+
+.death-goat-delete-card h4 {
+    margin: 0 0 8px;
+
+    color: #1F2937;
+
+    font-size: 18px;
+}
+
+.death-goat-delete-card p {
+    margin: 0 0 20px;
+
+    color: #6B7280;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   DELETE DETAILS
+========================================================= */
+
+.death-goat-delete-details {
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    background: #F8F7FF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 8px;
+
+    text-align: left;
+
+    color: #475569;
+
+    font-size: 13px;
+}
+
+.death-goat-delete-details div {
+    margin-bottom: 7px;
+}
+
+.death-goat-delete-details div:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   DELETE ACTIONS
+========================================================= */
+
+.death-goat-delete-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   DELETE CONFIRM
+========================================================= */
+
+.death-goat-delete-confirm-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border: 1px solid #DC2626;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.death-goat-delete-confirm-btn:hover {
+    background: #B91C1C;
+
+    border-color: #B91C1C;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .death-goat-page-header {
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .death-goat-page-header h3 {
+        font-size: 19px;
+    }
+
+    .death-goat-page-header p {
+        font-size: 11px;
+    }
+
+    .death-goat-add-btn {
+        padding: 8px 10px;
+
+        font-size: 11px;
+    }
+
+    .death-goat-table {
+        min-width: 850px;
+    }
+
+    .death-goat-table th {
+        padding: 10px 8px;
+
+        font-size: 10px;
+    }
+
+    .death-goat-table td {
+        padding: 10px 8px;
+
+        font-size: 11px;
+    }
+
+    .death-goat-form-header {
+        padding: 13px 14px;
+    }
+
+    .death-goat-form-body {
+        padding: 15px;
+    }
+
+    .death-goat-form-group {
+        margin-bottom: 13px;
+    }
+
+    .death-goat-form-actions {
+        justify-content: stretch;
+    }
+
+    .death-goat-cancel-btn,
+    .death-goat-save-btn {
+        flex: 1;
+
+        min-height: 38px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .death-goat-page-header {
+        flex-direction: column;
+    }
+
+    .death-goat-add-btn {
+        align-self: flex-end;
+    }
+
+    .death-goat-form-header-content {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .death-goat-back-btn {
+        align-self: flex-start;
+    }
+
+    .death-goat-delete-card {
+        margin: 20px 10px;
+
+        padding: 22px;
+    }
+
+    .death-goat-delete-actions {
+        flex-direction: column;
+    }
+
+    .death-goat-delete-actions a,
+    .death-goat-delete-actions button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,825 @@
+/* =========================================================
+   DISEASE PAGE
+========================================================= */
+
+.disease-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.disease-page-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.disease-page-header h3 {
+    margin: 0 0 4px;
+
+    color: #1F2937;
+
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.disease-page-header p {
+    margin: 0;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.disease-add-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.disease-add-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   LIST / FORM CARD
+========================================================= */
+
+.disease-list-card,
+.disease-form-card {
+    width: 100%;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.disease-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.disease-table {
+    width: 100%;
+
+    min-width: 1000px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    background: #FFFFFF;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.disease-table thead {
+    background: #6F63D9;
+}
+
+.disease-table th {
+    padding: 14px 12px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: left;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   COLUMN WIDTH
+========================================================= */
+
+.disease-table th:nth-child(1),
+.disease-table td:nth-child(1) {
+    width: 14%;
+}
+
+.disease-table th:nth-child(2),
+.disease-table td:nth-child(2) {
+    width: 20%;
+}
+
+.disease-table th:nth-child(3),
+.disease-table td:nth-child(3) {
+    width: 20%;
+}
+
+.disease-table th:nth-child(4),
+.disease-table td:nth-child(4) {
+    width: 20%;
+}
+
+.disease-table th:nth-child(5),
+.disease-table td:nth-child(5) {
+    width: 11%;
+}
+
+.disease-table th:nth-child(6),
+.disease-table td:nth-child(6) {
+    width: 15%;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.disease-table td {
+    padding: 13px 12px;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+.disease-table tbody tr:nth-child(even) {
+    background: #F8F7FF;
+}
+
+.disease-table tbody tr:hover {
+    background: #F0EEFF;
+}
+
+
+/* =========================================================
+   DISEASE NAME
+========================================================= */
+
+.disease-name {
+    color: #1F2937;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.disease-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    flex-wrap: wrap;
+}
+
+.disease-edit,
+.disease-delete {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+
+/* EDIT */
+
+.disease-edit {
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+}
+
+.disease-edit:hover {
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border-color: #6F63D9;
+}
+
+
+/* DELETE */
+
+.disease-delete {
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    border: 1px solid #FECDD3;
+}
+
+.disease-delete:hover {
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border-color: #DC2626;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.disease-empty {
+    padding: 40px 20px !important;
+
+    text-align: center;
+
+    color: #6B7280 !important;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.disease-form-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 16px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #F8F7FF,
+            #EFEDFF
+        );
+
+    border-bottom: 1px solid #DDD9F7;
+}
+
+.disease-form-header h5 {
+    margin: 0;
+
+    color: #352F68;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.disease-form-header p {
+    margin: 4px 0 0;
+
+    color: #6B6790;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.disease-form-body {
+    padding: 22px;
+
+    background: #FBFCFE;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.disease-form-group {
+    margin-bottom: 17px;
+
+    min-width: 0;
+}
+
+.disease-form-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUT / TEXTAREA
+========================================================= */
+
+.disease-form-input,
+.disease-form-group input,
+.disease-form-group textarea {
+    display: block;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.disease-form-group textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.disease-form-input:focus,
+.disease-form-group input:focus,
+.disease-form-group textarea:focus {
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.10);
+
+    outline: none;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.disease-form-error {
+    margin-top: 5px;
+
+    color: #DC2626;
+
+    font-size: 11px;
+}
+
+.disease-form-error ul {
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.disease-form-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 15px;
+
+    margin-top: 4px;
+
+    border-top: 1px solid #E2E8F0;
+}
+
+
+/* =========================================================
+   BACK / CANCEL
+========================================================= */
+
+.disease-back-btn,
+.disease-cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.disease-back-btn:hover,
+.disease-cancel-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+.disease-save-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.disease-save-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+}
+
+
+/* =========================================================
+   DELETE CARD
+========================================================= */
+
+.disease-delete-card {
+    max-width: 520px;
+
+    margin: 40px auto;
+
+    padding: 30px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 3px 12px rgba(15, 23, 42, 0.06);
+
+    text-align: center;
+}
+
+.disease-delete-icon {
+    width: 52px;
+    height: 52px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    font-size: 22px;
+}
+
+.disease-delete-card h4 {
+    margin: 0 0 8px;
+
+    color: #1F2937;
+
+    font-size: 18px;
+}
+
+.disease-delete-card > p {
+    margin: 0 0 20px;
+
+    color: #6B7280;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   DELETE DETAILS
+========================================================= */
+
+.disease-delete-details {
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    background: #F8F7FF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 8px;
+
+    text-align: left;
+
+    color: #475569;
+
+    font-size: 13px;
+}
+
+.disease-delete-details div {
+    margin-bottom: 7px;
+}
+
+.disease-delete-details div:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   DELETE ACTIONS
+========================================================= */
+
+.disease-delete-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   DELETE CONFIRM
+========================================================= */
+
+.disease-delete-confirm-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border: 1px solid #DC2626;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.disease-delete-confirm-btn:hover {
+    background: #B91C1C;
+
+    border-color: #B91C1C;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .disease-page-header {
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .disease-page-header h3 {
+        font-size: 19px;
+    }
+
+    .disease-page-header p {
+        font-size: 11px;
+    }
+
+    .disease-add-btn {
+        padding: 8px 10px;
+
+        font-size: 11px;
+    }
+
+    .disease-table {
+        min-width: 1000px;
+    }
+
+    .disease-table th {
+        padding: 10px 8px;
+
+        font-size: 10px;
+    }
+
+    .disease-table td {
+        padding: 10px 8px;
+
+        font-size: 11px;
+    }
+
+    .disease-form-header {
+        padding: 13px 14px;
+    }
+
+    .disease-form-body {
+        padding: 15px;
+    }
+
+    .disease-form-group {
+        margin-bottom: 13px;
+    }
+
+    .disease-form-actions {
+        justify-content: stretch;
+    }
+
+    .disease-cancel-btn,
+    .disease-save-btn {
+        flex: 1;
+
+        min-height: 38px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .disease-page-header {
+        flex-direction: column;
+    }
+
+    .disease-add-btn {
+        align-self: flex-end;
+    }
+
+    .disease-form-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .disease-back-btn {
+        align-self: flex-start;
+    }
+
+    .disease-delete-card {
+        margin: 20px 10px;
+
+        padding: 22px;
+    }
+
+    .disease-delete-actions {
+        flex-direction: column;
+    }
+
+    .disease-delete-actions a,
+    .disease-delete-actions button {
+        width: 100%;
+    }
+
+}

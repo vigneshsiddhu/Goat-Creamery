@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Goat Milk Voice Entry
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/goat_milk.css' %}?v=36"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="production-page">
+
+    <div class="goat-milk-form-card">
+
+    <!-- =====================================================
+
+         HEADER
+
+    ====================================================== -->
+
+    <div class="goat-milk-form-header">
+
+        <div>
+
+            <h3>
+
+                Goat Milk Entry
+
+            </h3>
+
+            <p>
+
+                Select the goat tag and milk quantity.
+
+            </p>
+
+        </div>
+
+        <a
+
+            href="{% url 'production:goat_milk_list' %}"
+
+            class="goat-milk-back-btn"
+
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back
+
+        </a>
+
+    </div>
+
+    <!-- =====================================================
+
+         FORM
+
+    ====================================================== -->
+
+    <div class="goat-milk-form-body">
+
+        <form
+
+            method="POST"
+
+            id="goat-milk-form"
+
+        >
+
+            {% csrf_token %}
+
+            <!-- =================================================
+
+                 GOAT TAG
+
+            ================================================== -->
+
+            <div class="goat-milk-form-group">
+
+                <label for="{{ form.goat.id_for_label }}">
+
+                    Goat Tag
+
+                </label>
+
+                <div class="goat-milk-select-wrapper">
+
+                    <i class="bi bi-tag-fill"></i>
+
+                    {{ form.goat }}
+
+                    <i class="bi bi-chevron-down goat-milk-select-arrow"></i>
+
+                </div>
+
+                {% if form.goat.errors %}
+
+                    <div class="goat-milk-form-error">
+
+                        {{ form.goat.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- =================================================
+
+                 MILK WEIGHT
+
+            ================================================== -->
+
+            <div class="goat-milk-form-group">
+
+                <label>
+
+                    Milk Weight
+
+                </label>
+
+                <div class="milk-quantity-buttons">
+
+                    {% for radio in form.milk_weight %}
+
+                        <label class="milk-quantity-option">
+
+                            {{ radio.tag }}
+
+                            <span>
+
+                                {{ radio.choice_label }}
+
+                            </span>
+
+                        </label>
+
+                    {% endfor %}
+
+                </div>
+
+                {% if form.milk_weight.errors %}
+
+                    <div class="goat-milk-form-error">
+
+                        {{ form.milk_weight.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- =================================================
+
+                 NON FIELD ERRORS
+
+            ================================================== -->
+
+            {% if form.non_field_errors %}
+
+                <div class="goat-milk-form-error">
+
+                    {{ form.non_field_errors }}
+
+                </div>
+
+            {% endif %}
+
+            <!-- =================================================
+
+                 ACTIONS
+
+            ================================================== -->
+
+            <div class="goat-milk-form-actions">
+
+                <a
+
+                    href="{% url 'production:goat_milk_list' %}"
+
+                    class="goat-milk-cancel-btn"
+
+                >
+
+                    <i class="bi bi-x-lg"></i>
+
+                    Cancel
+
+                </a>
+
+                <button
+
+                    type="submit"
+
+                    class="goat-milk-save-btn"
+
+                >
+
+                    <i class="bi bi-check-lg"></i>
+
+                    Save Milk
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}
+
+
+

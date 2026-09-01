@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Parent Mapping
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/parent_mapping.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="parent-mapping-page">
+
+    <!-- PAGE HEADER -->
+    <div class="parent-mapping-page-header">
+
+        <div>
+            <h3>Parent Mapping</h3>
+
+            <p>
+                Manage goat parent and child relationships for {{ business.name }}.
+            </p>
+        </div>
+
+        <a href="{% url 'breeding:parent_mapping_create' %}"
+           class="parent-mapping-add-btn">
+
+            <i class="bi bi-plus-lg"></i>
+            Add Parent Mapping
+
+        </a>
+
+    </div>
+
+
+    <!-- LIST CARD -->
+    <div class="parent-mapping-list-card">
+
+        <div class="parent-mapping-table-wrapper">
+
+            <table class="parent-mapping-list-table">
+
+                <thead>
+                    <tr>
+                        <th>Child Goat</th>
+                        <th>Parent Goat</th>
+                        <th>Created By</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    {% for mapping in mappings %}
+
+                    <tr>
+
+                        <td>
+                            <span class="parent-mapping-token">
+                                {{ mapping.child.token_no }}
+                            </span>
+                        </td>
+
+
+                        <td>
+                            <span class="parent-mapping-token">
+                                {{ mapping.parent.token_no }}
+                            </span>
+                        </td>
+
+
+                        <td>
+                            {{ mapping.created_by }}
+                        </td>
+
+
+                        <td>
+                            {{ mapping.created_at|date:"d-m-Y" }}
+                        </td>
+
+
+                        <td>
+
+                            <div class="parent-mapping-list-actions">
+
+                                <a href="{% url 'breeding:parent_mapping_update' mapping.id %}"
+                                   class="parent-mapping-list-edit">
+
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+
+                                </a>
+
+
+                                <a href="{% url 'breeding:parent_mapping_delete' mapping.id %}"
+                                   class="parent-mapping-list-delete">
+
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="parent-mapping-list-empty">
+
+                            No parent mappings found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

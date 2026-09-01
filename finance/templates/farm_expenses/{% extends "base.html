@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+
+    {% if expense %}
+        Edit Farm Expense
+    {% else %}
+        Add Farm Expense
+    {% endif %}
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/farm_expense.css' %}">
+
+<link rel="stylesheet" href="{% static 'css/voice_input.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="farm-expense-page">
+
+    <!-- YOUR NORMAL EXPENSE FORM -->
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+
+            Save Expense
+
+        </button>
+
+    </form>
+
+    <!-- VOICE COMPONENT -->
+
+    {% include "farm_expenses/voice_input.html" %}
+
+</div>
+
+<div class="farm-expense-page">
+
+    <div class="farm-expense-form-card">
+
+
+        <!-- HEADER -->
+
+        <div class="farm-expense-form-header">
+
+            <div class="farm-expense-form-header-content">
+
+                <div>
+
+                    <h5>
+
+                        {% if expense %}
+                            Edit Farm Expense
+                        {% else %}
+                            Farm Expense Information
+                        {% endif %}
+
+                    </h5>
+
+
+                    <p>
+
+                        {% if expense %}
+                            Update the farm expense details below.
+                        {% else %}
+                            Enter the farm expense details below.
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <a href="{% url 'finance:farm_expense_list' %}"
+                   class="farm-expense-back-btn">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Back
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- FORM BODY -->
+
+        <div class="farm-expense-form-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- CATEGORY + AMOUNT -->
+
+                <div class="farm-expense-form-row">
+
+
+                    <div class="farm-expense-form-group">
+
+                        <label for="{{ form.category.id_for_label }}">
+                            Category
+                        </label>
+
+                        {{ form.category }}
+
+                        {% if form.category.errors %}
+
+                            <div class="farm-expense-form-error">
+                                {{ form.category.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="farm-expense-form-group">
+
+                        <label for="{{ form.amount.id_for_label }}">
+                            Amount
+                        </label>
+
+                        {{ form.amount }}
+
+                        {% if form.amount.errors %}
+
+                            <div class="farm-expense-form-error">
+                                {{ form.amount.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+                <!-- Date -->
+                <div class="farm-expense-form-group">
+
+                    <label for="{{ form.date.id_for_label }}">
+
+                        Date
+
+                    </label>
+
+                    {{ form.date }}
+
+                    {% if form.date.errors %}
+
+                        <div class="farm-expense-form-error">
+
+                            {{ form.date.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+                <!-- comment -->
+
+                <div class="farm-expense-form-group">
+
+                    <label for="{{ form.comment.id_for_label }}">
+                        Comment
+                    </label>
+
+                    {{ form.comment }}
+
+                    {% if form.comment.errors %}
+
+                        <div class="farm-expense-form-error">
+                            {{ form.comment.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="farm-expense-form-actions">
+
+
+                    <a href="{% url 'finance:farm_expense_list' %}"
+                       class="farm-expense-cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="farm-expense-save-btn">
+
+                        {% if expense %}
+
+                            <i class="bi bi-check-lg"></i>
+
+                            Update Expense
+
+                        {% else %}
+
+                            <i class="bi bi-plus-lg"></i>
+
+                            Add Expense
+
+                        {% endif %}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

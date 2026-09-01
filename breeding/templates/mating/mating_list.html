@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+    {% load static %}
+
+    {% block title %}
+    Matting
+    {% endblock %}
+
+
+    {% block extra_css %}
+
+    <link rel="stylesheet" href="{% static 'css/mating.css' %}">
+
+    {% endblock %}
+
+
+    {% block content %}
+
+    <div class="mating-page">
+
+        <div class="mating-page-header">
+
+            <div>
+                <h3>Mating Records</h3>
+
+                <p>
+                    Manage goat mating records for {{ business.name }}.
+                </p>
+            </div>
+
+            <a href="{% url 'breeding:mating_create' %}"
+            class="mating-add-btn">
+
+                <i class="bi bi-plus-lg"></i>
+                Add Mating
+
+            </a>
+
+        </div>
+
+
+        <div class="mating-list-card">
+
+            <div class="mating-list-table-wrapper">
+
+                <table class="mating-list-table">
+
+                    <thead>
+                        <tr>
+                            <th>Male Goat</th>
+                            <th>Female Goat</th>
+                            <th>Mating Date</th>
+                            <th>Comment</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for mating in matings %}
+
+                        <tr>
+
+                            <td>
+                                <span class="mating-token">
+                                    {{ mating.male.token_no }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="mating-token">
+                                    {{ mating.female.token_no }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ mating.mating_date|date:"d-m-Y" }}
+                            </td>
+
+                            <td>
+                                {% if mating.comment %}
+                                    {{ mating.comment }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ mating.created_by }}
+                            </td>
+
+                            <td>
+                                <div class="mating-list-actions">
+
+                                    <a href="{% url 'breeding:mating_update' mating.id %}"
+                                    class="mating-list-edit">
+                                        <i class="bi bi-pencil"></i>
+                                        Edit
+                                    </a>
+
+                                    <a href="{% url 'breeding:mating_delete' mating.id %}"
+                                    class="mating-list-delete">
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </a>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="mating-list-empty">
+                                No mating records found.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

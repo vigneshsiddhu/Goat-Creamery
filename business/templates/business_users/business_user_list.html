@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Business Users | Goat Creamery
+{% endblock %}
+
+{% block page_title %}
+    Business Users
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/business_user_list.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="business-user-list-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="business-user-list-header">
+
+        <div class="business-user-header-content">
+
+            <h2>
+                Business Users
+            </h2>
+
+            <p>
+                Manage users assigned to {{ business.name }}.
+            </p>
+
+        </div>
+
+        <div class="business-user-header-actions">
+
+            <!-- BACK TO BUSINESS -->
+
+            <a
+                href="{% url 'business:business_user_list' %}"
+                class="business-user-back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                <span>Businesses</span>
+            </a>
+
+            <!-- ADD USER -->
+
+            <a
+                href="{% url 'business:business_user_create' %}"
+                class="business-user-add-btn"
+            >
+                <i class="bi bi-person-plus"></i>
+                <span>Add User</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TABLE
+    ====================================================== -->
+
+    <div class="business-user-list-card">
+
+        <div class="business-user-list-table-wrapper">
+
+            <table class="business-user-list-table">
+
+                <thead>
+                    <tr>
+
+                        <th>User</th>
+                        <th>Business</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for business_user in business_users %}
+
+                    <tr>
+
+                        <!-- USER -->
+
+                        <td>
+
+                            <span class="business-user-list-name">
+                                {{ business_user.user.username }}
+                            </span>
+
+                            {% if business_user.user.email %}
+
+                            <span class="business-user-list-email">
+                                {{ business_user.user.email }}
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- BUSINESS -->
+
+                        <td>
+
+                            <span class="business-user-list-business">
+                                {{ business_user.business.name }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- ROLE -->
+
+                        <td>
+
+                            <span class="business-user-list-role">
+                                {{ business_user.role|title }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if business_user.is_active %}
+
+                                <span class="business-user-list-status-active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="business-user-list-status-inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- CREATED -->
+
+                        <td>
+
+                            <span class="business-user-list-date">
+                                {{ business_user.created_at|date:"d M Y" }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="business-user-list-actions">
+
+                                <a
+                                    href="{% url 'business:business_user_edit' business_user.id %}"
+                                    class="business-user-list-edit"
+                                    title="Edit User"
+                                >
+                                    <i class="bi bi-pencil"></i>
+                                    <span>Edit</span>
+                                </a>
+
+
+                                <a
+                                    href="{% url 'business:business_user_delete' business_user.id %}"
+                                    class="business-user-list-delete"
+                                    title="Remove User"
+                                >
+                                    <i class="bi bi-person-dash"></i>
+                                    <span>Remove</span>
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <!-- EMPTY -->
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="business-user-list-empty"
+                        >
+
+                            <div class="business-user-empty-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+
+                            <div class="business-user-empty-title">
+                                No Business Users
+                            </div>
+
+                            <div class="business-user-empty-text">
+                                No users have been assigned to this business yet.
+                            </div>
+
+                            <a
+                                href="{% url 'business:business_user_create' %}"
+                                class="business-user-empty-btn"
+                            >
+                                <i class="bi bi-person-plus"></i>
+                                Add First User
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

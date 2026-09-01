@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Diseases
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{% static 'css/disease.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="disease-page">
+
+    <!-- HEADER -->
+
+    <div class="disease-page-header">
+
+        <div>
+
+            <h3>Disease Management</h3>
+
+            <p>
+                Manage goat diseases for {{ business.name }}.
+            </p>
+
+        </div>
+
+        <a href="{% url 'goats:disease_create' %}"
+           class="disease-add-btn">
+
+            <i class="bi bi-plus-lg"></i>
+            Add Disease
+
+        </a>
+
+    </div>
+
+
+    <!-- LIST CARD -->
+
+    <div class="disease-list-card">
+
+        <div class="disease-table-wrapper">
+
+            <table class="disease-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Disease</th>
+                        <th>Symptoms</th>
+                        <th>Impact on Goat</th>
+                        <th>Treatment</th>
+                        <th>Created By</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for disease in diseases %}
+
+                    <tr>
+
+                        <td>
+
+                            <span class="disease-name">
+                                {{ disease.name }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if disease.symptoms %}
+                                {{ disease.symptoms|truncatechars:100 }}
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if disease.impact_goat %}
+                                {{ disease.impact_goat|truncatechars:100 }}
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if disease.treatment %}
+                                {{ disease.treatment|truncatechars:100 }}
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ disease.created_by }}
+                        </td>
+
+
+                        <td>
+
+                            <div class="disease-actions">
+
+                                <a href="{% url 'goats:disease_update' disease.id %}"
+                                   class="disease-edit">
+
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+
+                                </a>
+
+
+                                <a href="{% url 'goats:disease_delete' disease.id %}"
+                                   class="disease-delete">
+
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="disease-empty">
+
+                            No diseases found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

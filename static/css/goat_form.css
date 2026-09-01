@@ -1,0 +1,511 @@
+/* =========================================================
+   GOAT FORM PAGE
+========================================================= */
+
+.goat-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.goat-form-card {
+    width: 100%;
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+    border-radius: 11px;
+
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.goat-form-header {
+    padding: 16px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #F8F7FF,
+        #EFEDFF
+    );
+
+    border-bottom: 1px solid #DDD9F7;
+}
+
+.goat-form-header-content {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.goat-form-header h5 {
+    margin: 0;
+
+    color: #352F68;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.goat-form-header p {
+    margin: 4px 0 0;
+
+    color: #6B6790;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.goat-back-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.goat-back-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+
+    border-color: #CBD5E1;
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.goat-form-body {
+    padding: 22px;
+
+    background: #FBFCFE;
+}
+
+
+/* =========================================================
+   TWO COLUMN ROW
+========================================================= */
+
+.goat-form-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.goat-form-group {
+    min-width: 0;
+
+    margin-bottom: 17px;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.goat-form-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.goat-form-group input,
+.goat-form-group select,
+.goat-form-group textarea {
+    display: block;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   SELECT DROPDOWN
+========================================================= */
+
+.goat-form-group select {
+    cursor: pointer;
+
+    background-color: #FFFFFF;
+
+    color: #334155;
+
+    /* Do not force appearance */
+}
+
+
+/* Dropdown options */
+
+.goat-form-group select option {
+    background: #FFFFFF;
+
+    color: #334155;
+
+    font-size: 13px;
+}
+
+
+/* Placeholder */
+
+.goat-form-group select option[value=""] {
+    color: #94A3B8;
+}
+
+
+/* =========================================================
+   DATE INPUT
+========================================================= */
+
+.goat-form-group input[type="date"] {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   INPUT FOCUS
+========================================================= */
+
+.goat-form-group input:focus,
+.goat-form-group select:focus,
+.goat-form-group textarea:focus {
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.10);
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.goat-checkbox-wrapper {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-height: 38px;
+}
+
+
+/* Checkbox */
+
+.goat-checkbox-wrapper input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+
+    min-height: 18px;
+
+    margin: 0;
+    padding: 0;
+
+    accent-color: #6F63D9;
+
+    cursor: pointer;
+}
+
+
+/* Live Goat label */
+
+.goat-checkbox-wrapper label {
+    margin: 0;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   FORM ERROR
+========================================================= */
+
+.goat-form-error {
+    margin-top: 5px;
+
+    color: #DC2626;
+
+    font-size: 11px;
+}
+
+.goat-form-error ul {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.goat-form-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 15px;
+
+    margin-top: 4px;
+
+    border-top: 1px solid #E2E8F0;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+========================================================= */
+
+.goat-cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.goat-cancel-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+
+    border-color: #CBD5E1;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.goat-save-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.goat-save-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .goat-form-header {
+        padding: 13px 14px;
+    }
+
+    .goat-form-header-content {
+        align-items: flex-start;
+    }
+
+    .goat-form-header h5 {
+        font-size: 15px;
+    }
+
+    .goat-form-header p {
+        font-size: 11px;
+    }
+
+    .goat-form-body {
+        padding: 15px;
+    }
+
+
+    /* One column */
+
+    .goat-form-row {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+
+    .goat-form-group {
+        margin-bottom: 13px;
+    }
+
+
+    .goat-form-group input,
+    .goat-form-group select,
+    .goat-form-group textarea {
+        min-height: 40px;
+
+        font-size: 13px;
+    }
+
+
+    /* Actions */
+
+    .goat-form-actions {
+        justify-content: stretch;
+    }
+
+    .goat-cancel-btn,
+    .goat-save-btn {
+        flex: 1;
+
+        min-height: 38px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .goat-form-header-content {
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .goat-back-btn {
+        align-self: flex-start;
+    }
+
+    .goat-form-body {
+        padding: 12px;
+    }
+
+    .goat-form-actions {
+        flex-direction: column;
+    }
+
+    .goat-cancel-btn,
+    .goat-save-btn {
+        width: 100%;
+    }
+}

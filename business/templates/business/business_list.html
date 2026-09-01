@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Businesses
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/business_list.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<div class="business-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="business-page-header">
+
+        <div class="business-header-content">
+
+            <h2>
+                Businesses
+            </h2>
+
+            <p>
+                Manage your businesses and business information.
+            </p>
+
+        </div>
+
+        <div class="business-header-actions">
+
+            <a
+                href="{% url 'business:create' %}"
+                class="business-add-btn"
+            >
+                <i class="bi bi-plus-lg"></i>
+                Add Business
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+        <div class="business-messages">
+
+            {% for message in messages %}
+
+                <div class="business-message business-message-{{ message.tags }}">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         BUSINESS TABLE CARD
+    ====================================================== -->
+
+    <div class="business-list-card">
+
+        <div class="business-list-table-wrapper">
+
+            <table class="business-list-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Business</th>
+
+                        <th>GSTIN</th>
+
+                        <th>Phone</th>
+
+                        <th>Owner</th>
+
+                        <th>Created By</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for business in businesses %}
+
+                    <tr>
+
+                        <!-- BUSINESS -->
+
+                        <td>
+
+                            <div class="business-list-business">
+
+                                <span class="business-list-name">
+                                    {{ business.name }}
+                                </span>
+
+                                {% if business.address %}
+
+                                    <span class="business-list-address">
+
+                                        <i class="bi bi-geo-alt"></i>
+
+                                        {{ business.address }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- GSTIN -->
+
+                        <td>
+
+                            <span class="business-list-value">
+
+                                {{ business.gstn|default:"-" }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- PHONE -->
+
+                        <td>
+
+                            <span class="business-list-value">
+
+                                {{ business.phone_number|default:"-" }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- OWNER -->
+
+                        <td>
+
+                            <span class="business-list-user">
+
+                                <i class="bi bi-person"></i>
+
+                                {{ business.owner.username }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- CREATED BY -->
+
+                        <td>
+
+                            <span class="business-list-user">
+
+                                <i class="bi bi-person-plus"></i>
+
+                                {{ business.created_by.username }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if business.status %}
+
+                                <span class="business-list-status-active">
+
+                                    <span class="business-status-dot"></span>
+
+                                    Active
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="business-list-status-inactive">
+
+                                    <span class="business-status-dot"></span>
+
+                                    Inactive
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="business-list-actions">
+
+                                <a
+                                    href="{% url 'business:update' business.id %}"
+                                    class="business-list-edit"
+                                    title="Edit Business"
+                                >
+
+                                    <i class="bi bi-pencil"></i>
+
+                                    <span>Edit</span>
+
+                                </a>
+
+
+                                <a
+                                    href="{% url 'business:delete' business.id %}"
+                                    class="business-list-delete"
+                                    title="Delete Business"
+                                >
+
+                                    <i class="bi bi-trash"></i>
+
+                                    <span>Delete</span>
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <!-- =================================================
+                         EMPTY STATE
+                    ================================================== -->
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="business-list-empty"
+                        >
+
+                            <div class="business-empty-icon">
+
+                                <i class="bi bi-building"></i>
+
+                            </div>
+
+                            <div class="business-empty-title">
+
+                                No Businesses Found
+
+                            </div>
+
+                            <div class="business-empty-text">
+
+                                You don't have any businesses yet.
+
+                            </div>
+
+                            <a
+                                href="{% url 'business:create' %}"
+                                class="business-empty-btn"
+                            >
+
+                                <i class="bi bi-plus-lg"></i>
+
+                                Add Business
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Delete Goat Weight
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{% static 'css/goat_weight.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="production-page">
+
+    <div class="production-delete-card">
+
+        <div class="production-delete-icon">
+            <i class="bi bi-trash"></i>
+        </div>
+
+        <h4>Delete Weight Record?</h4>
+
+        <p>
+            Are you sure you want to delete this weight record?
+        </p>
+
+        <div class="production-delete-details">
+
+            <div>
+                <strong>Goat:</strong>
+                {{ weight.goat.token_no }}
+            </div>
+
+            <div>
+                <strong>Weight:</strong>
+                {{ weight.weight }} kg
+            </div>
+
+            <div>
+                <strong>Date:</strong>
+                {{ weight.date|date:"d-m-Y" }}
+            </div>
+
+        </div>
+
+        <div class="production-delete-actions">
+
+            <a href="{% url 'production:goat_weight_list' %}"
+               class="production-cancel-btn">
+
+                Cancel
+
+            </a>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="production-delete-confirm-btn">
+
+                    <i class="bi bi-trash"></i>
+                    Delete
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

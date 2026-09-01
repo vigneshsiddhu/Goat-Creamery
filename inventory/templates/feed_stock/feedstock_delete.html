@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Delete Feed Stock
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{% static 'css/feed_stock.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="inventory-page">
+
+
+    <div class="inventory-delete-card">
+
+
+        <!-- ICON -->
+
+        <div class="inventory-delete-icon">
+
+            <i class="bi bi-trash"></i>
+
+        </div>
+
+
+        <h4>
+            Delete Feed Stock?
+        </h4>
+
+
+        <p>
+            Are you sure you want to delete this feed stock record?
+        </p>
+
+
+        <!-- DETAILS -->
+
+        <div class="inventory-delete-details">
+
+            <div>
+                <strong>Date:</strong>
+                {{ feedstock.date|date:"d-m-Y" }}
+            </div>
+
+            <div>
+                <strong>Fodder:</strong>
+                {{ feedstock.fodder_variety }}
+            </div>
+
+            <div>
+                <strong>Stock:</strong>
+                {{ feedstock.stock_weight }} kg
+            </div>
+
+            <div>
+                <strong>Rate:</strong>
+                ₹{{ feedstock.rate }}
+            </div>
+
+            <div>
+                <strong>Total:</strong>
+                ₹{{ feedstock.total_amount }}
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="inventory-delete-actions">
+
+
+                <a href="{% url 'inventory:feedstock_list' %}"
+                   class="inventory-cancel-btn">
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="inventory-delete-confirm-btn">
+
+                    <i class="bi bi-trash"></i>
+
+                    Yes, Delete
+
+                </button>
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

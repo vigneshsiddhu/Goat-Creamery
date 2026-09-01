@@ -1,0 +1,676 @@
+/* =========================================================
+   BUSINESS USER LIST TABLE
+========================================================= */
+
+.business-user-list-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.business-user-list-table-wrapper {
+    width: 100%;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.business-user-list-table {
+    width: 100%;
+
+    max-width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.business-user-list-table thead {
+    background: #6F63D9;
+}
+
+
+.business-user-list-table th {
+
+    color: #ffffff;
+
+    background: #6F63D9;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    text-align: left;
+
+    padding: 15px 14px;
+
+    white-space: normal;
+
+    overflow-wrap: break-word;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.business-user-list-table td {
+
+    padding: 14px;
+
+    font-size: 13px;
+
+    color: #4A4A4A;
+
+    vertical-align: middle;
+
+    white-space: normal;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+
+    min-width: 0;
+
+    max-width: 0;
+}
+
+
+/* =========================================================
+   ALTERNATE ROW
+========================================================= */
+
+.business-user-list-table tbody tr:nth-child(odd) {
+    background: #FFFFFF;
+}
+
+
+.business-user-list-table tbody tr:nth-child(even) {
+    background: #F3F0FF;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.business-user-list-table tbody tr:hover {
+    background: #ECE9FF;
+}
+
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+/*
+    User          22%
+    Business      20%
+    Role          14%
+    Status        11%
+    Created By    14%
+    Created       10%
+    Action         9%
+*/
+
+.business-user-list-table th:nth-child(1),
+.business-user-list-table td:nth-child(1) {
+    width: 22%;
+}
+
+
+.business-user-list-table th:nth-child(2),
+.business-user-list-table td:nth-child(2) {
+    width: 20%;
+}
+
+
+.business-user-list-table th:nth-child(3),
+.business-user-list-table td:nth-child(3) {
+    width: 14%;
+}
+
+
+.business-user-list-table th:nth-child(4),
+.business-user-list-table td:nth-child(4) {
+    width: 11%;
+}
+
+
+.business-user-list-table th:nth-child(5),
+.business-user-list-table td:nth-child(5) {
+    width: 14%;
+}
+
+
+.business-user-list-table th:nth-child(6),
+.business-user-list-table td:nth-child(6) {
+    width: 10%;
+}
+
+
+.business-user-list-table th:nth-child(7),
+.business-user-list-table td:nth-child(7) {
+    width: 9%;
+}
+
+
+/* =========================================================
+   USER NAME
+========================================================= */
+
+.business-user-list-name {
+
+    display: block;
+
+    color: #1F2937;
+
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   USER EMAIL
+========================================================= */
+
+.business-user-list-email {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #6B7280;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    white-space: normal;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   BUSINESS NAME
+========================================================= */
+
+.business-user-list-business {
+
+    display: block;
+
+    color: #1F2937;
+
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   ROLE
+========================================================= */
+
+.business-user-list-role {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 8px;
+
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: normal;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+
+    text-transform: capitalize;
+}
+
+
+/* =========================================================
+   ACTIVE STATUS
+========================================================= */
+
+.business-user-list-status-active {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 5px 8px;
+
+    background: #DCFCE7;
+
+    color: #166534;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: normal;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   INACTIVE STATUS
+========================================================= */
+
+.business-user-list-status-inactive {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 5px 8px;
+
+    background: #F1F5F9;
+
+    color: #64748B;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: normal;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   CREATED BY
+========================================================= */
+
+.business-user-list-created-by {
+
+    color: #4B5563;
+
+    font-size: 12px;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   CREATED DATE
+========================================================= */
+
+.business-user-list-date {
+
+    color: #6B7280;
+
+    font-size: 11px;
+
+    white-space: normal;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.business-user-list-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 5px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+.business-user-list-edit {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 6px 8px;
+
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+
+.business-user-list-edit:hover {
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border-color: #6F63D9;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+========================================================= */
+
+.business-user-list-delete {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 6px 8px;
+
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    border: 1px solid #FECDD3;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+
+.business-user-list-delete:hover {
+
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border-color: #DC2626;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.business-user-list-empty {
+
+    text-align: center;
+
+    padding: 30px !important;
+
+    color: #6B7280 !important;
+}
+
+
+.business-user-list-empty i {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 28px;
+
+    color: #9CA3AF;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .business-user-list-table {
+
+        width: 100%;
+
+        table-layout: fixed;
+    }
+
+
+    .business-user-list-table th {
+
+        padding: 10px 6px;
+
+        font-size: 10px;
+    }
+
+
+    .business-user-list-table td {
+
+        padding: 10px 6px;
+
+        font-size: 10px;
+
+        white-space: normal;
+
+        overflow-wrap: anywhere;
+
+        word-break: break-word;
+    }
+
+
+    /* USER */
+
+    .business-user-list-name {
+
+        font-size: 10px;
+    }
+
+
+    .business-user-list-email {
+
+        font-size: 9px;
+    }
+
+
+    /* BUSINESS */
+
+    .business-user-list-business {
+
+        font-size: 10px;
+    }
+
+
+    /* ROLE */
+
+    .business-user-list-role {
+
+        padding: 4px 5px;
+
+        font-size: 9px;
+    }
+
+
+    /* STATUS */
+
+    .business-user-list-status-active,
+    .business-user-list-status-inactive {
+
+        padding: 4px 5px;
+
+        font-size: 9px;
+    }
+
+
+    /* CREATED BY */
+
+    .business-user-list-created-by {
+
+        font-size: 9px;
+    }
+
+
+    /* DATE */
+
+    .business-user-list-date {
+
+        font-size: 9px;
+    }
+
+
+    /* ACTIONS */
+
+    .business-user-list-actions {
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .business-user-list-edit,
+    .business-user-list-delete {
+
+        width: 100%;
+
+        padding: 5px 4px;
+
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .business-user-list-table th {
+
+        padding: 8px 4px;
+
+        font-size: 9px;
+    }
+
+
+    .business-user-list-table td {
+
+        padding: 8px 4px;
+
+        font-size: 9px;
+    }
+
+
+    .business-user-list-name,
+    .business-user-list-business {
+
+        font-size: 9px;
+    }
+
+
+    .business-user-list-email {
+
+        font-size: 8px;
+    }
+
+
+    .business-user-list-role {
+
+        font-size: 8px;
+
+        padding: 3px 4px;
+    }
+
+
+    .business-user-list-status-active,
+    .business-user-list-status-inactive {
+
+        font-size: 8px;
+
+        padding: 3px 4px;
+    }
+
+}

@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Goat Weight Voice Entry
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/goat_weight.css' %}?v=35"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="production-page">
+
+    <div class="goat-weight-form-card">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="goat-weight-form-header">
+
+            <div>
+
+                <h3>
+                    Goat Weight Voice Entry
+                </h3>
+
+                <p>
+                    Select the goat tag and weight.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'production:goat_weight_list' %}"
+                class="goat-weight-back-btn"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             FORM BODY
+        ====================================================== -->
+
+        <div class="goat-weight-form-body">
+
+            <form
+                method="POST"
+                id="goat-weight-form"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- =================================================
+                     GOAT TAG
+                ================================================== -->
+
+                <div class="goat-weight-form-group">
+
+                    <label
+                        for="{{ form.goat.id_for_label }}"
+                    >
+                        Goat Tag
+                    </label>
+
+
+                    <div class="goat-weight-select-wrapper">
+
+                        <i class="bi bi-tag-fill"></i>
+
+                        {{ form.goat }}
+
+                        <i
+                            class="bi bi-chevron-down goat-weight-select-arrow"
+                        ></i>
+
+                    </div>
+
+
+                    {% if form.goat.errors %}
+
+                        <div class="goat-weight-form-error">
+
+                            {{ form.goat.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     GOAT WEIGHT
+                ================================================== -->
+
+                <div class="goat-weight-form-group">
+
+                    <label>
+                        Goat Weight
+                    </label>
+
+
+                    <div class="weight-quantity-buttons">
+
+                        {% for radio in form.weight %}
+
+                            <label
+                                class="weight-quantity-option"
+                            >
+
+                                {{ radio.tag }}
+
+                                <span>
+                                    {{ radio.choice_label }}
+                                </span>
+
+                            </label>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    {% if form.weight.errors %}
+
+                        <div class="goat-weight-form-error">
+
+                            {{ form.weight.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     NON FIELD ERRORS
+                ================================================== -->
+
+                {% if form.non_field_errors %}
+
+                    <div class="goat-weight-form-error">
+
+                        {{ form.non_field_errors }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     MAIN FORM ACTION
+                     ONLY CANCEL
+                ================================================== -->
+
+                <div class="goat-weight-form-actions">
+
+                    <a
+                        href="{% url 'production:goat_weight_list' %}"
+                        class="goat-weight-cancel-btn"
+                    >
+
+                        <i class="bi bi-x-lg"></i>
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CONFIRMATION POPUP
+========================================================= -->
+
+<div
+    id="weight-voice-confirmation"
+    class="weight-confirmation-overlay"
+    style="display: none;"
+>
+
+    <div class="weight-confirmation-popup">
+
+
+        <!-- =================================================
+             ICON
+        ================================================== -->
+
+        <div class="weight-confirmation-icon">
+
+            <i class="bi bi-volume-up-fill"></i>
+
+        </div>
+
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
+
+        <h4>
+            Confirm Goat Weight
+        </h4>
+
+
+        <!-- =================================================
+             VOICE MESSAGE
+        ================================================== -->
+
+        <p
+            id="weight-voice-text"
+            class="weight-confirmation-text"
+        ></p>
+
+
+        <!-- =================================================
+             SELECTED DETAILS
+        ================================================== -->
+
+        <div class="weight-confirmation-details">
+
+
+            <!-- GOAT -->
+
+            <div class="weight-confirmation-detail">
+
+                <span>
+                    Goat
+                </span>
+
+                <strong
+                    id="weight-confirmation-goat"
+                >
+                    —
+                </strong>
+
+            </div>
+
+
+            <!-- WEIGHT -->
+
+            <div class="weight-confirmation-detail">
+
+                <span>
+                    Weight
+                </span>
+
+                <strong
+                    id="weight-confirmation-value"
+                >
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             POPUP ACTIONS
+        ================================================== -->
+
+        <div class="weight-confirmation-actions">
+
+
+            <!-- CHANGE -->
+
+            <button
+                type="button"
+                id="weight-confirmation-cancel"
+                class="weight-confirmation-change-btn"
+            >
+
+                <i class="bi bi-pencil"></i>
+
+                Change
+
+            </button>
+
+
+            <!-- CONFIRM & SAVE -->
+
+            <button
+                type="button"
+                id="weight-confirmation-save"
+                class="weight-confirmation-save-btn"
+            >
+
+                <i class="bi bi-check-lg"></i>
+
+                Confirm & Save
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="{% static 'js/goat_weight.js' %}?v=35"
+    defer
+></script>
+
+{% endblock %}

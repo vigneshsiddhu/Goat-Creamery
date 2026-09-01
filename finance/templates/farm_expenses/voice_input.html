@@ -1,0 +1,91 @@
+{% load static %}
+
+<!-- =========================================================
+     VOICE EXPENSE
+========================================================= -->
+<div class="voice-expense-box">
+<div class="voice-expense-header">
+    <div class="voice-expense-icon">
+        <i class="bi bi-mic-fill"></i>
+    </div>
+    <div>
+        <h4>
+            Voice Expense
+        </h4>
+        <p>
+            Category and amount சொல்லுங்கள்
+        </p>
+    </div>
+</div>
+<!-- =====================================================
+     CONTROLS
+====================================================== -->
+<div class="voice-expense-controls">
+    <button
+        type="button"
+        id="voice-start-btn"
+        class="voice-start-btn">
+        <i class="bi bi-mic-fill"></i>
+        Start Speaking
+    </button>
+    <button
+        type="button"
+        id="voice-stop-btn"
+        class="voice-stop-btn"
+        style="display:none;">
+        <i class="bi bi-stop-fill"></i>
+        Stop
+    </button>
+</div>
+<!-- =====================================================
+     STATUS
+====================================================== -->
+<div
+    id="voice-status"
+    class="voice-status">
+    Ready to listen
+</div>
+<!-- =====================================================
+     RECOGNIZED TEXT
+====================================================== -->
+<div class="voice-result-wrapper">
+    <label for="voice-result">
+        Recognized Text
+    </label>
+    <textarea
+        id="voice-result"
+        class="voice-result"
+        rows="3"
+        readonly
+        placeholder="உதாரணம்: Feed 1500 ரூபாய்">
+    </textarea>
+</div>
+<!-- =====================================================
+     CONFIRMATION
+====================================================== -->
+<div
+    id="voice-confirmation"
+    class="voice-confirmation"
+    style="display:none;">
+    <div class="voice-confirmation-title">
+        <i class="bi bi-check-circle"></i>
+        Please confirm
+    </div>
+    <div
+        id="voice-confirmation-text"
+        class="voice-confirmation-text">
+    </div>
+    <div class="voice-confirmation-hint">
+        <i class="bi bi-mic"></i>
+        ஆம் அல்லது இல்லை சொல்லுங்கள்
+    </div>
+</div>
+<!-- =====================================================
+     ERROR
+====================================================== -->
+<div
+    id="voice-error"
+    class="voice-error"
+    style="display:none;">
+</div>
+</div>

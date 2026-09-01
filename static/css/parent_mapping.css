@@ -1,0 +1,871 @@
+/* =========================================================
+   PARENT MAPPING PAGE
+========================================================= */
+
+.parent-mapping-page {
+    width: 100%;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.parent-mapping-page-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.parent-mapping-page-header h3 {
+    margin: 0 0 5px;
+    color: #1F2937;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.parent-mapping-page-header p {
+    margin: 0;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.parent-mapping-add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    background: #6F63D9;
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.parent-mapping-add-btn:hover {
+    background: #5B50C7;
+    border-color: #5B50C7;
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   LIST CARD
+========================================================= */
+
+.parent-mapping-list-card {
+    width: 100%;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+    border-radius: 11px;
+
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.parent-mapping-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.parent-mapping-list-table {
+    width: 100%;
+
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    background: #FFFFFF;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.parent-mapping-list-table thead {
+    background: #6F63D9;
+}
+
+.parent-mapping-list-table th {
+    padding: 14px 12px;
+
+    background: #6F63D9;
+    color: #FFFFFF;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: left;
+    vertical-align: middle;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   COLUMN WIDTH
+========================================================= */
+
+.parent-mapping-list-table th:nth-child(1),
+.parent-mapping-list-table td:nth-child(1) {
+    width: 22%;
+}
+
+.parent-mapping-list-table th:nth-child(2),
+.parent-mapping-list-table td:nth-child(2) {
+    width: 22%;
+}
+
+.parent-mapping-list-table th:nth-child(3),
+.parent-mapping-list-table td:nth-child(3) {
+    width: 18%;
+}
+
+.parent-mapping-list-table th:nth-child(4),
+.parent-mapping-list-table td:nth-child(4) {
+    width: 18%;
+}
+
+.parent-mapping-list-table th:nth-child(5),
+.parent-mapping-list-table td:nth-child(5) {
+    width: 20%;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.parent-mapping-list-table td {
+    padding: 13px 12px;
+
+    color: #374151;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* Alternate rows */
+
+.parent-mapping-list-table tbody tr:nth-child(even) {
+    background: #F8F7FF;
+}
+
+
+/* Hover */
+
+.parent-mapping-list-table tbody tr:hover {
+    background: #F0EEFF;
+}
+
+
+/* =========================================================
+   GOAT TOKEN
+========================================================= */
+
+.parent-mapping-token {
+    color: #1F2937;
+
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.parent-mapping-list-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   EDIT / DELETE BUTTON
+========================================================= */
+
+.parent-mapping-list-edit,
+.parent-mapping-list-delete {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+.parent-mapping-list-edit {
+    background: #F0EEFF;
+
+    color: #6F63D9;
+
+    border: 1px solid #D8D3F5;
+}
+
+.parent-mapping-list-edit:hover {
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border-color: #6F63D9;
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+.parent-mapping-list-delete {
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    border: 1px solid #FECDD3;
+}
+
+.parent-mapping-list-delete:hover {
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border-color: #DC2626;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.parent-mapping-list-empty {
+    padding: 40px 20px !important;
+
+    text-align: center;
+
+    color: #6B7280 !important;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.parent-mapping-form-card {
+    width: 100%;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.parent-mapping-form-header {
+    padding: 16px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #F8F7FF,
+        #EFEDFF
+    );
+
+    border-bottom: 1px solid #DDD9F7;
+}
+
+.parent-mapping-form-header-content {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.parent-mapping-form-header h5 {
+    margin: 0;
+
+    color: #352F68;
+
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.parent-mapping-form-header p {
+    margin: 4px 0 0;
+
+    color: #6B6790;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM BODY
+========================================================= */
+
+.parent-mapping-form-body {
+    padding: 22px;
+
+    background: #FBFCFE;
+}
+
+
+/* =========================================================
+   FORM ROW
+========================================================= */
+
+.parent-mapping-form-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.parent-mapping-form-group {
+    margin-bottom: 17px;
+
+    min-width: 0;
+}
+
+.parent-mapping-form-group label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FORM INPUTS
+========================================================= */
+
+.parent-mapping-form-group input,
+.parent-mapping-form-group select,
+.parent-mapping-form-group textarea {
+    display: block;
+
+    width: 100%;
+
+    min-height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 9px 11px;
+
+    background: #FFFFFF;
+
+    color: #334155;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* SELECT */
+
+.parent-mapping-form-group select {
+    cursor: pointer;
+
+    appearance: auto;
+    -webkit-appearance: menulist;
+}
+
+
+/* TEXTAREA */
+
+.parent-mapping-form-group textarea {
+    min-height: 90px;
+
+    resize: vertical;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.parent-mapping-form-group input:focus,
+.parent-mapping-form-group select:focus,
+.parent-mapping-form-group textarea:focus {
+    border-color: #6F63D9;
+
+    box-shadow:
+        0 0 0 3px rgba(111, 99, 217, 0.10);
+
+    outline: none;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.parent-mapping-form-error {
+    margin-top: 5px;
+
+    color: #DC2626;
+
+    font-size: 11px;
+}
+
+.parent-mapping-form-error ul {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.parent-mapping-form-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    padding-top: 15px;
+
+    margin-top: 4px;
+
+    border-top: 1px solid #E2E8F0;
+}
+
+
+/* =========================================================
+   BACK / CANCEL
+========================================================= */
+
+.parent-mapping-back-btn,
+.parent-mapping-cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    color: #475569;
+
+    border: 1px solid #CBD5E1;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.parent-mapping-back-btn:hover,
+.parent-mapping-cancel-btn:hover {
+    background: #F1F5F9;
+
+    color: #1E293B;
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+.parent-mapping-save-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #6F63D9;
+
+    color: #FFFFFF;
+
+    border: 1px solid #6F63D9;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
+
+.parent-mapping-save-btn:hover {
+    background: #5B50C7;
+
+    border-color: #5B50C7;
+}
+
+
+/* =========================================================
+   DELETE CARD
+========================================================= */
+
+.parent-mapping-delete-card {
+    max-width: 520px;
+
+    margin: 40px auto;
+
+    padding: 30px;
+
+    text-align: center;
+
+    background: #FFFFFF;
+
+    border: 1px solid #DFE5EC;
+
+    border-radius: 11px;
+
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+}
+
+
+/* =========================================================
+   DELETE ICON
+========================================================= */
+
+.parent-mapping-delete-icon {
+    width: 52px;
+    height: 52px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #FFF1F2;
+
+    color: #DC2626;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   DELETE CONTENT
+========================================================= */
+
+.parent-mapping-delete-card h4 {
+    margin: 0 0 8px;
+
+    color: #1F2937;
+
+    font-size: 18px;
+}
+
+.parent-mapping-delete-card p {
+    margin: 0 0 20px;
+
+    color: #6B7280;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   DELETE DETAILS
+========================================================= */
+
+.parent-mapping-delete-details {
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    background: #F8F7FF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 8px;
+
+    text-align: left;
+
+    color: #475569;
+
+    font-size: 13px;
+}
+
+.parent-mapping-delete-details div {
+    margin-bottom: 7px;
+}
+
+.parent-mapping-delete-details div:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   DELETE ACTIONS
+========================================================= */
+
+.parent-mapping-delete-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+.parent-mapping-delete-confirm-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: #DC2626;
+
+    color: #FFFFFF;
+
+    border: 1px solid #DC2626;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.parent-mapping-delete-confirm-btn:hover {
+    background: #B91C1C;
+
+    border-color: #B91C1C;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .parent-mapping-page-header {
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .parent-mapping-page-header h3 {
+        font-size: 19px;
+    }
+
+    .parent-mapping-page-header p {
+        font-size: 11px;
+    }
+
+    .parent-mapping-add-btn {
+        padding: 8px 10px;
+
+        font-size: 11px;
+    }
+
+    .parent-mapping-list-table {
+        min-width: 700px;
+    }
+
+    .parent-mapping-list-table th {
+        padding: 10px 8px;
+
+        font-size: 10px;
+    }
+
+    .parent-mapping-list-table td {
+        padding: 10px 8px;
+
+        font-size: 11px;
+    }
+
+    .parent-mapping-form-header {
+        padding: 13px 14px;
+    }
+
+    .parent-mapping-form-body {
+        padding: 15px;
+    }
+
+    .parent-mapping-form-row {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .parent-mapping-form-group {
+        margin-bottom: 13px;
+    }
+
+    .parent-mapping-form-actions {
+        justify-content: stretch;
+    }
+
+    .parent-mapping-cancel-btn,
+    .parent-mapping-save-btn {
+        flex: 1;
+
+        min-height: 38px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .parent-mapping-page-header {
+        flex-direction: column;
+    }
+
+    .parent-mapping-add-btn {
+        align-self: flex-end;
+    }
+
+    .parent-mapping-form-header-content {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .parent-mapping-back-btn {
+        align-self: flex-start;
+    }
+
+    .parent-mapping-delete-card {
+        margin: 20px 10px;
+
+        padding: 22px;
+    }
+
+    .parent-mapping-delete-actions {
+        flex-direction: column;
+    }
+
+    .parent-mapping-delete-actions a,
+    .parent-mapping-delete-actions button {
+        width: 100%;
+    }
+}

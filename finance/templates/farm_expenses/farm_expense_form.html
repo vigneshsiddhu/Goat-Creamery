@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if expense %}
+        Edit Farm Expense
+    {% else %}
+        Add Farm Expense
+    {% endif %}
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/farm_expense.css' %}?v=11"
+>
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/voice_input.css' %}?v=11"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="farm-expense-page">
+
+    <!-- =====================================================
+         MAIN FORM CARD
+    ====================================================== -->
+
+    <div class="farm-expense-form-card">
+
+
+        <!-- =================================================
+             VOICE EXPENSE
+        ================================================== -->
+
+        <div class="voice-expense-box">
+
+            <div class="voice-expense-header">
+
+                <div class="voice-expense-icon">
+                    <i class="bi bi-mic-fill"></i>
+                </div>
+
+                <div>
+                    <h4>Voice Expense</h4>
+
+                    <p>
+                        சொல்லுங்கள் — உதாரணம்:
+                        Feed 1500
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- VOICE CONTROLS -->
+
+            <div class="voice-expense-controls">
+
+                <button
+                    type="button"
+                    id="voice-start-btn"
+                    class="voice-start-btn"
+                >
+                    <i class="bi bi-mic-fill"></i>
+                    Start Speaking
+                </button>
+
+
+                <button
+                    type="button"
+                    id="voice-stop-btn"
+                    class="voice-stop-btn"
+                    style="display: none;"
+                >
+                    <i class="bi bi-stop-fill"></i>
+                    Stop
+                </button>
+
+            </div>
+
+
+            <!-- VOICE STATUS -->
+
+            <div
+                id="voice-status"
+                class="voice-status"
+            >
+                Ready to listen
+            </div>
+
+
+            <!-- RECOGNIZED TEXT -->
+
+            <div class="voice-result-wrapper">
+
+                <label for="voice-result">
+                    Recognized Text
+                </label>
+
+                <textarea
+                    id="voice-result"
+                    class="voice-result"
+                    rows="2"
+                    readonly
+                    placeholder="உதாரணம்: Feed 1500"
+                ></textarea>
+
+            </div>
+
+
+            <!-- =================================================
+                 VOICE CONFIRMATION
+            ================================================== -->
+
+            <div
+                id="voice-confirmation"
+                class="voice-confirmation"
+                style="display: none;"
+            >
+
+                <div class="voice-confirmation-title">
+                    Expense Details
+                </div>
+
+
+                <div
+                    id="voice-confirmation-text"
+                    class="voice-confirmation-text"
+                ></div>
+
+
+                <div class="voice-confirmation-question">
+                    சரியா?
+                </div>
+
+
+                <div class="voice-confirmation-buttons">
+
+                    <button
+                        type="button"
+                        id="voice-yes-btn"
+                        class="voice-yes-btn"
+                    >
+                        <i class="bi bi-check-lg"></i>
+                        சரி
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="voice-no-btn"
+                        class="voice-no-btn"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                        தவறு
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- VOICE ERROR -->
+
+            <div
+                id="voice-error"
+                class="voice-error"
+                style="display: none;"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM HEADER
+        ================================================== -->
+
+        <div class="farm-expense-form-header">
+
+            <div class="farm-expense-form-header-content">
+
+                <div>
+
+                    <h5>
+                        {% if expense %}
+                            Edit Farm Expense
+                        {% else %}
+                            Farm Expense Information
+                        {% endif %}
+                    </h5>
+
+                    <p>
+                        {% if expense %}
+                            Update the farm expense details below.
+                        {% else %}
+                            Add a new farm expense manually or using voice.
+                        {% endif %}
+                    </p>
+
+                </div>
+
+
+                <!-- BACK -->
+
+                <a
+                    href="{% url 'finance:farm_expense_list' %}"
+                    class="farm-expense-back-btn"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM BODY
+        ================================================== -->
+
+        <div class="farm-expense-form-body">
+
+            <form
+                method="POST"
+                id="farm-expense-form"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- =================================================
+                     CATEGORY + AMOUNT
+                ================================================== -->
+
+                <div class="farm-expense-form-row">
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="farm-expense-form-group">
+
+                        <label for="{{ form.category.id_for_label }}">
+                            Category
+                        </label>
+
+                        {{ form.category }}
+
+                        {% if form.category.errors %}
+
+                            <div class="farm-expense-form-error">
+                                {{ form.category.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- AMOUNT -->
+
+                    <div class="farm-expense-form-group">
+
+                        <label for="{{ form.amount.id_for_label }}">
+                            Amount
+                        </label>
+
+                        {{ form.amount }}
+
+                        {% if form.amount.errors %}
+
+                            <div class="farm-expense-form-error">
+                                {{ form.amount.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     DATE
+                ================================================== -->
+
+                <div class="farm-expense-form-group">
+
+                    <label for="{{ form.date.id_for_label }}">
+                        Date
+                    </label>
+
+                    {{ form.date }}
+
+                    {% if form.date.errors %}
+
+                        <div class="farm-expense-form-error">
+                            {{ form.date.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     COMMENT
+                ================================================== -->
+
+                <div class="farm-expense-form-group">
+
+                    <label for="{{ form.comment.id_for_label }}">
+                        Comment
+                    </label>
+
+                    {{ form.comment }}
+
+                    {% if form.comment.errors %}
+
+                        <div class="farm-expense-form-error">
+                            {{ form.comment.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     FORM ACTIONS
+                ================================================== -->
+
+                <div class="farm-expense-form-actions">
+
+
+                    <!-- CANCEL -->
+
+                    <a
+                        href="{% url 'finance:farm_expense_list' %}"
+                        class="farm-expense-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <!-- SAVE -->
+
+                    <button
+                        type="submit"
+                        class="farm-expense-save-btn"
+                    >
+
+                        {% if expense %}
+
+                            <i class="bi bi-check-lg"></i>
+                            Update Expense
+
+                        {% else %}
+
+                            <i class="bi bi-plus-lg"></i>
+                            Add Expense
+
+                        {% endif %}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% block extra_js %}
+
+<script
+
+    src="{% static 'js/voice_input.js' %}?v=20"
+
+    src="{% static 'js/farm_expense_voice.js' %}?v=20"
+
+></script>
+
+{% endblock %}
+{% endblock %}

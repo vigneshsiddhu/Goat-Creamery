@@ -1,0 +1,441 @@
+/* =========================================================
+   VOICE INPUT COMPONENT
+========================================================= */
+
+.voice-expense-box {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   VOICE HEADER
+========================================================= */
+
+.voice-expense-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.voice-expense-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   VOICE CONTROLS
+========================================================= */
+
+.voice-expense-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
+.voice-start-btn,
+.voice-stop-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* Start */
+
+.voice-start-btn {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.voice-start-btn:hover {
+    background: #1d4ed8;
+
+    box-shadow:
+        0 4px 12px rgba(37, 99, 235, 0.22);
+}
+
+.voice-start-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   STOP BUTTON
+========================================================= */
+
+.voice-stop-btn {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.voice-stop-btn:hover {
+    background: #b91c1c;
+}
+
+.voice-stop-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   RECORDING STATE
+========================================================= */
+
+.voice-start-btn.recording {
+    animation:
+        voice-pulse 1.4s infinite;
+}
+
+@keyframes voice-pulse {
+
+    0% {
+        box-shadow:
+            0 0 0 0 rgba(37, 99, 235, 0.35);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 10px rgba(37, 99, 235, 0);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 0 rgba(37, 99, 235, 0);
+    }
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.voice-status {
+    min-height: 20px;
+
+    margin-top: 12px;
+
+    color: #4b5563;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.voice-result-wrapper {
+    margin-top: 14px;
+}
+
+.voice-result-wrapper label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.voice-result {
+    display: block;
+
+    width: 100%;
+    min-height: 64px;
+
+    box-sizing: border-box;
+
+    padding: 11px 13px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #111827;
+
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+
+    resize: vertical;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.voice-result:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================================
+   CONFIRMATION
+========================================================= */
+
+.voice-confirmation {
+    margin-top: 16px;
+
+    padding: 16px;
+
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    animation:
+        voice-confirmation-in 0.2s ease;
+}
+
+@keyframes voice-confirmation-in {
+
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+.voice-confirmation-title {
+    margin-bottom: 8px;
+
+    color: #111827;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+.voice-confirmation-text {
+    padding: 11px 12px;
+
+    border-radius: 8px;
+
+    background: #f3f4f6;
+
+    color: #111827;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.voice-confirmation-question {
+    margin-top: 12px;
+
+    color: #4b5563;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CONFIRMATION BUTTONS
+========================================================= */
+
+.voice-confirmation-buttons {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+
+.voice-yes-btn,
+.voice-no-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding: 9px 16px;
+
+    border: none;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+/* YES */
+
+.voice-yes-btn {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.voice-yes-btn:hover {
+    background: #15803d;
+}
+
+.voice-yes-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* NO */
+
+.voice-no-btn {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.voice-no-btn:hover {
+    background: #dc2626;
+}
+
+.voice-no-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.voice-error {
+    margin-top: 12px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+
+    background: #fef2f2;
+    color: #b91c1c;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.voice-start-btn:disabled,
+.voice-stop-btn:disabled,
+.voice-yes-btn:disabled,
+.voice-no-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .voice-expense-controls {
+        width: 100%;
+    }
+
+    .voice-start-btn,
+    .voice-stop-btn {
+        width: 100%;
+    }
+
+    .voice-confirmation-buttons {
+        flex-direction: column;
+    }
+
+    .voice-yes-btn,
+    .voice-no-btn {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .voice-expense-header {
+        align-items: flex-start;
+    }
+
+    .voice-expense-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .voice-result {
+        min-height: 58px;
+    }
+
+}

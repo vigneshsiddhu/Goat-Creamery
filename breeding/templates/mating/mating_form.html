@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+    {% load static %}
+
+    {% block title %}
+    Matting
+    {% endblock %}
+
+
+    {% block extra_css %}
+
+    <link rel="stylesheet" href="{% static 'css/mating.css' %}">
+
+    {% endblock %}
+
+
+    {% block content %}
+    <div class="mating-page">
+
+        <div class="mating-form-card">
+
+            <div class="mating-form-header">
+                Matting Information
+            </div>
+
+            <div class="mating-form-body">
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mating-form-row">
+
+                        <div class="mating-form-group">
+                            <label>Male Goat</label>
+                            {{ form.male }}
+                        </div>
+
+                        <div class="mating-form-group">
+                            <label>Female Goat</label>
+                            {{ form.female }}
+                        </div>
+
+                    </div>
+
+                    <div class="mating-form-group">
+                        <label>Mating Date</label>
+                        {{ form.mating_date }}
+                    </div>
+
+                    <div class="mating-form-group">
+                        <label>Comment</label>
+                        {{ form.comment }}
+                    </div>
+
+                    <div class="mating-form-actions">
+
+                        <a href="{% url 'breeding:mating_list' %}"
+                        class="mating-cancel-btn">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="mating-save-btn">
+                            Save Mating
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}

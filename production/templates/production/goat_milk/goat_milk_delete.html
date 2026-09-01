@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Delete Goat Milk
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{% static 'css/goat_milk.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="production-page">
+
+    <div class="production-delete-card">
+
+        <div class="production-delete-icon">
+            <i class="bi bi-trash"></i>
+        </div>
+
+        <h4>Delete Milk Record?</h4>
+
+        <p>
+            Are you sure you want to delete this milk record?
+        </p>
+
+        <div class="production-delete-details">
+
+            <div>
+                <strong>Goat:</strong>
+                {{ milk.goat.token_no }}
+            </div>
+
+            <div>
+                <strong>Milk:</strong>
+                {{ milk.milk_weight }} kg
+            </div>
+
+            <div>
+                <strong>Date:</strong>
+                {{ milk.date|date:"d-m-Y" }}
+            </div>
+
+            <div>
+                <strong>Time:</strong>
+                {{ milk.get_time_display }}
+            </div>
+
+        </div>
+
+        <div class="production-delete-actions">
+
+            <a href="{% url 'production:goat_milk_list' %}"
+               class="production-cancel-btn">
+
+                Cancel
+
+            </a>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="production-delete-confirm-btn">
+
+                    <i class="bi bi-trash"></i>
+                    Delete
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

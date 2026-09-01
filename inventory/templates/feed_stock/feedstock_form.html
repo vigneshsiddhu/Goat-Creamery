@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+
+    {% if feedstock %}
+        Edit Feed Stock
+    {% else %}
+        Add Feed Stock
+    {% endif %}
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{% static 'css/feed_stock.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="inventory-page">
+
+    <div class="inventory-form-card">
+
+
+        <!-- FORM HEADER -->
+
+        <div class="inventory-form-header">
+
+            <div>
+
+                <h5>
+
+                    {% if feedstock %}
+                        Edit Feed Stock
+                    {% else %}
+                        Feed Stock Information
+                    {% endif %}
+
+                </h5>
+
+                <p>
+
+                    {% if feedstock %}
+                        Update the feed stock details below.
+                    {% else %}
+                        Enter the feed stock details below.
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <a href="{% url 'inventory:feedstock_list' %}"
+               class="inventory-back-btn">
+
+                <i class="bi bi-arrow-left"></i>
+                Back
+
+            </a>
+
+        </div>
+
+
+        <!-- FORM BODY -->
+
+        <div class="inventory-form-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- DATE + FODDER -->
+
+                <div class="inventory-form-row">
+
+
+                    <div class="inventory-form-group">
+
+                        <label for="{{ form.date.id_for_label }}">
+                            Date
+                        </label>
+
+                        {{ form.date }}
+
+                        {% if form.date.errors %}
+
+                            <div class="inventory-form-error">
+                                {{ form.date.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="inventory-form-group">
+
+                        <label for="{{ form.fodder_variety.id_for_label }}">
+                            Fodder Variety
+                        </label>
+
+                        {{ form.fodder_variety }}
+
+                        {% if form.fodder_variety.errors %}
+
+                            <div class="inventory-form-error">
+                                {{ form.fodder_variety.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- STOCK + RATE -->
+
+                <div class="inventory-form-row">
+
+
+                    <div class="inventory-form-group">
+
+                        <label for="{{ form.stock_weight.id_for_label }}">
+                            Stock Weight (kg)
+                        </label>
+
+                        {{ form.stock_weight }}
+
+                        {% if form.stock_weight.errors %}
+
+                            <div class="inventory-form-error">
+                                {{ form.stock_weight.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="inventory-form-group">
+
+                        <label for="{{ form.rate.id_for_label }}">
+                            Rate / Kg
+                        </label>
+
+                        {{ form.rate }}
+
+                        {% if form.rate.errors %}
+
+                            <div class="inventory-form-error">
+                                {{ form.rate.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL + CURRENT STOCK -->
+
+                <div class="inventory-form-row">
+
+
+                    <div class="inventory-form-group">
+
+                        <label for="{{ form.total_amount.id_for_label }}">
+                            Total Amount
+                        </label>
+
+                        {{ form.total_amount }}
+
+                        {% if form.total_amount.errors %}
+
+                            <div class="inventory-form-error">
+                                {{ form.total_amount.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="inventory-form-group">
+
+                        <label for="{{ form.current_stock_kg.id_for_label }}">
+                            Current Stock (kg)
+                        </label>
+
+                        {{ form.current_stock_kg }}
+
+                        {% if form.current_stock_kg.errors %}
+
+                            <div class="inventory-form-error">
+                                {{ form.current_stock_kg.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="inventory-form-actions">
+
+
+                    <a href="{% url 'inventory:feedstock_list' %}"
+                       class="inventory-cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="inventory-save-btn">
+
+                        {% if feedstock %}
+
+                            <i class="bi bi-check-lg"></i>
+                            Update Stock
+
+                        {% else %}
+
+                            <i class="bi bi-plus-lg"></i>
+                            Add Stock
+
+                        {% endif %}
+
+                    </button>
+
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
