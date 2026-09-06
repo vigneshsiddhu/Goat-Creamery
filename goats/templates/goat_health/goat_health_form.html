@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Add Goat Health
+{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+{% block content %}
+
+<div class="form-page">
+
+    <div class="form-card">
+
+        <!-- =================================================
+             FORM HEADER
+        ================================================== -->
+
+        <div class="form-header">
+
+            <div class="form-header-content">
+
+                <h3>
+                    Add Goat Health
+                </h3>
+
+                <p>
+                    Record health information for {{ business.name }}.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'goats:goat_health_list' %}"
+                class="form-back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM BODY
+        ================================================== -->
+
+        <div class="form-body">
+
+            {% if form.non_field_errors %}
+
+                <div class="form-non-field-errors">
+
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <form
+                method="post"
+                novalidate
+            >
+
+                {% csrf_token %}
+
+
+                <!-- =================================================
+                     GOAT + DISEASE
+                ================================================== -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="{{ form.goat.id_for_label }}">
+                            Goat
+                            <span class="form-required">*</span>
+                        </label>
+
+                        {{ form.goat }}
+
+                        {% if form.goat.errors %}
+                            <div class="form-error">
+                                {% for error in form.goat.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.disease.id_for_label }}">
+                            Disease
+                            <span class="form-required">*</span>
+                        </label>
+
+                        {{ form.disease }}
+
+                        {% if form.disease.errors %}
+                            <div class="form-error">
+                                {% for error in form.disease.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     STATUS + DATE
+                ================================================== -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="{{ form.status.id_for_label }}">
+                             Health Status
+                            <span class="form-required">*</span>
+                        </label>
+
+                        {{ form.status }}
+
+                        {% if form.status.errors %}
+                            <div class="form-error">
+                                {% for error in form.status.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.date.id_for_label }}">
+                            Date
+                            <span class="form-required">*</span>
+                        </label>
+
+                        {{ form.date }}
+
+                        {% if form.date.errors %}
+                            <div class="form-error">
+                                {% for error in form.date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     COMMENT
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.comment.id_for_label }}">
+                        Notes
+                    </label>
+
+                    {{ form.comment }}
+
+                    {% if form.comment.errors %}
+                        <div class="form-error">
+                            {% for error in form.comment.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     FORM ACTIONS
+                ================================================== -->
+
+                <div class="form-actions">
+
+                    <a
+                        href="{% url 'goats:goat_health_list' %}"
+                        class="form-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="form-save-btn"
+                    >
+                        <i class="bi bi-check-lg"></i>
+                        Save Health Record
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

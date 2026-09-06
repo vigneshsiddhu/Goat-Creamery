@@ -1,0 +1,536 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+
+<div class="form-page">
+    <div class="form-card">
+
+        <div class="form-header">
+            <div class="form-header-content">
+                <h3>{{ title }}</h3>
+                <p>Create invoice and add invoice items.</p>
+            </div>
+        </div>
+
+        <div class="form-body">
+
+            <form method="post" id="invoice-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-non-field-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <!-- INVOICE DETAILS -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="{{ form.number.id_for_label }}">
+                            Invoice Number
+                            <span class="form-required">*</span>
+                        </label>
+                        {{ form.number }}
+
+                        {% for error in form.number.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.date.id_for_label }}">
+                            Date
+                            <span class="form-required">*</span>
+                        </label>
+                        {{ form.date }}
+
+                        {% for error in form.date.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="{{ form.time.id_for_label }}">
+                            Time
+                        </label>
+                        {{ form.time }}
+
+                        {% for error in form.time.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.customer.id_for_label }}">
+                            Customer
+                            <span class="form-required">*</span>
+                        </label>
+                        {{ form.customer }}
+
+                        {% for error in form.customer.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="{{ form.payment_status.id_for_label }}">
+                            Payment Status
+                            <span class="form-required">*</span>
+                        </label>
+                        {{ form.payment_status }}
+
+                        {% for error in form.payment_status.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.payment_method.id_for_label }}">
+                            Payment Method
+                            <span class="form-required">*</span>
+                        </label>
+                        {{ form.payment_method }}
+
+                        {% for error in form.payment_method.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- INVOICE ITEMS -->
+
+                <div class="form-section-header">
+                    <div>
+                        <h4>Invoice Items</h4>
+                        <p>Add products to this invoice.</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="form-save-btn"
+                        id="add-item-btn"
+                    >
+                        + Add Item
+                    </button>
+                </div>
+
+                {{ formset.management_form }}
+
+                <div id="invoice-items"></div>
+
+                <!-- EMPTY ITEM FORM -->
+
+                <template id="invoice-empty-form">
+
+                    <div class="invoice-item-row">
+
+                        <div class="form-row-4">
+
+                            <div class="form-group">
+                                <label>Item</label>
+                                {{ formset.empty_form.item }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Unit</label>
+                                {{ formset.empty_form.unit }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                {{ formset.empty_form.quantity }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Price</label>
+                                {{ formset.empty_form.price }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Discount</label>
+                                {{ formset.empty_form.discount }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>GST</label>
+                                {{ formset.empty_form.gst }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Total</label>
+                                <input
+                                    type="text"
+                                    class="form-input invoice-item-total"
+                                    value="0.00"
+                                    readonly
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+
+                                <button
+                                    type="button"
+                                    class="form-delete-btn remove-item-btn"
+                                >
+                                    Remove
+                                </button>
+
+                                <div style="display:none;">
+                                    {{ formset.empty_form.DELETE }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </template>
+
+                <!-- DISCOUNT / GST -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="{{ form.discount.id_for_label }}">
+                            Invoice Discount
+                        </label>
+                        {{ form.discount }}
+
+                        {% for error in form.discount.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.gst.id_for_label }}">
+                            Invoice GST
+                        </label>
+                        {{ form.gst }}
+
+                        {% for error in form.gst.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- TOTALS -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Sub Total</label>
+
+                        <input
+                            type="text"
+                            id="invoice-sub-total"
+                            class="form-input"
+                            value="0.00"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Grand Total</label>
+
+                        <input
+                            type="text"
+                            id="invoice-grand-total"
+                            class="form-input"
+                            value="0.00"
+                            readonly
+                        >
+                    </div>
+
+                </div>
+
+                <!-- NOTES -->
+
+                <div class="form-group">
+                    <label for="{{ form.notes.id_for_label }}">
+                        Notes
+                    </label>
+
+                    {{ form.notes }}
+
+                    {% for error in form.notes.errors %}
+                        <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- ACTIONS -->
+
+                <div class="form-actions">
+
+                    <a
+                        href="{% url 'sales:invoice_list' %}"
+                        class="form-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="form-save-btn"
+                        id="save-invoice-btn"
+                    >
+                        Save Invoice
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const invoiceForm = document.getElementById("invoice-form");
+    const addItemBtn = document.getElementById("add-item-btn");
+    const invoiceItems = document.getElementById("invoice-items");
+    const emptyFormTemplate = document.getElementById("invoice-empty-form");
+
+    const totalFormsInput = invoiceForm.querySelector(
+        'input[name$="-TOTAL_FORMS"]'
+    );
+
+    const subTotalInput = document.getElementById("invoice-sub-total");
+    const grandTotalInput = document.getElementById("invoice-grand-total");
+
+    const invoiceDiscount = document.getElementById("id_discount");
+    const invoiceGst = document.getElementById("id_gst");
+
+    if (!invoiceForm) {
+        console.error("Invoice form not found");
+        return;
+    }
+
+    if (!totalFormsInput) {
+        console.error("Django TOTAL_FORMS not found");
+        return;
+    }
+
+    function addItem() {
+
+        const index = parseInt(
+            totalFormsInput.value,
+            10
+        );
+
+        const html = emptyFormTemplate.innerHTML.replace(
+            /__prefix__/g,
+            index
+        );
+
+        invoiceItems.insertAdjacentHTML(
+            "beforeend",
+            html
+        );
+
+        totalFormsInput.value = index + 1;
+
+        calculateTotals();
+    }
+
+    function removeItem(row) {
+
+        const deleteInput = row.querySelector(
+            'input[name$="-DELETE"]'
+        );
+
+        if (deleteInput) {
+            deleteInput.checked = true;
+        }
+
+        row.style.display = "none";
+
+        calculateTotals();
+    }
+
+    function calculateTotals() {
+
+        let subTotal = 0;
+
+        const rows = invoiceItems.querySelectorAll(
+            ".invoice-item-row"
+        );
+
+        rows.forEach(function (row) {
+
+            const deleteInput = row.querySelector(
+                'input[name$="-DELETE"]'
+            );
+
+            if (
+                deleteInput &&
+                deleteInput.checked
+            ) {
+                return;
+            }
+
+            const quantityInput = row.querySelector(
+                ".invoice-item-quantity"
+            );
+
+            const priceInput = row.querySelector(
+                ".invoice-item-price"
+            );
+
+            const discountInput = row.querySelector(
+                ".invoice-item-discount"
+            );
+
+            const totalInput = row.querySelector(
+                ".invoice-item-total"
+            );
+
+            const quantity =
+                parseFloat(quantityInput?.value) || 0;
+
+            const price =
+                parseFloat(priceInput?.value) || 0;
+
+            const discount =
+                parseFloat(discountInput?.value) || 0;
+
+            let total =
+                (quantity * price) - discount;
+
+            if (total < 0) {
+                total = 0;
+            }
+
+            if (totalInput) {
+                totalInput.value =
+                    total.toFixed(2);
+            }
+
+            subTotal += total;
+        });
+
+        const discount =
+            parseFloat(invoiceDiscount?.value) || 0;
+
+        const gst =
+            parseFloat(invoiceGst?.value) || 0;
+
+        let grandTotal =
+            subTotal - discount + gst;
+
+        if (grandTotal < 0) {
+            grandTotal = 0;
+        }
+
+        subTotalInput.value =
+            subTotal.toFixed(2);
+
+        grandTotalInput.value =
+            grandTotal.toFixed(2);
+    }
+
+    addItemBtn.addEventListener(
+        "click",
+        function () {
+            addItem();
+        }
+    );
+
+    invoiceItems.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target.classList.contains(
+                    "remove-item-btn"
+                )
+            ) {
+
+                const row =
+                    event.target.closest(
+                        ".invoice-item-row"
+                    );
+
+                if (row) {
+                    removeItem(row);
+                }
+            }
+        }
+    );
+
+    invoiceItems.addEventListener(
+        "input",
+        function () {
+            calculateTotals();
+        }
+    );
+
+    if (invoiceDiscount) {
+        invoiceDiscount.addEventListener(
+            "input",
+            calculateTotals
+        );
+    }
+
+    if (invoiceGst) {
+        invoiceGst.addEventListener(
+            "input",
+            calculateTotals
+        );
+    }
+
+    /*
+     * Add one empty item row initially.
+     */
+    if (
+        invoiceItems.querySelectorAll(
+            ".invoice-item-row"
+        ).length === 0
+    ) {
+        addItem();
+    }
+
+    /*
+     * IMPORTANT:
+     * Do not prevent form submission.
+     */
+    invoiceForm.addEventListener(
+        "submit",
+        function () {
+            console.log("SAVE INVOICE SUBMITTED");
+
+            const saveButton =
+                document.getElementById(
+                    "save-invoice-btn"
+                );
+
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.textContent = "Saving...";
+            }
+        }
+    );
+
+    calculateTotals();
+
+});
+</script>
+
+{% endblock %}

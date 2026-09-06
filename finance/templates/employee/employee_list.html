@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/list.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="list-page">
+    <div class="list-page-header">
+        <div class="list-page-header-content">
+            <h2>Employees</h2>
+            <p>Manage farm and business employees.</p>
+        </div>
+        <div class="list-page-header-actions">
+            <a href="{% url 'finance:employee_create' %}" class="list-add-btn">
+                <i class="bi bi-plus-lg"></i>
+                Add Employee
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="list-messages">
+            {% for message in messages %}
+                <div class="list-message list-message-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="list-card">
+        <div class="list-table-wrapper">
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Phone</th>
+                        <th>Joining Date</th>
+                        <th>Salary</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in objects %}
+                        <tr>
+                            <td class="list-value">{{ employee.employee_code }}</td>
+                            <td class="list-name">{{ employee.name }}</td>
+                            <td>{{ employee.get_employee_type_display }}</td>
+                            <td>{{ employee.get_department_display|default:employee.department }}</td>
+                            <td>{{ employee.designation }}</td>
+                            <td>{{ employee.phone|default:"-" }}</td>
+                            <td>{{ employee.joining_date|date:"d M Y"|default:"-" }}</td>
+                            <td>₹{{ employee.monthly_salary }}</td>
+                            <td>
+                                {% if employee.active %}
+                                    <span class="list-status list-status-active">
+                                        <span class="list-status-dot"></span>
+                                        Active
+                                    </span>
+                                {% else %}
+                                    <span class="list-status list-status-inactive">
+                                        <span class="list-status-dot"></span>
+                                        Inactive
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="list-actions">
+                                    <a href="{% url 'finance:employee_edit' employee.pk %}" class="list-edit-btn">
+                                        <i class="bi bi-pencil"></i>
+                                        Edit
+                                    </a>
+                                    <form method="post" action="{% url 'finance:employee_delete' employee.pk %}" class="list-delete-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="list-delete-btn" onclick="return confirm('Delete this employee?');">
+                                            <i class="bi bi-trash"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="10">
+                                <div class="list-empty">
+                                    <div class="list-empty-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <div class="list-empty-title">No Employees Found</div>
+                                    <div class="list-empty-text">Add your first employee to get started.</div>
+                                    <a href="{% url 'finance:employee_create' %}" class="list-empty-btn">Add Employee</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

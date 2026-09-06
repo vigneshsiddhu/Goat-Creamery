@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-header">
+            <div class="form-header-content">
+                <h3>{{ title }}</h3>
+                <p>Create and manage employee information.</p>
+            </div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-body">
+                {% if form.non_field_errors %}
+                    <div class="form-non-field-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}">Name <span class="form-required">*</span></label>
+                        {{ form.name }}
+                        {% for error in form.name.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.employee_type.id_for_label }}">Employee Type <span class="form-required">*</span></label>
+                        {{ form.employee_type }}
+                        {% for error in form.employee_type.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.department.id_for_label }}">Department <span class="form-required">*</span></label>
+                        {{ form.department }}
+                        {% for error in form.department.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="{{ form.designation.id_for_label }}">Designation <span class="form-required">*</span></label>
+                        {{ form.designation }}
+                        {% for error in form.designation.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.phone.id_for_label }}">Phone</label>
+                        {{ form.phone }}
+                        {% for error in form.phone.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.joining_date.id_for_label }}">Joining Date <span class="form-required">*</span></label>
+                        {{ form.joining_date }}
+                        {% for error in form.joining_date.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="{{ form.monthly_salary.id_for_label }}">Monthly Salary <span class="form-required">*</span></label>
+                        {{ form.monthly_salary }}
+                        {% for error in form.monthly_salary.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.active.id_for_label }}">Active</label>
+                        {{ form.active }}
+                        {% for error in form.active.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.note.id_for_label }}">Note</label>
+                    {{ form.note }}
+                    {% for error in form.note.errors %}
+                        <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'finance:employee_list' %}" class="form-back-btn">Back</a>
+                    <button type="submit" class="form-save-btn">Save Employee</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

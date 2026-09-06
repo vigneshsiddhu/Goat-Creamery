@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="list-page">
+    <div class="list-page-header">
+        <div class="list-page-header-content">
+            <h2>Invoices</h2>
+            <p>Manage customer invoices and invoice items.</p>
+        </div>
+        <div class="list-page-header-actions">
+            <a href="{% url 'sales:invoice_create' %}" class="list-add-btn">+ Create Invoice</a>
+        </div>
+    </div>
+    {% if messages %}
+    <div class="list-messages">
+        {% for message in messages %}
+        <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="list-card">
+        {% if invoices %}
+        <div class="list-table-wrapper">
+            <table class="list-table" id="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Invoice</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Payment</th>
+                        <th>Method</th>
+                        <th>Subtotal</th>
+                        <th>Discount</th>
+                        <th>GST</th>
+                        <th>Grand Total</th>
+                        <th>Items</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td class="list-name">{{ invoice.number }}</td>
+                        <td>{{ invoice.date|date:"d-m-Y" }}</td>
+                        <td class="list-user">{{ invoice.customer.name }}</td>
+                        <td>
+                            <span class="list-status {% if invoice.payment_status == 'paid' %}list-status-active{% elif invoice.payment_status == 'cancelled' %}list-status-danger{% else %}list-status-warning{% endif %}">
+                                <span class="list-status-dot"></span>
+                                {{ invoice.get_payment_status_display|default:invoice.payment_status }}
+                            </span>
+                        </td>
+                        <td>{{ invoice.get_payment_method_display|default:invoice.payment_method }}</td>
+                        <td class="list-value">₹{{ invoice.sub_total|floatformat:2 }}</td>
+                        <td class="list-value">₹{{ invoice.discount|floatformat:2 }}</td>
+                        <td class="list-value">₹{{ invoice.gst|floatformat:2 }}</td>
+                        <td class="list-value">₹{{ invoice.grand_total|floatformat:2 }}</td>
+                        <td>{{ invoice.items.count }}</td>
+                        <td>
+                            <div class="list-actions">
+                                <a href="{% url 'sales:invoice_edit' invoice.pk %}" class="list-edit-btn">Edit</a>
+                                <a href="{% url 'sales:invoice_delete' invoice.pk %}" class="list-delete-btn">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="list-empty">
+            <div class="list-empty-icon">🧾</div>
+            <div class="list-empty-title">No invoices found</div>
+            <div class="list-empty-text">Create your first invoice to get started.</div>
+            <a href="{% url 'sales:invoice_create' %}" class="list-empty-btn">Create Invoice</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+    const search=document.getElementById("invoice-search");
+    const rows=document.querySelectorAll("#invoice-table tbody tr");
+    if(!search)return;
+    search.addEventListener("input",function(){
+        const value=this.value.toLowerCase().trim();
+        rows.forEach(row=>{
+            row.style.display=row.textContent.toLowerCase().includes(value)?"":"none";
+        });
+    });
+});
+</script>
+{% endblock %}

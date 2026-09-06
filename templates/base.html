@@ -1,422 +1,198 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color"
-          content="#6F63D9">
-
-    <meta name="apple-mobile-web-app-capable"
-          content="yes">
-
-    <meta name="apple-mobile-web-app-status-bar-style"
-          content="default">
-
-    <title>
-        {% block title %}Goat Creamery{% endblock %}
-    </title>
-
-
-    <!-- Bootstrap Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-    >
-
-
-    <!-- Main CSS -->
-    <link
-        rel="stylesheet"
-        href="{% static 'css/base.css' %}"
-    >
-
-
-    {% block extra_css %}
-    {% endblock %}
-
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="theme-color" content="#6F63D9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="icon" type="image/png" href="{% static 'icons/icon-192.png' %}">
+    <title>{% block title %}Goat Creamery{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/base.css'%}?v=2">
+    {% block extra_css %}{% endblock %}
 </head>
-
-
 <body>
-
-
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
-
 <aside class="sidebar">
-
-    <!-- LOGO -->
-
     <div class="logo">
-
-        <img
-            src="{% static 'icons/icon-192.png' %}"
-            alt="Goat Creamery"
-            class="farm-logo"
-        >
-
-        <span class="farm-logo-name">
-            Goat Creamery
-        </span>
-
+        <img src="{% static 'icons/icon-192.png' %}" alt="Goat Creamery" class="farm-logo">
+        <span class="farm-logo-name">Goat Creamery</span>
     </div>
-
-
-    <!-- MENU -->
-
     <nav class="menu">
-
-
-        <!-- Dashboard -->
-
         <a href="{% url 'dashboard' %}">
-
             <i class="bi bi-speedometer2"></i>
-
-            <span>
-                Dashboard
-            </span>
-
+            <span>Dashboard</span>
         </a>
-
-
-        <!-- Businesses -->
-
-        <a href="{% url 'business:list' %}">
-
-            <i class="bi bi-building"></i>
-
-            <span>
-                Businesses
-            </span>
-
-        </a>
-
-        <a href="{% url 'business:business_user_list' %}">
-
-            <i class="bi bi-people"></i>
-
-            <span>Business Users</span>
-
-        </a>
-
-
-        <!-- Goats -->
-
-        <a href="{% url 'goats:list' %}">
-
-            <i class="bi bi-git"></i>
-
-            <span>
-                Goats
-            </span>
-
-        </a>
-
-         <!-- Farm Expenses -->
-
-        <a href="{% url 'finance:farm_expense_list' %}">
-
-            <i class="bi bi-cash-stack"></i>
-
-            <span>
-                Farm Expenses
-            </span>
-
-        </a>
-
-         <!-- Milk -->
-
-        <a href="{% url 'production:goat_milk_list' %}"
-           title="Goat Milk">
-
-            <i class="bi bi-cup-straw"></i>
-
-            <span>
-                Milk
-            </span>
-
-        </a>
-         <!-- Weight -->
-
-        <a href="{% url 'production:goat_weight_list' %}"
-           title="Goat Weight">
-
-            <i class="bi bi-speedometer2"></i>
-
-            <span>
-                Weight
-            </span>
-
-        </a>
-
-        <!-- Stock -->
-
-        <a href="{% url 'inventory:feedstock_list' %}"
-           title="Feed Stock">
-
-            <i class="bi bi-box-seam"></i>
-
-            <span>
-                Stock
-            </span>
-
-        </a>
-        <!-- Mating -->
-
-        <a href="{% url 'breeding:mating_list' %}">
-
-            <i class="bi bi-droplet"></i>
-
-            <span>
-                Mating
-            </span>
-
-        </a>
-
-        <!-- Parent Mapping -->
-
-        <a href="{% url 'breeding:parent_mapping_list' %}">
-
-            <i class="bi bi-diagram-3"></i>
-
-            <span>
-                Parent Mapping
-            </span>
-
-        </a>
-
-
-
-
-
-        <!-- Disease -->
-
-        <a href="{% url 'goats:disease_list' %}"
-           title="Disease">
-
-            <i class="bi bi-bandaid"></i>
-
-            <span>
-                Disease
-            </span>
-
-        </a>
-
-
-        <!-- Death Register -->
-
-        <a href="{% url 'goats:death_goat_list' %}">
-
-            <i class="bi bi-heartbreak"></i>
-
-            <span>
-                Death Register
-            </span>
-
-        </a>
-
-
-        <!-- Reports -->
-
-        <a href="#">
-
-            <i class="bi bi-bar-chart"></i>
-
-            <span>
-                Reports
-            </span>
-
-        </a>
-
-
-    </nav>
-
-</aside>
-
-
-
-<!-- =====================================================
-     MAIN APPLICATION AREA
-===================================================== -->
-
-<div class="main-area">
-
-
-    <!-- =================================================
-         TOP NAVBAR
-    ================================================== -->
-
-    <header class="top-navbar">
-
-
-        <!-- LEFT -->
-
-        <div class="top-navbar-left">
-
-            <!-- Mobile menu -->
-
-            <button
-                type="button"
-                class="mobile-menu-btn"
-                id="mobileMenuBtn"
-            >
-
-                <i class="bi bi-list"></i>
-
+        <!-- FARM -->
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-tree"></i>
+                <span>Farm</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
             </button>
-
-
-            <!-- Page title -->
-
-            <div class="top-page-title">
-
-                {% block page_title %}
-                    Goat Creamery
-                {% endblock %}
-
+            <div class="menu-dropdown-content">
+                <a href="{% url 'farm:land_list' %}"><i class="bi bi-map"></i><span>Land</span></a>
+                <a href="{% url 'farm:water_list' %}"><i class="bi bi-droplet"></i><span>Water</span></a>
+                <a href="{% url 'farm:land_water_list' %}"><i class="bi bi-moisture"></i><span>Land Water</span></a>
+                <a href="{% url 'farm:feedstock_list' %}"><i class="bi bi-box-seam"></i><span>Feed Stock</span></a>
+                <a href="{% url 'farm:feedstock_transaction_list' %}"><i class="bi bi-arrow-left-right"></i><span>Feed Transactions</span></a>
+                <a href="{% url 'farm:feed_consumption_list' %}"><i class="bi bi-basket"></i><span>Feed Consumption</span></a>
+                <a href="{% url 'goats:list' %}"><i class="bi bi-git"></i><span>Goats</span></a>
+                <a href="{% url 'breeding:mating_list' %}"><i class="bi bi-heart"></i><span>Breeding</span></a>
+                <a href="{% url 'breeding:parent_mapping_list' %}"><i class="bi bi-diagram-3"></i><span>Parent Mapping</span></a>
+                <a href="{% url 'production:goat_milk_list' %}"><i class="bi bi-cup-straw"></i><span>Goat Milk</span></a>
+                <a href="{% url 'production:goat_weight_list' %}"><i class="bi bi-speedometer2"></i><span>Goat Weight</span></a>
+                <a href="{% url 'goats:disease_list' %}"><i class="bi bi-bandaid"></i><span>Disease</span></a>
+                <a href="{% url 'goats:goat_health_list' %}"><i class="bi bi-heart-pulse"></i><span>Goat Health</span></a>
+                <a href="{% url 'goats:death_goat_list' %}"><i class="bi bi-heartbreak"></i><span>Death Register</span></a>
+                <a href="{% url 'finance:farm_spend_book_list' %}"><i class="bi bi-journal-richtext"></i><span>Farm Spend Book</span></a>
+                <a href="{% url 'finance:farm_expense_list' %}"><i class="bi bi-cash-stack"></i><span>Farm Expenses</span></a>
             </div>
-
         </div>
-
-
-
-        <!-- =================================================
-             SEARCH
-        ================================================== -->
-
-        <div class="top-search">
-
-            <i class="bi bi-search"></i>
-
-            <input
-                type="search"
-                placeholder="Search..."
-                autocomplete="off"
-            >
-
-        </div>
-
-
-
-        <!-- =================================================
-             RIGHT SIDE
-        ================================================== -->
-
-        <div class="top-navbar-right">
-
-
-            <!-- Notification -->
-
-            <button
-                type="button"
-                class="top-icon-btn"
-                title="Notifications"
-            >
-
-                <i class="bi bi-bell"></i>
-
-                <span class="notification-dot"></span>
-
+        <!-- Product -->
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-box2"></i>
+                <span>Product</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
             </button>
-
-            <!-- =================================================
-             User Dropdwon
-        ================================================== -->
+            <div class="menu-dropdown-content">
+                <!-- PRODUCTION -->
+                <a href="{% url 'production:product_list' %}"><i class="bi bi-box2"></i><span>Products</span></a>
+                <a href="{% url 'production:product_price_list' %}"><i class="bi bi-tag"></i><span>Product Prices</span></a>
+                <a href="{% url 'production:ingredient_list' %}"><i class="bi bi-egg"></i><span>Ingredients</span></a>
+                <a href="{% url 'production:ingredient_price_list' %}"><i class="bi bi-tags"></i><span>Ingredient Prices</span></a>
+                <a href="{% url 'production:recipe_list' %}"><i class="bi bi-journal-text"></i><span>Recipes</span></a>
+                <a href="{% url 'production:recipe_item_list' %}"><i class="bi bi-list-check"></i><span>Recipe Items</span></a>
+                <a href="{% url 'production:recipe_item_list' %}"><i class="bi bi-list-check"></i><span>Recipe Items</span></a>
+            </div>
+        </div>
+        <!-- BUSINESS -->
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-building"></i>
+                <span>Business</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'business:list' %}"><i class="bi bi-building"></i><span>Businesses</span></a>
+                <a href="{% url 'business:business_user_list' %}"><i class="bi bi-people"></i><span>Business Users</span></a>
+                <!-- PRODUCTION -->
+                <a href="{% url 'production:goat_milk_batch_list' %}"><i class="bi bi-box"></i><span>Milk Batches</span></a>
+                <a href="{% url 'production:product_batch_list' %}"><i class="bi bi-boxes"></i><span>Product Batches</span></a>
+                <!-- INVENTORY -->
+                <a href="{% url 'inventory:item_list' %}"><i class="bi bi-box-seam"></i><span>Items</span></a>
+                <a href="{% url 'production:goat_milk_test_list' %}"><i class="bi bi-clipboard2-pulse"></i><span>Milk Tests</span></a>
+            </div>
+        </div>
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-receipt"></i>
+                <span>Invoice</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <!-- FINANCE -->
+                <a href="{% url 'sales:customer_list' %}"><i class="bi bi-person-lines-fill"></i><span>Customers</span></a>
+                <a href="{% url 'sales:invoice_list' %}"><i class="bi bi-receipt"></i><span>Invoices</span></a>
+                <a href="{% url 'sales:invoice_location_list' %}"><i class="bi bi-geo"></i><span>Invoice Locations</span></a>
+                <!-- SALES -->
+            </div>
+        </div>
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-pin-map"></i>
+                <span>Company Traction</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <!-- FINANCE -->
+               <a href="{% url 'inventory:vehicle_list' %}"><i class="bi bi-truck"></i><span>Vehicles</span></a>
+                <a href="{% url 'inventory:vehicle_location_list' %}"><i class="bi bi-geo-alt"></i><span>Vehicle Locations</span></a>
+                <a href="{% url 'inventory:item_location_list' %}"><i class="bi bi-pin-map"></i><span>Item Locations</span></a>
+                <!-- LOCATION -->
+                <a href="{% url 'business:location_list' %}"><i class="bi bi-geo-alt-fill"></i><span>Locations</span></a>
+                <!-- SALES -->
+            </div>
+        </div>
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-journal-text"></i>
+                <span>Finance Book</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <!-- FINANCE -->
+                <a href="{% url 'finance:employee_list' %}"><i class="bi bi-person-badge"></i><span>Employees</span></a>
+                <a href="{% url 'finance:employee_salary_list' %}"><i class="bi bi-cash"></i><span>Employee Salary</span></a>
+                <a href="{% url 'finance:business_spend_book_list' %}"><i class="bi bi-journal-text"></i><span>Business Spend Book</span></a>
+                <a href="{% url 'finance:business_expense_list' %}"><i class="bi bi-wallet2"></i><span>Business Expenses</span></a>
+                <!-- SALES -->
+            </div>
+        </div>
+        <div class="menu-dropdown"></div>
+            <button type="button" class="menu-dropdown-btn">
+                <i class="bi bi-bar-chart"></i>
+                <span>Reports</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <!-- REPORTS -->
+                <a href="#"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
+                <!-- SALES -->
+            </div>
+        </div>
+    </nav>
+</aside>
+<div class="main-area">
+    <header class="top-navbar">
+        <div class="top-navbar-left">
+            <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="top-page-title">
+                {% block page_title %}Goat Creamery{% endblock %}
+            </div>
+        </div>
+        <div class="top-search">
+            <i class="bi bi-search"></i>
+            <input type="search" placeholder="Search..." autocomplete="off">
+        </div>
+        <div class="top-navbar-right">
+            <button type="button" class="top-icon-btn" title="Notifications" aria-label="Notifications">
+                <i class="bi bi-bell"></i>
+                <span class="notification-dot"></span>
+            </button>
             <div class="top-user-wrapper">
-
-                <button
-                    type="button"
-                    class="top-user"
-                    id="userDropdownBtn"
-                    aria-expanded="false"
-                >
-
+                <button type="button" class="top-user" id="userDropdownBtn" aria-expanded="false" aria-label="User menu">
                     <div class="top-user-avatar">
                         <i class="bi bi-person"></i>
                     </div>
-
                     <div class="top-user-info">
-
-                        <span class="top-user-name">
-                            {{ request.user.username }}
-                        </span>
-
-                        <span class="top-user-role">
-                            User
-                        </span>
-
+                        <span class="top-user-name">{{ request.user.username }}</span>
+                        <span class="top-user-role">User</span>
                     </div>
-
                     <i class="bi bi-chevron-down user-dropdown-icon"></i>
-
                 </button>
-
-
-                <div
-                    class="user-dropdown"
-                    id="userDropdown"
-                >
-
-                    <form
-                        method="post"
-                        action="{% url 'logout' %}"
-                    >
-
+                <div class="user-dropdown" id="userDropdown">
+                    <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="user-dropdown-item"
-                        >
-
+                        <button type="submit" class="user-dropdown-item">
                             <i class="bi bi-box-arrow-right"></i>
-
                             <span>Logout</span>
-
                         </button>
-
                     </form>
-
                 </div>
-
             </div>
         </div>
-
-    
     </header>
-
-
-
-    <!-- =================================================
-         PAGE CONTENT
-    ================================================== -->
-
     <main class="content">
-
-        {% block content %}
-        {% endblock %}
-
+        {% block content %}{% endblock %}
     </main>
-
-
 </div>
-
-<!-- Main JavaScript -->
-
-<script src="{% static 'js/base.js' %}"></script>
-
-{% block extra_js %}
-
-{% endblock %}
+<script src="{% static 'js/base.js' %}?v=2"></script>
+{% block extra_js %}{% endblock %}
 </body>
-
 </html>

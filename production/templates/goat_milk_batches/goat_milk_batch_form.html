@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+
+    {% if form.instance.pk %}
+        Edit Goat Milk Batch
+    {% else %}
+        Add Goat Milk Batch
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+
+    <div class="form-card">
+
+        <!-- =====================================================
+             FORM HEADER
+        ====================================================== -->
+
+        <div class="form-header">
+
+            <div class="form-header-content">
+
+                <h3>
+
+                    {% if form.instance.pk %}
+                        Edit Goat Milk Batch
+                    {% else %}
+                        Add Goat Milk Batch
+                    {% endif %}
+
+                </h3>
+
+                <p>
+
+                    {% if form.instance.pk %}
+
+                        Update milk batch information for
+                        {{ business.name }}.
+
+                    {% else %}
+
+                        Create a new goat milk batch for
+                        {{ business.name }}.
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'production:goat_milk_batch_list' %}"
+                class="form-back-btn"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             FORM BODY
+        ====================================================== -->
+
+        <div class="form-body">
+
+            <!-- NON FIELD ERRORS -->
+
+            {% if form.non_field_errors %}
+
+                <div class="form-non-field-errors">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <form method="post" novalidate>
+
+                {% csrf_token %}
+
+
+                <!-- =================================================
+                     BATCH INFORMATION
+                ================================================== -->
+
+                <div class="form-row">
+
+                    <!-- QR CODE -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.qr_code.id_for_label }}">
+
+                            QR Code
+
+                        </label>
+
+                        {{ form.qr_code }}
+
+                        <span class="form-help-text">
+                            Optional unique QR code for this batch.
+                        </span>
+
+                        {% if form.qr_code.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.qr_code.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- STATUS -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.status.id_for_label }}">
+
+                            Status
+
+                            <span class="form-required">*</span>
+
+                        </label>
+
+                        {{ form.status }}
+
+                        <span class="form-help-text">
+                            Example: Collected, Processing, Packed, Sold.
+                        </span>
+
+                        {% if form.status.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.status.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.date.id_for_label }}">
+
+                            Milk Collection Date
+
+                            <span class="form-required">*</span>
+
+                        </label>
+
+                        {{ form.date }}
+
+                        {% if form.date.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="{{ form.milk_time.id_for_label }}">
+
+                            Milk Time
+
+                            <span class="form-required">*</span>
+
+                        </label>
+
+                        {{ form.milk_time }}
+
+                        {% if form.milk_time.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.milk_time.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     MILK COLLECTION
+                ================================================== -->
+
+                <div class="form-row-3">
+
+                    <!-- MILK TIME -->
+
+
+
+                    <!-- MILK QUANTITY -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.milk_quantity.id_for_label }}">
+
+                            Milk Quantity (Litres)
+
+                            <span class="form-required">*</span>
+
+                        </label>
+
+                        {{ form.milk_quantity }}
+
+                        <span class="form-help-text">
+                            Enter the total milk collected in litres.
+                        </span>
+
+                        {% if form.milk_quantity.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.milk_quantity.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- WASTAGE -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.wastage.id_for_label }}">
+
+                            Wastage (Litres)
+
+                        </label>
+
+                        {{ form.wastage }}
+
+                        <span class="form-help-text">
+                            Enter milk wasted during collection or handling.
+                        </span>
+
+                        {% if form.wastage.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.wastage.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    
+
+                </div>
+
+
+              
+
+
+                <!-- =================================================
+                     PACKING / EXPIRY
+                ================================================== -->
+
+                <div class="form-row">
+
+                    <!-- PACKED DATE -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.packed_date.id_for_label }}">
+
+                            Packed Date & Time
+
+                        </label>
+
+                        {{ form.packed_date }}
+
+                        <span class="form-help-text">
+                            Leave empty if the batch has not been packed.
+                        </span>
+
+                        {% if form.packed_date.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.packed_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- EXPIRY -->
+
+                    <div class="form-group">
+
+                        <label for="{{ form.exp_date.id_for_label }}">
+
+                            Expiry Date & Time
+
+                        </label>
+
+                        {{ form.exp_date }}
+
+                        <span class="form-help-text">
+                            Enter the expiry date and time for this batch.
+                        </span>
+
+                        {% if form.exp_date.errors %}
+
+                            <div class="form-error">
+
+                                {% for error in form.exp_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     FORM ACTIONS
+                ================================================== -->
+
+                <div class="form-actions">
+
+                    <a
+                        href="{% url 'production:goat_milk_batch_list' %}"
+                        class="form-cancel-btn"
+                    >
+
+                        Cancel
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="form-save-btn"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        {% if form.instance.pk %}
+
+                            Update Batch
+
+                        {% else %}
+
+                            Save Batch
+
+                        {% endif %}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

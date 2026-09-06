@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Customers{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/list.css' %}">
+{% endblock %}
+{% block content %}
+<div class="list-page">
+    <div class="list-page-header">
+        <div class="list-page-header-content">
+            <h2>Customers</h2>
+            <p>Manage customers for {{ business.name }}.</p>
+        </div>
+        <div class="list-page-header-actions">
+            <a href="{% url 'sales:customer_create' %}" class="list-add-btn">Add Customer</a>
+        </div>
+    </div>
+    {% if messages %}
+    <div class="list-messages">
+        {% for message in messages %}
+        <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="list-card">
+        {% if customers %}
+        <div class="list-table-wrapper">
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>
+                            <div class="list-name">{{ customer.name }}</div>
+                        </td>
+                        <td>
+                            <div class="list-value">{{ customer.number }}</div>
+                        </td>
+                        <td>
+                            <div class="list-value">
+                                {% if customer.gender %}
+                                {{ customer.get_gender_display }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="list-value">
+                                {% if customer.age %}
+                                {{ customer.age }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="list-secondary">
+                                {% if customer.address %}
+                                {{ customer.address|truncatechars:60 }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="list-actions">
+                                <a href="{% url 'sales:customer_edit' customer.pk %}" class="list-edit-btn">Edit</a>
+                                <form method="post" action="{% url 'sales:customer_delete' customer.pk %}" class="list-delete-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="list-delete-btn" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="list-empty">
+            <div class="list-empty-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="list-empty-title">No Customers Found</div>
+            <div class="list-empty-text">Add your first customer to get started.</div>
+            <a href="{% url 'sales:customer_create' %}" class="list-empty-btn">Add Customer</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -18,4 +18,11 @@ urlpatterns = [
     path("business-users/create/",views.business_user_create,name="business_user_create"),
     path("business-users/<uuid:pk>/edit/",views.business_user_edit,name="business_user_edit"),
     path("business-users/<uuid:pk>/delete/",views.business_user_delete,name="business_user_delete"),
+    # =====================================================
+    # BUSINESS USERS
+    # =====================================================
+    path("location",views.location_list,name="location_list"),
+    path("location/create/",views.location_create,name="location_create"),
+    path("location/<uuid:pk>/edit/",views.location_edit,name="location_edit"),
+    path("location/<uuid:pk>/delete/",views.location_delete,name="location_delete"),
 ]

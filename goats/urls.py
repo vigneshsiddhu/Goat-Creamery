@@ -15,4 +15,8 @@ urlpatterns = [
     path("death-goats/create/",views.death_goat_create,name="death_goat_create"),
     path("death-goats/<uuid:pk>/edit/",views.death_goat_update,name="death_goat_update"),
     path("death-goats/<uuid:pk>/delete/",views.death_goat_delete,name="death_goat_delete"),
+    path("health/",views.goat_health_list,name="goat_health_list"),
+    path("health/create/",views.goat_health_create,name="goat_health_create"),
+    path("health/<uuid:pk>/edit/",views.goat_health_update,name="goat_health_update"),
+    path("health/<uuid:pk>/delete/",views.goat_health_delete,name="goat_health_delete"),
 ]

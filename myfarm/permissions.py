@@ -16,88 +16,254 @@ ROLE_PERMISSIONS = {
     # SUPER ADMIN
     # =====================================================
 
+    # =========================================================
+# SUPER ADMIN
+# =========================================================
     "SUPER_ADMIN": {
-
-        # Dashboard
+        # =====================================================
+        # DASHBOARD
+        # =====================================================
         "dashboard.view",
-
-        # Business
+        # =====================================================
+        # BUSINESS
+        # =====================================================
         "business.view",
         "business.create",
         "business.update",
         "business.delete",
-
-        # Business Users
+        # =====================================================
+        # BUSINESS USERS
+        # =====================================================
         "business_user.view",
         "business_user.create",
         "business_user.update",
         "business_user.delete",
-
-        # Goat
+        # =====================================================
+        # LOCATION
+        # =====================================================
+        "location.view",
+        "location.create",
+        "location.update",
+        "location.delete",
+        # =====================================================
+        # GOAT
+        # =====================================================
         "goat.view",
         "goat.create",
         "goat.update",
         "goat.delete",
-
-        # Goat Disease
+        # =====================================================
+        # GOAT DISEASE
+        # =====================================================
         "goat_disease.view",
         "goat_disease.create",
         "goat_disease.update",
         "goat_disease.delete",
-
-        # Goat Death
+        # =====================================================
+        # GOAT HEALTH
+        # =====================================================
+        "goat_health.view",
+        "goat_health.create",
+        "goat_health.update",
+        "goat_health.delete",
+        # =====================================================
+        # GOAT DEATH
+        # =====================================================
         "goat_death.view",
         "goat_death.create",
         "goat_death.update",
         "goat_death.delete",
-
-        # Weight
+        # =====================================================
+        # GOAT WEIGHT
+        # =====================================================
         "weight.view",
         "weight.create",
         "weight.update",
         "weight.delete",
-
-        # Milk
+        # =====================================================
+        # GOAT MILK
+        # =====================================================
         "milk.view",
         "milk.create",
         "milk.update",
         "milk.delete",
-
-        # Mating
+        # =====================================================
+        # MILK BATCH
+        # =====================================================
+        "milk_batch.view",
+        "milk_batch.create",
+        "milk_batch.update",
+        "milk_batch.delete",
+        # =====================================================
+        # MILK TEST
+        # =====================================================
+        "milk_test.view",
+        "milk_test.create",
+        "milk_test.update",
+        "milk_test.delete",
+        # =====================================================
+        # BREEDING / MATING
+        # =====================================================
         "mating.view",
         "mating.create",
         "mating.update",
         "mating.delete",
-
-        # Parent Maping
+        # =====================================================
+        # PARENT MAPPING
+        # =====================================================
         "parent_mapping.view",
         "parent_mapping.create",
         "parent_mapping.update",
         "parent_mapping.delete",
-
-        # Expense
-        "expense.view",
-        "expense.create",
-        "expense.update",
-        "expense.delete",
-
-        # Sales
-        "sales.view",
-        "sales.create",
-        "sales.update",
-        "sales.delete",
-
-        # Stock
-        "stock.view",
-        "stock.create",
-        "stock.update",
-        "stock.delete",
-
-        # Reports
+        # =====================================================
+        # PRODUCTION - PRODUCTS
+        # =====================================================
+        "product.view",
+        "product.create",
+        "product.update",
+        "product.delete",
+        # =====================================================
+        # PRODUCTION - PRODUCT PRICE
+        # =====================================================
+        "product_price.view",
+        "product_price.create",
+        "product_price.update",
+        "product_price.delete",
+        # =====================================================
+        # PRODUCTION - INGREDIENT
+        # =====================================================
+        "ingredient.view",
+        "ingredient.create",
+        "ingredient.update",
+        "ingredient.delete",
+        # =====================================================
+        # PRODUCTION - INGREDIENT PRICE
+        # =====================================================
+        "ingredient_price.view",
+        "ingredient_price.create",
+        "ingredient_price.update",
+        "ingredient_price.delete",
+        # =====================================================
+        # PRODUCTION - RECIPE
+        # =====================================================
+        "recipe.view",
+        "recipe.create",
+        "recipe.update",
+        "recipe.delete",
+        # =====================================================
+        # PRODUCTION - RECIPE ITEM
+        # =====================================================
+        "recipe_item.view",
+        "recipe_item.create",
+        "recipe_item.update",
+        "recipe_item.delete",
+        # =====================================================
+        # PRODUCTION - PRODUCT BATCH
+        # =====================================================
+        "product_batch.view",
+        "product_batch.create",
+        "product_batch.update",
+        "product_batch.delete",
+        # =====================================================
+        # INVENTORY - ITEM
+        # =====================================================
+        "item.view",
+        "item.create",
+        "item.update",
+        "item.delete",
+        # =====================================================
+        # INVENTORY - VEHICLE
+        # =====================================================
+        "vehicle.view",
+        "vehicle.create",
+        "vehicle.update",
+        "vehicle.delete",
+        # =====================================================
+        # INVENTORY - VEHICLE LOCATION
+        # =====================================================
+        "vehicle_location.view",
+        "vehicle_location.create",
+        "vehicle_location.update",
+        "vehicle_location.delete",
+       
+        # =====================================================
+        # FINANCE - EMPLOYEE
+        # =====================================================
+        "employee.view",
+        "employee.create",
+        "employee.update",
+        "employee.delete",
+        # =====================================================
+        # FINANCE - EMPLOYEE SALARY
+        # =====================================================
+        "employee_salary.view",
+        "employee_salary.create",
+        "employee_salary.update",
+        "employee_salary.delete",
+        # =====================================================
+        # FINANCE - FARM SPEND BOOK
+        # =====================================================
+        "farm_spend_book.view",
+        "farm_spend_book.create",
+        "farm_spend_book.update",
+        "farm_spend_book.delete",
+        # =====================================================
+        # FINANCE - FARM EXPENSE
+        # =====================================================
+        "farm_expense.view",
+        "farm_expense.create",
+        "farm_expense.update",
+        "farm_expense.delete",
+        # =====================================================
+        # FINANCE - BUSINESS SPEND BOOK
+        # =====================================================
+        "business_spend_book.view",
+        "business_spend_book.create",
+        "business_spend_book.update",
+        "business_spend_book.delete",
+        # =====================================================
+        # FINANCE - BUSINESS EXPENSE
+        # =====================================================
+        "business_expense.view",
+        "business_expense.create",
+        "business_expense.update",
+        "business_expense.delete",
+        # =====================================================
+        # SALES - CUSTOMER
+        # =====================================================
+        "customer.view",
+        "customer.create",
+        "customer.update",
+        "customer.delete",
+        # =====================================================
+        # SALES - INVOICE
+        # =====================================================
+        "invoice.view",
+        "invoice.create",
+        "invoice.update",
+        "invoice.delete",
+        # =====================================================
+        # SALES - INVOICE ITEM
+        # =====================================================
+        "invoice_item.view",
+        "invoice_item.create",
+        "invoice_item.update",
+        "invoice_item.delete",
+        # =====================================================
+        # SALES - INVOICE LOCATION
+        # =====================================================
+        "invoice_location.view",
+        "invoice_location.create",
+        "invoice_location.update",
+        "invoice_location.delete",
+        # =====================================================
+        # REPORTS
+        # =====================================================
         "reports.view",
         "reports.export",
-
-        # Settings
+        # =====================================================
+        # SETTINGS
+        # =====================================================
         "settings.view",
         "settings.update",
     },

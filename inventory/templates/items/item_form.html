@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+{% endblock %}
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-header">
+            <div class="form-header-content">
+                <h3>{{ title|default:"Create Item" }}</h3>
+                <p>Manage product item, pricing and packing details.</p>
+            </div>
+        </div>
+        <div class="form-body">
+            <form method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="form-non-field-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                <div class="form-row-4">
+                    <div class="form-group">
+                        <label for="{{ form.qr_code.id_for_label }}">QR Code</label>
+                        {{ form.qr_code }}
+                        {% for error in form.qr_code.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.product.id_for_label }}">Product <span class="form-required">*</span></label>
+                        {{ form.product }}
+                        {% for error in form.product.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.product_batch.id_for_label }}">Product Batch <span class="form-required">*</span></label>
+                        {{ form.product_batch }}
+                        {% for error in form.product_batch.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.price.id_for_label }}">Price <span class="form-required">*</span></label>
+                        {{ form.price }}
+                        {% for error in form.price.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-row-4">
+                    <div class="form-group">
+                        <label for="{{ form.time.id_for_label }}">Time</label>
+                        {{ form.time }}
+                        {% for error in form.time.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.packed_date.id_for_label }}">Packed Date <span class="form-required">*</span></label>
+                        {{ form.packed_date }}
+                        {% for error in form.packed_date.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.exp_date.id_for_label }}">Expiry Date <span class="form-required">*</span></label>
+                        {{ form.exp_date }}
+                        {% for error in form.exp_date.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.status.id_for_label }}">Status</label>
+                        {{ form.status }}
+                        {% for error in form.status.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.description.id_for_label }}">Description</label>
+                        {{ form.description }}
+                        {% for error in form.description.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'inventory:item_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

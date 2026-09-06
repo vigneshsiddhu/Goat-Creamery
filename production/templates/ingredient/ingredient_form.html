@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+{% endblock %}
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-header">
+            <div class="form-header-content">
+                <h3>{{ title|default:"Create Ingredient" }}</h3>
+                <p>Manage ingredient details used in production.</p>
+            </div>
+        </div>
+        <div class="form-body">
+            <form method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="form-non-field-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}">Ingredient Name <span class="form-required">*</span></label>
+                        {{ form.name }}
+                        {% for error in form.name.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.details.id_for_label }}">Details</label>
+                        {{ form.details }}
+                        {% for error in form.details.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'production:ingredient_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

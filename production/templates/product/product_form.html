@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-header">
+            <div class="form-header-content">
+                <h3>{{ title|default:"Product" }}</h3>
+                <p>Create or update product details.</p>
+            </div>
+        </div>
+
+        <div class="form-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-non-field-errors">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.goat_milk_batch.id_for_label }}">
+                            Goat Milk Batch
+                            {% if form.goat_milk_batch.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.goat_milk_batch }}
+                        {% for error in form.goat_milk_batch.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="{{ form.type.id_for_label }}">
+                            Product Type
+                            {% if form.type.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.type }}
+                        {% for error in form.type.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.variant.id_for_label }}">
+                            Variant / Flavour
+                            {% if form.variant.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.variant }}
+                        {% for error in form.variant.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.storage_type.id_for_label }}">
+                            Storage Type
+                            {% if form.storage_type.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.storage_type }}
+                        {% for error in form.storage_type.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="{{ form.storage_temp_min.id_for_label }}">
+                            Minimum Storage Temperature (°C)
+                        </label>
+                        {{ form.storage_temp_min }}
+                        {% for error in form.storage_temp_min.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.storage_temp_max.id_for_label }}">
+                            Maximum Storage Temperature (°C)
+                        </label>
+                        {{ form.storage_temp_max }}
+                        {% for error in form.storage_temp_max.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.status.id_for_label }}">
+                            Status
+                            {% if form.status.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.status }}
+                        {% for error in form.status.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.life_span_unit.id_for_label }}">
+                            Shelf Life Unit
+                            {% if form.life_span_unit.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.life_span_unit }}
+                        {% for error in form.life_span_unit.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.life_span_value.id_for_label }}">
+                            Shelf Life
+                            {% if form.life_span_value.field.required %}
+                                <span class="form-required">*</span>
+                            {% endif %}
+                        </label>
+                        {{ form.life_span_value }}
+                        {% for error in form.life_span_value.errors %}
+                            <span class="form-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">
+                        Description
+                    </label>
+                    {{ form.description }}
+                    {% for error in form.description.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    <a
+                        href="{% url 'production:product_list' %}"
+                        class="form-cancel-btn"
+                    >
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="form-save-btn">
+                        Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

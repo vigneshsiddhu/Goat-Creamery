@@ -112,3 +112,23 @@ class RackGoat(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return f"{self.goat.token_no} - {self.rack.name}"
+
+
+# =========================================================
+# Goat Health
+# =========================================================
+class GoatHealth(models.Model):
+    id = models.UUIDField( primary_key=True, default=uuid.uuid4, editable=False)
+    goat = models.ForeignKey( Goat, on_delete=models.PROTECT, related_name="health_records")
+    disease = models.ForeignKey( Disease, on_delete=models.PROTECT, related_name="goat_health_records")
+    comment = models.TextField( blank=True, null=True)
+    status = models.CharField( max_length=100)
+    date = models.DateField()
+    business = models.ForeignKey( Business, on_delete=models.CASCADE, related_name="goat_health_records")
+    created_by = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="created_goat_health_records")
+    created_at = models.DateTimeField( auto_now_add=True)
+    updated_at = models.DateTimeField( auto_now=True)
+    class Meta:
+        ordering = ["-date", "-created_at"]
+    def __str__(self):
+        return f"{self.goat} - {self.disease} - {self.date} - {self.status}"
