@@ -20,6 +20,7 @@ from . import views
 from user_registrations import views as user_views
 
 urlpatterns = [
+    path("health/", views.health, name="health"),
     #Added for PWA
     path(
         'service-worker.js',

@@ -1,5 +1,9 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
+
+
+def health(request):
+    return JsonResponse({"status": "ok"})
 
 
 def home(request):
