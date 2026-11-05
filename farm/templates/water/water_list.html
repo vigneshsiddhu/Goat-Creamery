@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Water{% endblock %}
+{% block page_title %}Water{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Water</h2>
+                <p>Water sources for {{ business.name }}</p>
+            </div>
+            <div class="ingredient-header-actions">
+                <a href="{% url 'farm:water_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add water
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if waters %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Source</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for water in waters %}
+                    <tr>
+                        <td><span class="ingredient-name">{{ water.name }}</span></td>
+                        <td>{{ water.get_source_display }}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'farm:water_edit' water.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'farm:water_delete' water.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-droplet"></i></div>
+            <h3>No water sources yet</h3>
+            <p>Add borewells, ponds, or other sources used on the farm.</p>
+            <a href="{% url 'farm:water_create' %}" class="ingredient-primary-btn">Add water</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

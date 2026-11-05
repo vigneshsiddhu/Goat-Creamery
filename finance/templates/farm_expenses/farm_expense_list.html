@@ -1,261 +1,146 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Farm Expenses
-{% endblock %}
+{% block title %}Farm Expenses{% endblock %}
+{% block page_title %}Farm Expenses{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{% static 'css/farm_expense.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=14">
 {% endblock %}
 
 {% block content %}
-
-<div class="farm-expense-page">
-
-    <!-- HEADER -->
-
-    <div class="farm-expense-page-header">
-
-        <div>
-
-            <h3>Farm Expenses</h3>
-
-            <p>
-                Manage farm expenses for {{ business.name }}.
-            </p>
-
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Farm Expenses</h2>
+                <p>Spending for {{ business.name }}</p>
+            </div>
+            <div class="ingredient-header-actions">
+                <a href="{% url 'finance:farm_expense_voice_create' %}" class="ingredient-secondary-btn">
+                    <i class="bi bi-mic"></i>
+                    Voice Farm Expenses
+                </a>
+                <a href="{% url 'finance:farm_expense_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Expense
+                </a>
+            </div>
         </div>
 
-        <a href="{% url 'finance:farm_expense_create' %}"
-           class="farm-expense-add-btn">
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-            <i class="bi bi-plus-lg"></i>
-
-            Add Expense
-
-        </a>
-
-    </div>
-    <!-- =====================================================
-     EXPENSE SUMMARY
-    ====================================================== -->
-
-    <div class="expense-summary-grid">
-
-        <!-- LAST MONTH -->
-
-        <div class="expense-summary-card expense-card-last">
-
-            <div class="expense-summary-icon">
-                <i class="bi bi-calendar-minus"></i>
+        <div class="ingredient-stat-grid">
+            <div class="ingredient-stat-card">
+                <span>{{ last_month_name }}</span>
+                <strong>₹{{ last_month_total|floatformat:0 }}</strong>
             </div>
-
-            <div class="expense-summary-content">
-
-                <span class="expense-summary-label">
-                    {{ last_month_name }} Expenses
-                </span>
-
-                <strong class="expense-summary-value">
-                    ₹{{ last_month_total|floatformat:2 }}
-                </strong>
-
-                <span class="expense-summary-description">
-                    Previous month
-                </span>
-
+            <div class="ingredient-stat-card">
+                <span>{{ current_month_name }}</span>
+                <strong>₹{{ current_month_total|floatformat:0 }}</strong>
             </div>
-
+            <div class="ingredient-stat-card">
+                <span>Today</span>
+                <strong>₹{{ today_total|floatformat:0 }}</strong>
+            </div>
         </div>
 
-
-        <!-- CURRENT MONTH -->
-
-        <div class="expense-summary-card expense-card-current">
-
-            <div class="expense-summary-icon">
-                <i class="bi bi-calendar-check"></i>
-            </div>
-
-            <div class="expense-summary-content">
-
-                <span class="expense-summary-label">
-                    {{ current_month_name }} Expenses
-                </span>
-
-                <strong class="expense-summary-value">
-                    ₹{{ current_month_total|floatformat:2 }}
-                </strong>
-
-                <span class="expense-summary-description">
-                    Current month
-                </span>
-
-            </div>
-
+        {% if objects %}
+        <div class="ingredient-toolbar">
+            <label class="ingredient-search" for="farm-expense-search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="farm-expense-search" placeholder="Search category, amount, comment..." autocomplete="off">
+            </label>
+            <span class="ingredient-count">{{ objects|length }} expense{{ objects|length|pluralize }}</span>
         </div>
 
-
-        <!-- TODAY -->
-
-        <div class="expense-summary-card expense-card-today">
-
-            <div class="expense-summary-icon">
-                <i class="bi bi-calendar-day"></i>
-            </div>
-
-            <div class="expense-summary-content">
-
-                <span class="expense-summary-label">
-                    Today's Expenses
-                </span>
-
-                <strong class="expense-summary-value">
-                    ₹{{ today_total|floatformat:2 }}
-                </strong>
-
-                <span class="expense-summary-description">
-                    Today
-                </span>
-
-            </div>
-
-        </div>
-
-
-        
-
-    </div>
-
-
-    
-    <!-- LIST CARD -->
-
-    <div class="farm-expense-list-card">
-
-        <div class="farm-expense-table-wrapper">
-
-            <table class="farm-expense-table">
-
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table" id="farm-expense-table">
                 <thead>
-
                     <tr>
-
                         <th>Category</th>
-
                         <th>Amount</th>
-
-                        <th>Comment
-                        </th>
-
-                        <th>Created By</th>
-
+                        <th>Employee</th>
                         <th>Date</th>
-
                         <th>Actions</th>
-
                     </tr>
-
                 </thead>
-
-
                 <tbody>
-
-                    {% for expense in expenses %}
-
-                    <tr>
-
+                    {% for expense in objects %}
+                    <tr data-expense-row>
                         <td>
-
-                            <span class="farm-expense-category">
-                                {{ expense.category }}
-                            </span>
-
+                            <span class="ingredient-name">{{ expense.category }}</span>
+                            <span class="ingredient-code">{% if expense.comment %}{{ expense.comment|truncatechars:60 }}{% else %}—{% endif %}</span>
                         </td>
-
-
+                        <td><span class="ingredient-stock-pill">₹{{ expense.amount|floatformat:0 }}</span></td>
+                        <td>{% if expense.employee %}{{ expense.employee }}{% else %}—{% endif %}</td>
+                        <td>{{ expense.date|date:"d M Y" }}</td>
                         <td>
-
-                            <span class="farm-expense-amount">
-                                ₹{{ expense.amount }}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            {% if expense.comment %}
-                                {{ expense.comment }}
-                            {% else %}
-                                —
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-                            {{ expense.created_by }}
-                        </td>
-
-
-                        <td>
-                            {{ expense.created_at|date:"d-m-Y" }}
-                        </td>
-
-
-                        <td>
-
-                            <div class="farm-expense-actions">
-
-                                <a href="{% url 'finance:farm_expense_update' expense.id %}"
-                                   class="farm-expense-edit">
-
-                                    <i class="bi bi-pencil"></i>
-                                    Edit
-
-                                </a>
-
-
-                                <a href="{% url 'finance:farm_expense_delete' expense.id %}"
-                                   class="farm-expense-delete">
-
-                                    <i class="bi bi-trash"></i>
-                                    Delete
-
-                                </a>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'finance:farm_expense_edit' expense.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'finance:farm_expense_delete' expense.pk %}" class="ingredient-btn ingredient-btn-delete">Delete</a>
                             </div>
-
                         </td>
-
                     </tr>
-
-                    {% empty %}
-
-                    <tr>
-
-                        <td colspan="6"
-                            class="farm-expense-empty">
-
-                            No farm expenses found.
-
-                        </td>
-
-                    </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
 
+        <div class="ingredient-cards" id="farm-expense-cards">
+            {% for expense in objects %}
+            <div class="ingredient-card-item" data-expense-card>
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ expense.category }}</div>
+                        <div class="ingredient-code">{{ expense.date|date:"d M Y" }}</div>
+                    </div>
+                    <span class="ingredient-stock-pill">₹{{ expense.amount|floatformat:0 }}</span>
+                </div>
+                <div class="ingredient-card-meta">
+                    <span>{% if expense.employee %}{{ expense.employee }}{% else %}No employee{% endif %}</span>
+                    <span>{% if expense.comment %}{{ expense.comment|truncatechars:40 }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="ingredient-card-actions">
+                    <a href="{% url 'finance:farm_expense_edit' expense.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'finance:farm_expense_delete' expense.pk %}" class="ingredient-btn ingredient-btn-delete">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-cash-stack"></i></div>
+            <h3>No farm expenses yet</h3>
+            <p>Record feed, labour, and other farm spending.</p>
+            <a href="{% url 'finance:farm_expense_create' %}" class="ingredient-primary-btn">Add Expense</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const search = document.getElementById("farm-expense-search");
+    if (!search) return;
+    const rows = document.querySelectorAll("[data-expense-row]");
+    const cards = document.querySelectorAll("[data-expense-card]");
+    search.addEventListener("input", function () {
+        const q = search.value.trim().toLowerCase();
+        rows.forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+        cards.forEach(function (card) {
+            card.style.display = card.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+    });
+});
+</script>
 {% endblock %}

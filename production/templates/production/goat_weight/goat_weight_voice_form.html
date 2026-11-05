@@ -1,338 +1,131 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Goat Weight Voice Entry
-{% endblock %}
-
+{% block title %}Goat Weight Voice Entry{% endblock %}
+{% block page_title %}Voice Weight{% endblock %}
 
 {% block extra_css %}
-
-<link
-    rel="stylesheet"
-    href="{% static 'css/goat_weight.css' %}?v=35"
->
-
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/goat_weight.css' %}?v=43">
 {% endblock %}
-
 
 {% block content %}
+<div class="ingredient-form-page weight-voice-page">
+    <a href="{% url 'production:goat_weight_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goat weight
+    </a>
 
-<div class="production-page">
-
-    <div class="goat-weight-form-card">
-
-        <!-- =====================================================
-             HEADER
-        ====================================================== -->
-
-        <div class="goat-weight-form-header">
-
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
             <div>
-
-                <h3>
-                    Goat Weight Voice Entry
-                </h3>
-
-                <p>
-                    Select the goat tag and weight.
-                </p>
-
+                <h3>Voice Weight</h3>
+                <p>Pick Token ID, set kg, then confirm by voice. Saved for today.</p>
             </div>
-
-
-            <a
-                href="{% url 'production:goat_weight_list' %}"
-                class="goat-weight-back-btn"
-            >
-
+            <a href="{% url 'production:goat_weight_list' %}" class="form-back-btn">
                 <i class="bi bi-arrow-left"></i>
-
                 Back
-
             </a>
-
         </div>
 
+        <div class="ingredient-form-body">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
 
-        <!-- =====================================================
-             FORM BODY
-        ====================================================== -->
-
-        <div class="goat-weight-form-body">
-
-            <form
-                method="POST"
-                id="goat-weight-form"
-            >
-
+            <form method="post" id="goat-weight-form" novalidate>
                 {% csrf_token %}
-
-
-                <!-- =================================================
-                     GOAT TAG
-                ================================================== -->
-
-                <div class="goat-weight-form-group">
-
-                    <label
-                        for="{{ form.goat.id_for_label }}"
-                    >
-                        Goat Tag
-                    </label>
-
-
-                    <div class="goat-weight-select-wrapper">
-
-                        <i class="bi bi-tag-fill"></i>
-
-                        {{ form.goat }}
-
-                        <i
-                            class="bi bi-chevron-down goat-weight-select-arrow"
-                        ></i>
-
-                    </div>
-
-
-                    {% if form.goat.errors %}
-
-                        <div class="goat-weight-form-error">
-
-                            {{ form.goat.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     GOAT WEIGHT
-                ================================================== -->
-
-                <div class="goat-weight-form-group">
-
-                    <label>
-                        Goat Weight
-                    </label>
-
-
-                    <div class="weight-quantity-buttons">
-
-                        {% for radio in form.weight %}
-
-                            <label
-                                class="weight-quantity-option"
-                            >
-
-                                {{ radio.tag }}
-
-                                <span>
-                                    {{ radio.choice_label }}
-                                </span>
-
-                            </label>
-
-                        {% endfor %}
-
-                    </div>
-
-
-                    {% if form.weight.errors %}
-
-                        <div class="goat-weight-form-error">
-
-                            {{ form.weight.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     NON FIELD ERRORS
-                ================================================== -->
+                <input type="hidden" name="weight" id="id_weight" value="{{ form.weight.value|default:'' }}">
 
                 {% if form.non_field_errors %}
-
-                    <div class="goat-weight-form-error">
-
-                        {{ form.non_field_errors }}
-
-                    </div>
-
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
+                {% for error in form.goat.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                {% for error in form.weight.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
 
-
-                <!-- =================================================
-                     MAIN FORM ACTION
-                     ONLY CANCEL
-                ================================================== -->
-
-                <div class="goat-weight-form-actions">
-
-                    <a
-                        href="{% url 'production:goat_weight_list' %}"
-                        class="goat-weight-cancel-btn"
-                    >
-
-                        <i class="bi bi-x-lg"></i>
-
-                        Cancel
-
-                    </a>
-
+                <div class="weight-voice-step">
+                    <div class="weight-voice-step-title"><span>1</span> Token ID</div>
+                    <select name="goat" id="id_goat" class="form-input">
+                        <option value="">Select Token ID</option>
+                        {% for goat in goats %}
+                        <option
+                            value="{{ goat.id }}"
+                            data-last-weight="{% if goat.last_weight %}{{ goat.last_weight }}{% endif %}"
+                            {% if form.goat.value|stringformat:"s" == goat.id|stringformat:"s" %}selected{% endif %}
+                        >{{ goat.token_no }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
+                <div class="weight-voice-step">
+                    <div class="weight-voice-step-title"><span>2</span> Weight</div>
+                    <div class="weight-keypad-display" id="weight-keypad-display">
+                        <span id="weight-display-goat">Select Token ID</span>
+                        <strong>
+                            <span id="weight-display-value">0.0</span><span class="weight-caret" aria-hidden="true"></span>
+                            <small>kg</small>
+                        </strong>
+                    </div>
+                    <div class="weight-keypad" id="weight-keypad">
+                        <button type="button" data-key="1">1</button>
+                        <button type="button" data-key="2">2</button>
+                        <button type="button" data-key="3">3</button>
+                        <button type="button" data-key="4">4</button>
+                        <button type="button" data-key="5">5</button>
+                        <button type="button" data-key="6">6</button>
+                        <button type="button" data-key="7">7</button>
+                        <button type="button" data-key="8">8</button>
+                        <button type="button" data-key="9">9</button>
+                        <button type="button" data-key=".">.</button>
+                        <button type="button" data-key="0">0</button>
+                        <button type="button" data-key="back">⌫</button>
+                    </div>
+                    <button type="button" class="form-save-btn weight-voice-confirm-inline" data-weight-confirm>
+                        <i class="bi bi-volume-up-fill"></i>
+                        Speak & Confirm
+                    </button>
+                </div>
             </form>
-
         </div>
-
     </div>
-
 </div>
 
 
-<!-- =========================================================
-     CONFIRMATION POPUP
-========================================================= -->
 
-<div
-    id="weight-voice-confirmation"
-    class="weight-confirmation-overlay"
-    style="display: none;"
->
-
+<div id="weight-voice-confirmation" class="weight-confirmation-overlay">
     <div class="weight-confirmation-popup">
-
-
-        <!-- =================================================
-             ICON
-        ================================================== -->
-
         <div class="weight-confirmation-icon">
-
             <i class="bi bi-volume-up-fill"></i>
-
         </div>
-
-
-        <!-- =================================================
-             TITLE
-        ================================================== -->
-
-        <h4>
-            Confirm Goat Weight
-        </h4>
-
-
-        <!-- =================================================
-             VOICE MESSAGE
-        ================================================== -->
-
-        <p
-            id="weight-voice-text"
-            class="weight-confirmation-text"
-        ></p>
-
-
-        <!-- =================================================
-             SELECTED DETAILS
-        ================================================== -->
-
+        <h4>Confirm Goat Weight</h4>
+        <p id="weight-voice-text" class="weight-confirmation-text"></p>
         <div class="weight-confirmation-details">
-
-
-            <!-- GOAT -->
-
             <div class="weight-confirmation-detail">
-
-                <span>
-                    Goat
-                </span>
-
-                <strong
-                    id="weight-confirmation-goat"
-                >
-                    —
-                </strong>
-
+                <span>Token ID</span>
+                <strong id="weight-confirmation-goat">—</strong>
             </div>
-
-
-            <!-- WEIGHT -->
-
             <div class="weight-confirmation-detail">
-
-                <span>
-                    Weight
-                </span>
-
-                <strong
-                    id="weight-confirmation-value"
-                >
-                    —
-                </strong>
-
+                <span>Weight</span>
+                <strong id="weight-confirmation-value">—</strong>
             </div>
-
         </div>
-
-
-        <!-- =================================================
-             POPUP ACTIONS
-        ================================================== -->
-
         <div class="weight-confirmation-actions">
-
-
-            <!-- CHANGE -->
-
-            <button
-                type="button"
-                id="weight-confirmation-cancel"
-                class="weight-confirmation-change-btn"
-            >
-
+            <button type="button" id="weight-confirmation-cancel" class="weight-confirmation-change-btn">
                 <i class="bi bi-pencil"></i>
-
                 Change
-
             </button>
-
-
-            <!-- CONFIRM & SAVE -->
-
-            <button
-                type="button"
-                id="weight-confirmation-save"
-                class="weight-confirmation-save-btn"
-            >
-
+            <button type="button" id="weight-confirmation-save" class="weight-confirmation-save-btn">
                 <i class="bi bi-check-lg"></i>
-
                 Confirm & Save
-
             </button>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}
 
-
 {% block extra_js %}
-
-<script
-    src="{% static 'js/goat_weight.js' %}?v=35"
-    defer
-></script>
-
+<script src="{% static 'js/goat_weight.js' %}?v=43" defer></script>
 {% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Goat milk report{% endblock %}
+{% block page_title %}Goat milk report{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reports.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="report-page">
+    <div class="report-header">
+        <div>
+            <span class="report-eyebrow">Last month</span>
+            <h1>{{ report.title }}</h1>
+            <p>{{ period_start|date:"d M" }} – {{ period_end|date:"d M Y" }} · daily litres, sessions, and goat map · {{ business.name }}</p>
+        </div>
+    </div>
+    {% include "reports/_tabs.html" %}
+
+    <div class="report-kpis">
+        {% for kpi in report.kpis %}
+        <div class="report-kpi is-{{ kpi.tone }}">
+            <span>{{ kpi.label }}</span>
+            <strong>{{ kpi.value }}</strong>
+            <small>{{ kpi.note }}</small>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="report-split">
+        <section class="report-panel">
+            <h3>Daily milk</h3>
+            <p>Total litres, highs and drops.</p>
+            <canvas id="chart-daily" height="140"></canvas>
+        </section>
+        <section class="report-panel">
+            <h3>Goat milk map</h3>
+            <p>Each tile is a goat. Green is high, red is low.</p>
+            <div class="report-tile-map">
+                {% for tile in report.tiles %}
+                <div class="report-tile is-{{ tile.tone }}" title="{{ tile.token }}">
+                    <strong>{{ tile.token }}</strong>
+                    <span>{{ tile.value }}</span>
+                </div>
+                {% empty %}
+                <p>No milk records this month.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <div class="report-split">
+        <section class="report-panel">
+            <h3>Morning vs evening</h3>
+            <canvas id="chart-session" height="160"></canvas>
+        </section>
+        <section class="report-panel">
+            <h3>Top goats</h3>
+            <canvas id="chart-goats" height="160"></canvas>
+        </section>
+    </div>
+</div>
+
+{{ report.charts|json_script:"report-charts" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/reports.js' %}?v=2"></script>
+{% endblock %}

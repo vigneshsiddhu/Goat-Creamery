@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ batch.batch_number }}{% endblock %}
+{% block page_title %}Production Batch{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'production:product_batch_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to production batches
+    </a>
+
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ batch.batch_number }}</h2>
+                <p>
+                    {{ batch.product.type|title }}{% if batch.product.variant %} · {{ batch.product.variant|title }}{% endif %}
+                    · {{ batch.date|date:"d M Y" }}
+                </p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">{{ batch.get_qc_status_display }}</span>
+        </div>
+
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Quantity</span>
+                    <strong>{{ batch.quantity }} {{ batch.unit }}</strong>
+                </div>
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Cost</span>
+                    <strong>₹{{ batch.cost|floatformat:2 }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Product</span>
+                    <strong>{{ batch.product.code_sku }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Recipe</span>
+                    <strong>{% if batch.recipe %}{{ batch.recipe.type|title }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Milk Batch</span>
+                    <strong>
+                        {% with links=batch.milk_links.all %}
+                        {% if links %}
+                            {% for link in links %}{{ link.goat_milk_batch.batch_number }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                            —
+                        {% endif %}
+                        {% endwith %}
+                    </strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Wastage</span>
+                    <strong>{{ batch.wastage }} {{ batch.unit }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Status</span>
+                    <strong>{{ batch.status|title }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>QR Code</span>
+                    <strong>{% if batch.qr_code %}{{ batch.qr_code }}{% else %}—{% endif %}</strong>
+                </div>
+            </div>
+
+            {% if batch.notes %}
+            <div class="ingredient-detail-field" style="margin-bottom: 18px;">
+                <span>Notes</span>
+                <strong>{{ batch.notes }}</strong>
+            </div>
+            {% endif %}
+
+            <div class="ingredient-detail-actions">
+                <a href="{% url 'production:product_batch_edit' batch.pk %}" class="ingredient-btn ingredient-btn-edit">Edit Batch</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

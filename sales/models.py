@@ -2,10 +2,10 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
-from business.models import Business
+from business.models import Business, Location
 from inventory.models import Item, Vehicle
-from farm.models import Location
 
 
 # ============================================================
@@ -32,13 +32,15 @@ class Customer(models.Model):
 # INVOICE
 # ============================================================
 class Invoice(models.Model):
+    PAYMENT_STATUS_CHOICES = [("pending", "Pending"),("paid", "Paid"),("partial", "Partially Paid"),("cancelled", "Cancelled"),]
+    PAYMENT_METHOD_CHOICES = [("cash", "Cash"),("upi", "UPI"),("card", "Card"),("bank_transfer", "Bank Transfer"),("credit", "Credit"),]
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,)
-    number = models.CharField(max_length=50,)
+    number = models.CharField(max_length=50,blank=True,)
     date = models.DateField()
     time = models.TimeField(null=True,blank=True,)
-    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,related_name="invoices",)
-    payment_status = models.CharField(max_length=100,)
-    payment_method = models.CharField(max_length=100)
+    customer = models.ForeignKey(Customer,on_delete=models.PROTECT,related_name="invoices",null=True,blank=True,help_text="Optional. Leave empty for walk-in sales.",)
+    payment_status = models.CharField(max_length=100,choices=PAYMENT_STATUS_CHOICES,blank=True,default="",)
+    payment_method = models.CharField(max_length=100,choices=PAYMENT_METHOD_CHOICES,blank=True,default="",)
     sub_total = models.DecimalField(max_digits=14,decimal_places=2,default=0,)
     discount = models.DecimalField(max_digits=14,decimal_places=2,default=0,)
     gst = models.DecimalField(max_digits=14,decimal_places=2,default=0,)
@@ -53,6 +55,28 @@ class Invoice(models.Model):
         constraints = [models.UniqueConstraint(fields=["business", "number"],name="unique_invoice_number_per_business",)]
     def __str__(self):
         return self.number
+
+    @classmethod
+    def generate_number(cls, business):
+        last_number = (
+            cls.objects.select_for_update()
+            .filter(business=business, number__startswith="INV-")
+            .order_by("-number")
+            .values_list("number", flat=True)
+            .first()
+        )
+        sequence = 1
+        if last_number:
+            try:
+                sequence = int(last_number.rsplit("-", 1)[-1]) + 1
+            except ValueError:
+                sequence = cls.objects.filter(business=business).count() + 1
+        return f"INV-{sequence:05d}"
+
+    def assign_now(self):
+        now = timezone.localtime()
+        self.date = now.date()
+        self.time = now.time().replace(microsecond=0)
     
 # ============================================================
 # INVOICE ITEM
@@ -83,11 +107,19 @@ class InvoiceLocation(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,)
     invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE,related_name="locations",)
     vehicle = models.ForeignKey(Vehicle,on_delete=models.PROTECT,related_name="invoice_vehicles",null=True,blank=True,)
-    location = models.ForeignKey(Location,on_delete=models.PROTECT,related_name="invoice_locations",)
+    location = models.ForeignKey(Location,on_delete=models.PROTECT,related_name="invoice_locations",null=True,blank=True,)
+    latitude = models.DecimalField(max_digits=10,decimal_places=7,null=True,blank=True,)
+    longitude = models.DecimalField(max_digits=10,decimal_places=7,null=True,blank=True,)
     business = models.ForeignKey(Business,on_delete=models.CASCADE,related_name="invoice_locations",)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="created_invoice_locations",)
     created_at = models.DateTimeField(auto_now_add=True,)
     updated_at = models.DateTimeField(auto_now=True,)
     def __str__(self):
-        return f"{self.invoice.number} - {self.location}"
+        if self.location_id:
+            return f"{self.invoice.number} - {self.location}"
+        if self.latitude is not None and self.longitude is not None:
+            return f"{self.invoice.number} - {self.latitude}, {self.longitude}"
+        if self.vehicle_id:
+            return f"{self.invoice.number} - {self.vehicle}"
+        return f"{self.invoice.number} - location"
 

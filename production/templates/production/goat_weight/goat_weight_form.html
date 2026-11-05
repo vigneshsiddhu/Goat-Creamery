@@ -1,273 +1,83 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    {% if weight %}
-        Edit Goat Weight
-    {% else %}
-        Add Goat Weight
-    {% endif %}
-{% endblock %}
-
+{% block title %}{{ title|default:"Goat Weight" }}{% endblock %}
+{% block page_title %}{{ title|default:"Goat Weight" }}{% endblock %}
 
 {% block extra_css %}
-
-<link rel="stylesheet" href="{% static 'css/goat_weight.css' %}?v=10">
-
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
 {% endblock %}
-
 
 {% block content %}
-
-<div class="production-page">
-
-    <div class="goat-weight-form-card">
-
-
-
-        <!-- =================================================
-             PAGE HEADER
-        ================================================== -->
-
-        <div class="goat-weight-form-header">
-
+<div class="ingredient-form-page">
+    <a href="{% url 'production:goat_weight_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goat weight
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
             <div>
-
-                <h5>
-
-                    {% if weight %}
-                        Edit Goat Weight
-                    {% else %}
-                        Goat Weight Information
-                    {% endif %}
-
-                </h5>
-
-
+                <h3>{{ title|default:"Add Goat Weight" }}</h3>
                 <p>
-
                     {% if weight %}
-                        Update the weight details below.
+                        Update this weight record for {{ business.name }}.
                     {% else %}
-                        Enter the goat weight details below.
+                        One weight per Token ID per day — saving again updates that date.
                     {% endif %}
-
                 </p>
-
             </div>
-
-
-            <a
-                href="{% url 'production:goat_weight_list' %}"
-                class="goat-weight-back-btn"
-            >
-
+            <a href="{% url 'production:goat_weight_list' %}" class="form-back-btn">
                 <i class="bi bi-arrow-left"></i>
-
                 Back
-
             </a>
-
         </div>
-
-
-        <!-- =================================================
-             FORM BODY
-        ================================================== -->
-
-        <div class="goat-weight-form-body">
-
-            <form
-                method="POST"
-                id="goat-weight-form"
-            >
-
+        <div class="ingredient-form-body">
+            <form method="post" id="goat-weight-form" novalidate>
                 {% csrf_token %}
-
-
-                <!-- =================================================
-                     GOAT
-                ================================================== -->
-
-                <div class="goat-weight-form-group">
-
-                    <label
-                        for="{{ form.goat.id_for_label }}"
-                    >
-                        Goat
-                    </label>
-
-
-                    {{ form.goat }}
-
-
-                    {% if form.goat.errors %}
-
-                        <div class="goat-weight-form-error">
-                            {{ form.goat.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     WEIGHT + DATE
-                ================================================== -->
-
-                <div class="goat-weight-form-row">
-
-                    <!-- WEIGHT -->
-
-                    <div class="goat-weight-form-group">
-
-                        <label
-                            for="{{ form.weight.id_for_label }}"
-                        >
-                            Weight (kg)
-                        </label>
-
-
-                        {{ form.weight }}
-
-
-                        {% if form.weight.errors %}
-
-                            <div class="goat-weight-form-error">
-                                {{ form.weight.errors }}
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <!-- DATE -->
-
-                    <div class="goat-weight-form-group">
-
-                        <label
-                            for="{{ form.date.id_for_label }}"
-                        >
-                            Date
-                        </label>
-
-
-                        {{ form.date }}
-
-
-                        {% if form.date.errors %}
-
-                            <div class="goat-weight-form-error">
-                                {{ form.date.errors }}
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     NOTE
-                ================================================== -->
-
-                <div class="goat-weight-form-group">
-
-                    <label
-                        for="{{ form.note.id_for_label }}"
-                    >
-                        Note
-                    </label>
-
-
-                    {{ form.note }}
-
-
-                    {% if form.note.errors %}
-
-                        <div class="goat-weight-form-error">
-                            {{ form.note.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     NON FIELD ERRORS
-                ================================================== -->
-
                 {% if form.non_field_errors %}
-
-                    <div class="goat-weight-form-error">
-                        {{ form.non_field_errors }}
-                    </div>
-
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-
-
-                <!-- =================================================
-                     FORM ACTIONS
-                ================================================== -->
-
-                <div class="goat-weight-form-actions">
-
-                    <a
-                        href="{% url 'production:goat_weight_list' %}"
-                        class="goat-weight-cancel-btn"
-                    >
-                        Cancel
-                    </a>
-
-
-                    <button
-
-                        type="submit"
-
-                        id="goat-weight-submit-btn"
-
-                        class="goat-weight-save-btn"
-
-                    >
-
-                        {% if weight %}
-
-                            <i class="bi bi-check-lg"></i>
-
-                            Update Weight
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-
-                            Add Weight
-
-                        {% endif %}
-
-                    </button>
-
+                <h4 class="ingredient-form-section">Weight Details</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.goat.id_for_label }}">Token ID <span class="form-required">*</span></label>
+                        {{ form.goat }}
+                        {% for error in form.goat.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.weight.id_for_label }}">Weight (kg) <span class="form-required">*</span></label>
+                        {{ form.weight }}
+                        {% for error in form.weight.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
                 </div>
-
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.note.id_for_label }}">Note</label>
+                        {{ form.note }}
+                        {% for error in form.note.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'production:goat_weight_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if weight %}Update Weight{% else %}Save Weight{% endif %}
+                    </button>
+                </div>
             </form>
-
         </div>
-
     </div>
-
 </div>
-
-{% endblock %}
-
-
-{% block extra_js %}
-
-<script
-    src="{% static 'js/goat_weight.js' %}?v=31"
-    defer
-></script>
-
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="goat-weight-form">{% if weight %}Update Weight{% else %}Save Weight{% endif %}</button>
+</div>
 {% endblock %}

@@ -1,404 +1,108 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Locations
-{% endblock %}
+{% block title %}Locations{% endblock %}
+{% block page_title %}Locations{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/list.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="list-page">
-
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="list-page-header">
-
-        <div class="list-page-header-content">
-
-            <h3>Locations</h3>
-
-            <p>
-                Manage locations for {{ business.name }}.
-            </p>
-
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Locations</h2>
+                <p>{{ business.name }} · places</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'business:location_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add location
+                </a>
+            </div>
         </div>
-
-        <div class="list-page-header-actions">
-
-            <a
-                href="{% url 'business:location_create' %}"
-                class="list-add-btn"
-            >
-                <i class="bi bi-plus-lg"></i>
-                Add Location
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         MESSAGES
-    ====================================================== -->
-
-    {% if messages %}
-
-        <div class="list-messages">
-
+        {% if messages %}
+        <div class="farm-hub-messages">
             {% for message in messages %}
-
-                <div class="list-message list-message-{{ message.tags }}">
-
-                    {{ message }}
-
-                </div>
-
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
-
         </div>
-
-    {% endif %}
-
-
-    <!-- =====================================================
-         LIST CARD
-    ====================================================== -->
-
-    <div class="list-card">
-
-
-
-        <!-- =================================================
-             TABLE
-        ================================================== -->
-
-        <div class="list-table-wrapper">
-
-            <table class="list-table" id="location-table">
-
+        {% endif %}
+        {% if locations %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
                 <thead>
-
                     <tr>
-
                         <th>Location</th>
-
                         <th>Type</th>
-
-                        <th>City</th>
-
+                        <th>Parent</th>
                         <th>Map</th>
-
                         <th>Status</th>
-
-                        <th>Created By</th>
-
+                        <th>Created by</th>
                         <th>Actions</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     {% for location in locations %}
-
-                        <tr>
-
-                            <!-- LOCATION -->
-
-                            <td>
-
-                                <span class="list-name">
-                                    {{ location.name }}
-                                </span>
-
-                            </td>
-
-
-                            <!-- TYPE -->
-
-                            <td>
-
-                                {% if location.type == "state" %}
-
-                                    <span class="list-status list-status-info">
-                                        State
-                                    </span>
-
-                                {% elif location.type == "district" %}
-
-                                    <span class="list-status list-status-info">
-                                        District
-                                    </span>
-
-                                {% elif location.type == "area" %}
-
-                                    <span class="list-status list-status-info">
-                                        Area
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="list-status">
-                                        Other
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- PARENT -->
-
-                            <td>
-
-                                {% if location.parent %}
-
-                                    <span class="list-secondary">
-                                        {{ location.parent.name }}
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="list-secondary">
-                                        —
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- COORDINATES -->
-
-                            <td>
-
-                                {% if location.latitude and location.longitude %}
-
-                                    <span class="list-value">
-
-                                        {{ location.latitude }},
-                                        {{ location.longitude }}
-
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="list-secondary">
-                                        —
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- STATUS -->
-
-                            <td>
-
-                                {% if location.status %}
-
-                                    <span class="list-status list-status-active">
-
-                                        <span class="list-status-dot"></span>
-
-                                        Active
-
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="list-status list-status-inactive">
-
-                                        <span class="list-status-dot"></span>
-
-                                        Inactive
-
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- CREATED BY -->
-
-                            <td>
-
-                                {% if location.created_by %}
-
-                                    <span class="list-user">
-                                        {{ location.created_by }}
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="list-secondary">
-                                        —
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- ACTIONS -->
-
-                            <td>
-
-                                <div class="list-actions">
-
-                                    <!-- EDIT -->
-
-                                    <a
-                                        href="{% url 'business:location_edit' location.id %}"
-                                        class="list-edit-btn"
-                                    >
-
-                                        <i class="bi bi-pencil"></i>
-
-                                        Edit
-
-                                    </a>
-
-
-                                    <!-- DELETE -->
-
-                                    <form
-                                        method="post"
-                                        action="{% url 'business:location_delete' location.id %}"
-                                        class="list-delete-form"
-                                    >
-
-                                        {% csrf_token %}
-
-                                        <button
-                                            type="submit"
-                                            class="list-delete-btn"
-                                            onclick="return confirm('Are you sure you want to delete this location?');"
-                                        >
-
-                                            <i class="bi bi-trash"></i>
-
-                                            Delete
-
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    {% empty %}
-
-                        <tr>
-
-                            <td
-                                colspan="7"
-                                class="list-empty"
-                            >
-
-                                <div class="list-empty-icon">
-
-                                    <i class="bi bi-geo-alt"></i>
-
-                                </div>
-
-                                <div class="list-empty-title">
-                                    No locations found
-                                </div>
-
-                                <div class="list-empty-text">
-                                    Create your first location for
-                                    {{ business.name }}.
-                                </div>
-
-                                <a
-                                    href="{% url 'business:location_create' %}"
-                                    class="list-empty-btn"
-                                >
-
-                                    <i class="bi bi-plus-lg"></i>
-
-                                    Add Location
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-
+                    <tr>
+                        <td><span class="ingredient-name">{{ location.name }}</span></td>
+                        <td>{{ location.get_type_display }}</td>
+                        <td>{% if location.parent %}{{ location.parent.name }}{% else %}—{% endif %}</td>
+                        <td>
+                            {% if location.latitude and location.longitude %}
+                            {{ location.latitude }}, {{ location.longitude }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if location.status %}
+                            <span class="ingredient-stock-pill">Active</span>
+                            {% else %}
+                            <span class="ingredient-stock-pill empty">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ location.created_by|default:"—" }}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'business:location_edit' location.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'business:location_delete' location.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
+        <div class="ingredient-cards">
+            {% for location in locations %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ location.name }}</div>
+                        <div class="ingredient-code">{{ location.get_type_display }}{% if location.parent %} · {{ location.parent.name }}{% endif %}</div>
+                    </div>
+                    {% if location.status %}
+                    <span class="ingredient-stock-pill">Active</span>
+                    {% else %}
+                    <span class="ingredient-stock-pill empty">Inactive</span>
+                    {% endif %}
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'business:location_edit' location.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'business:location_delete' location.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-geo-alt"></i></div>
+            <h3>No locations yet</h3>
+            <p>Add state, district, area, or other places.</p>
+            <a href="{% url 'business:location_create' %}" class="ingredient-primary-btn">Add location</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
-
-
-<!-- =========================================================
-     SEARCH
-========================================================= -->
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const searchInput =
-        document.getElementById("location-search");
-
-    const table =
-        document.getElementById("location-table");
-
-    if (!searchInput || !table) {
-        return;
-    }
-
-    const rows =
-        table.querySelectorAll("tbody tr");
-
-    searchInput.addEventListener("input", function () {
-
-        const searchValue =
-            this.value.toLowerCase().trim();
-
-        rows.forEach(function (row) {
-
-            const rowText =
-                row.textContent.toLowerCase();
-
-            if (rowText.includes(searchValue)) {
-
-                row.style.display = "";
-
-            } else {
-
-                row.style.display = "none";
-
-            }
-
-        });
-
-    });
-
-});
-
-</script>
-
 {% endblock %}

@@ -1,0 +1,2 @@
+{% url 'inventory:vehicle_location_list' as cancel_url %}
+{% include "farm/_delete.html" with farm_title="Delete vehicle location?" object_label=vehicle_location.vehicle.number %}

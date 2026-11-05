@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if record %}Edit mapping{% else %}Map land to water{% endif %}{% endblock %}
+{% block page_title %}{% if record %}Edit mapping{% else %}Map land to water{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'farm:land_list' %}?tab=map" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to land & water
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if record %}Edit mapping{% else %}Map land to water{% endif %}</h3>
+                <p>
+                    {% if record %}
+                    Update which water source is used on this land.
+                    {% else %}
+                    Link a land parcel to a water source and the date it was used.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'farm:land_list' %}?tab=map" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <h4 class="ingredient-form-section">Mapping</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.land.id_for_label }}">Land <span class="form-required">*</span></label>
+                        {{ form.land }}
+                        <span class="form-help-text">Parcel that received water.</span>
+                        {% for error in form.land.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.water.id_for_label }}">Water <span class="form-required">*</span></label>
+                        {{ form.water }}
+                        <span class="form-help-text">Borewell, pond, or other source.</span>
+                        {% for error in form.water.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label>Status</label>
+                        <label class="farm-checkbox-row" for="{{ form.status.id_for_label }}">
+                            {{ form.status }}
+                            <span>Active</span>
+                        </label>
+                        {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-group">
+                    <label for="{{ form.comment.id_for_label }}">Comment</label>
+                    {{ form.comment }}
+                    <span class="form-help-text">Optional note about irrigation or usage.</span>
+                    {% for error in form.comment.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'farm:land_list' %}?tab=map" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if record %}Update mapping{% else %}Save mapping{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

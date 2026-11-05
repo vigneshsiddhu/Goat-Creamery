@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ weight.goat.token_no }} · Weight{% endblock %}
+{% block page_title %}Goat Weight{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'production:goat_weight_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goat weight
+    </a>
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ weight.goat.token_no }}</h2>
+                <p>{{ weight.date|date:"d M Y" }} · {{ business.name }}</p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">{{ weight.weight }} kg</span>
+        </div>
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Weight</span>
+                    <strong>{{ weight.weight }} kg</strong>
+                </div>
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Date</span>
+                    <strong>{{ weight.date|date:"d M Y" }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Token ID</span>
+                    <strong>{{ weight.goat.token_no }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>RFID</span>
+                    <strong>{% if weight.goat.rfid %}{{ weight.goat.rfid }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Created By</span>
+                    <strong>{{ weight.created_by }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Recorded</span>
+                    <strong>{{ weight.created_at|date:"d M Y, H:i" }}</strong>
+                </div>
+            </div>
+            {% if weight.note %}
+            <div class="ingredient-detail-field" style="margin-bottom: 18px;">
+                <span>Note</span>
+                <strong>{{ weight.note }}</strong>
+            </div>
+            {% endif %}
+            <div class="ingredient-detail-actions">
+                <a href="{% url 'production:goat_weight_update' weight.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                <a href="{% url 'production:goat_weight_delete' weight.id %}" class="ingredient-btn ingredient-btn-delete">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

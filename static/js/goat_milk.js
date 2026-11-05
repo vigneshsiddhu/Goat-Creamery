@@ -1,801 +1,248 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("goat-milk-form");
+    const goatSelect = document.getElementById("id_goat");
+    let milkInput = document.getElementById("id_milk_weight");
+    const confirmationPopup = document.getElementById("milk-voice-confirmation");
+    const voiceText = document.getElementById("milk-voice-text");
+    const confirmationGoat = document.getElementById("milk-confirmation-goat");
+    const confirmationMilk = document.getElementById("milk-confirmation-value");
+    const changeButton = document.getElementById("milk-confirmation-cancel");
+    const saveButton = document.getElementById("milk-confirmation-save");
+    const confirmButtons = document.querySelectorAll("[data-milk-confirm]");
+    const displayValue = document.getElementById("milk-display-value");
+    const displayGoat = document.getElementById("milk-display-goat");
+    const keypad = document.getElementById("milk-keypad");
+    const keypadDisplay = document.getElementById("milk-keypad-display");
 
-    console.log("Goat Milk Voice JS loaded");
+    const MIN_MILK = 0.1;
+    const MAX_MILK = 5;
 
-
-    /* =========================================================
-       ELEMENTS
-    ========================================================= */
-
-    const form =
-        document.getElementById("goat-milk-form");
-
-    const goatSelect =
-        document.getElementById("id_goat");
-
-    const milkRadios =
-        document.querySelectorAll(
-            'input[name="milk_weight"]'
-        );
-
-    const confirmationPopup =
-        document.getElementById(
-            "milk-voice-confirmation"
-        );
-
-    const voiceText =
-        document.getElementById(
-            "milk-voice-text"
-        );
-
-    const confirmationGoat =
-        document.getElementById(
-            "milk-confirmation-goat"
-        );
-
-    const confirmationMilk =
-        document.getElementById(
-            "milk-confirmation-value"
-        );
-
-    const changeButton =
-        document.getElementById(
-            "milk-confirmation-cancel"
-        );
-
-    const saveButton =
-        document.getElementById(
-            "milk-confirmation-save"
-        );
-
-
-    /* =========================================================
-       CHECK ELEMENTS
-    ========================================================= */
-
-    if (!form) {
-        console.error("Goat milk form not found");
+    if (!form || !goatSelect) {
         return;
     }
 
-    if (!goatSelect) {
-        console.error("Goat select not found");
-        return;
+    if (!milkInput) {
+        milkInput = document.createElement("input");
+        milkInput.type = "hidden";
+        milkInput.name = "milk_weight";
+        milkInput.id = "id_milk_weight";
+        form.appendChild(milkInput);
     }
 
-    if (!confirmationPopup) {
-        console.error(
-            "Milk confirmation popup not found"
-        );
-        return;
+    let typingBuffer = "";
+    let typingMode = false;
+    let currentMilk = 0;
+
+    if (window.speechSynthesis) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = function () {
+            window.speechSynthesis.getVoices();
+        };
     }
 
+    function clampMilk(value) {
+        if (isNaN(value)) return 0;
+        return Math.min(MAX_MILK, Math.max(0, Math.round(value * 10) / 10));
+    }
 
-    /* =========================================================
-       TAMIL VOICE
-    ========================================================= */
+    function formatMilk(value) {
+        return clampMilk(value).toFixed(1);
+    }
 
-    function speakTamil(text) {
+    function setDisplay(text) {
+        if (displayValue) displayValue.textContent = text || "0";
+    }
 
-        if (!("speechSynthesis" in window)) {
+    function setTyping(isTyping) {
+        if (keypadDisplay) keypadDisplay.classList.toggle("is-typing", isTyping);
+    }
 
-            console.warn(
-                "Speech synthesis is not supported"
-            );
+    function commitMilk(value) {
+        typingMode = false;
+        typingBuffer = "";
+        setTyping(false);
+        currentMilk = clampMilk(value);
+        setDisplay(formatMilk(currentMilk));
+        milkInput.value = currentMilk >= MIN_MILK ? formatMilk(currentMilk) : "";
+    }
 
+    function updateFromBuffer() {
+        setTyping(true);
+        setDisplay(typingBuffer || "0");
+        const parsed = parseFloat(typingBuffer);
+        if (isNaN(parsed)) {
+            currentMilk = 0;
+            milkInput.value = "";
             return;
         }
-
-
-        // Stop previous speech
-
-        window.speechSynthesis.cancel();
-
-
-        const utterance =
-            new SpeechSynthesisUtterance(text);
-
-
-        // Tamil India
-
-        utterance.lang = "ta-IN";
-
-        utterance.rate = 0.9;
-
-        utterance.pitch = 1;
-
-        utterance.volume = 1;
-
-
-        window.speechSynthesis.speak(
-            utterance
-        );
+        currentMilk = clampMilk(parsed);
+        milkInput.value = currentMilk >= MIN_MILK ? formatMilk(currentMilk) : "";
     }
-
-
-    /* =========================================================
-       STOP VOICE
-    ========================================================= */
-
-    function stopVoice() {
-
-        if ("speechSynthesis" in window) {
-
-            window.speechSynthesis.cancel();
-
-        }
-    }
-
-
-    /* =========================================================
-       GET SELECTED GOAT
-    ========================================================= */
 
     function getSelectedGoat() {
-
-        if (
-            !goatSelect.value ||
-            goatSelect.selectedIndex < 0
-        ) {
-
-            return null;
-
-        }
-
-
-        const option =
-            goatSelect.options[
-                goatSelect.selectedIndex
-            ];
-
-
-        return {
-
-            value: goatSelect.value,
-
-            text: option.textContent.trim()
-
-        };
+        if (!goatSelect.value) return null;
+        const option = goatSelect.options[goatSelect.selectedIndex];
+        if (!option) return null;
+        return { value: goatSelect.value, text: option.textContent.trim() };
     }
-
-
-    /* =========================================================
-       GET SELECTED MILK WEIGHT
-    ========================================================= */
 
     function getSelectedMilk() {
-
-        const selected =
-            document.querySelector(
-                'input[name="milk_weight"]:checked'
-            );
-
-
-        if (!selected) {
-
-            return null;
-
-        }
-
-
-        let labelText = "";
-
-
-        /*
-         * Try to get the text from the label.
-         */
-
-        const label =
-            selected.closest(
-                ".milk-quantity-option"
-            );
-
-
-        if (label) {
-
-            const span =
-                label.querySelector("span");
-
-
-            if (span) {
-
-                labelText =
-                    span.textContent.trim();
-
-            }
-
-        }
-
-
-        /*
-         * Fallback to radio value
-         */
-
-        if (!labelText) {
-
-            labelText =
-                selected.value;
-
-        }
-
-
-        /*
-         * Remove kg if already present.
-         */
-
-        labelText =
-            labelText
-                .replace(/\s*kg\s*/gi, "")
-                .trim();
-
-
-        return {
-
-            value: selected.value,
-
-            text: labelText
-
-        };
-
+        const value = parseFloat(milkInput.value);
+        if (isNaN(value) || value < MIN_MILK) return null;
+        return { value: formatMilk(value), text: formatMilk(value) };
     }
 
+    function speakMessage(tamilText, englishText) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const voices = window.speechSynthesis.getVoices() || [];
+        const tamilVoice = voices.find(function (voice) {
+            return (voice.lang || "").toLowerCase().indexOf("ta") === 0;
+        });
+        const utterance = new SpeechSynthesisUtterance(tamilVoice ? tamilText : englishText);
+        utterance.lang = tamilVoice ? (tamilVoice.lang || "ta-IN") : "en-IN";
+        utterance.rate = 0.9;
+        if (tamilVoice) utterance.voice = tamilVoice;
+        window.speechSynthesis.speak(utterance);
+    }
 
-    /* =========================================================
-       OPEN CONFIRMATION POPUP
-    ========================================================= */
+    function applyGoatSelection() {
+        const goat = getSelectedGoat();
+        if (!goat) {
+            if (displayGoat) displayGoat.textContent = "Select Token ID";
+            return;
+        }
+        if (displayGoat) displayGoat.textContent = goat.text;
+        const option = goatSelect.options[goatSelect.selectedIndex];
+        const lastMilk = parseFloat(option.getAttribute("data-last-weight"));
+        if (!isNaN(lastMilk) && lastMilk > 0) {
+            commitMilk(lastMilk);
+        }
+    }
 
     function openConfirmation() {
-
-        const goat =
-            getSelectedGoat();
-
-
-        const milk =
-            getSelectedMilk();
-
-
-        /*
-         * Both fields are required.
-         */
-
-        if (!goat || !milk) {
-
+        const goat = getSelectedGoat();
+        const milk = getSelectedMilk();
+        if (!goat) {
+            if (displayGoat) displayGoat.textContent = "Select Token ID first";
+            goatSelect.focus();
             return;
-
+        }
+        if (!milk) {
+            if (displayGoat) displayGoat.textContent = goat.text + " · enter L";
+            return;
         }
 
-
-        /* =====================================================
-           DISPLAY DETAILS
-        ===================================================== */
-
-        confirmationGoat.textContent =
-            goat.text;
-
-
-        confirmationMilk.textContent =
-            `${milk.text} kg`;
-
-
-        /* =====================================================
-           TAMIL MESSAGE
-        ===================================================== */
-
-        const tamilMessage =
-            `பால் எடை ${milk.text} கிலோ. சரியா?`;
-
-
-        voiceText.textContent =
-            tamilMessage;
-
-
-        /* =====================================================
-           SHOW POPUP
-        ===================================================== */
-
-        confirmationPopup.style.display =
-            "flex";
-
-
-        /*
-         * Prevent background scrolling
-         */
-
-        document.body.style.overflow =
-            "hidden";
-
-
-        /* =====================================================
-           SPEAK TAMIL
-        ===================================================== */
-
-        setTimeout(function () {
-
-            speakTamil(tamilMessage);
-
-        }, 200);
-
+        confirmationGoat.textContent = goat.text;
+        confirmationMilk.textContent = milk.text + " L";
+        const tamilMessage = "பால் " + milk.text + " லிட்டர். சரியா?";
+        const englishMessage = "Milk " + milk.text + " litre. Confirm?";
+        if (voiceText) voiceText.textContent = tamilMessage;
+        if (confirmationPopup) {
+            confirmationPopup.classList.add("is-open");
+            confirmationPopup.style.display = "flex";
+        }
+        document.body.style.overflow = "hidden";
+        speakMessage(tamilMessage, englishMessage);
     }
-
-
-    /* =========================================================
-       CLOSE CONFIRMATION POPUP
-    ========================================================= */
 
     function closeConfirmation() {
-
-        stopVoice();
-
-
-        confirmationPopup.style.display =
-            "none";
-
-
-        /*
-         * Restore scrolling
-         */
-
-        document.body.style.overflow =
-            "";
-
-
-        /*
-         * Do NOT clear the selected values.
-         *
-         * User can change goat or milk weight.
-         */
-
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        if (confirmationPopup) {
+            confirmationPopup.classList.remove("is-open");
+            confirmationPopup.style.display = "none";
+        }
+        document.body.style.overflow = "";
     }
 
+    function submitForm() {
+        const goat = getSelectedGoat();
+        const milk = getSelectedMilk();
+        if (!goat || !milk) return;
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        milkInput.value = milk.value;
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.textContent = "Saving...";
+        }
+        if (typeof form.requestSubmit === "function") {
+            form.requestSubmit();
+        } else {
+            form.submit();
+        }
+    }
 
-    /* =========================================================
-       GOAT CHANGE
-    ========================================================= */
+    goatSelect.addEventListener("change", applyGoatSelection);
 
-    goatSelect.addEventListener(
-        "change",
-        function () {
+    if (keypad) {
+        keypad.addEventListener("click", function (event) {
+            const button = event.target.closest("[data-key]");
+            if (!button) return;
+            const key = button.getAttribute("data-key");
 
-            /*
-             * Only open popup when both
-             * goat and milk weight are selected.
-             */
-
-            const milk =
-                getSelectedMilk();
-
-
-            if (this.value && milk) {
-
-                openConfirmation();
-
+            if (!typingMode) {
+                typingBuffer = "";
+                typingMode = true;
             }
 
-        }
-    );
-
-
-    /* =========================================================
-       MILK WEIGHT CHANGE
-    ========================================================= */
-
-    milkRadios.forEach(
-        function (radio) {
-
-            radio.addEventListener(
-                "change",
-                function () {
-
-                    /*
-                     * Only open when goat
-                     * is selected.
-                     */
-
-                    if (goatSelect.value) {
-
-                        openConfirmation();
-
-                    }
-
+            if (key === "back") {
+                typingBuffer = typingBuffer.slice(0, -1);
+            } else if (key === ".") {
+                if (typingBuffer.indexOf(".") === -1) {
+                    typingBuffer = typingBuffer ? typingBuffer + "." : "0.";
                 }
-            );
+            } else {
+                const parts = typingBuffer.split(".");
+                if (parts[1] && parts[1].length >= 1) return;
+                if (parts[0].replace(/^0+/, "").length >= 1 && typingBuffer.indexOf(".") === -1) return;
+                typingBuffer += key;
+            }
+            updateFromBuffer();
+        });
+    }
 
-        }
-    );
-
-
-    /* =========================================================
-       CHANGE BUTTON
-    ========================================================= */
+    confirmButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            openConfirmation();
+        });
+    });
 
     if (changeButton) {
-
-        changeButton.addEventListener(
-            "click",
-            function () {
-
-                closeConfirmation();
-
-
-                /*
-                 * Focus goat select so user
-                 * can change the selection.
-                 */
-
-                goatSelect.focus();
-
-            }
-        );
-
+        changeButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            closeConfirmation();
+        });
     }
-
-
-    /* =========================================================
-       CONFIRM & SAVE
-    ========================================================= */
 
     if (saveButton) {
-
-        saveButton.addEventListener(
-            "click",
-            function () {
-
-                const goat =
-                    getSelectedGoat();
-
-
-                const milk =
-                    getSelectedMilk();
-
-
-                /*
-                 * Safety check
-                 */
-
-                if (!goat || !milk) {
-
-                    return;
-
-                }
-
-
-                /* =============================================
-                   STOP VOICE
-                ============================================= */
-
-                stopVoice();
-
-
-                /* =============================================
-                   HIDE MILK WEIGHT RADIO BUTTONS
-                ============================================= */
-
-                const quantityButtons =
-                    document.querySelector(
-                        ".milk-quantity-buttons"
-                    );
-
-                if (quantityButtons) {
-
-                    quantityButtons.style.display =
-                        "none";
-
-                }
-
-
-                /* =============================================
-                   DISABLE BUTTON
-                ============================================= */
-
-                saveButton.disabled =
-                    true;
-
-
-                saveButton.innerHTML =
-                    `
-                    <i class="bi bi-hourglass-split"></i>
-                    Saving...
-                    `;
-
-
-                /* =============================================
-                   SUBMIT VIA AJAX
-                   (avoids a full page reload between entries)
-                ============================================= */
-
-                const formData =
-                    new FormData(form);
-
-                const targetUrl =
-                    form.action || window.location.href;
-
-                console.log(
-                    "Goat milk save: sending to",
-                    targetUrl
-                );
-
-
-                /*
-                 * Safety timeout so the button
-                 * never gets stuck forever if the
-                 * request hangs.
-                 */
-
-                const abortController =
-                    new AbortController();
-
-                const timeoutId =
-                    setTimeout(function () {
-
-                        console.warn(
-                            "Goat milk save: request timed out after 10s"
-                        );
-
-                        abortController.abort();
-
-                    }, 10000);
-
-
-                fetch(targetUrl, {
-
-                    method: "POST",
-
-                    body: formData,
-
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest"
-                    },
-
-                    credentials: "same-origin",
-
-                    signal: abortController.signal
-
-                })
-                    .then(function (response) {
-
-                        clearTimeout(timeoutId);
-
-                        console.log(
-                            "Goat milk save: response status",
-                            response.status,
-                            response.redirected
-                                ? "(redirected to " + response.url + ")"
-                                : ""
-                        );
-
-                        if (!response.ok) {
-
-                            throw new Error(
-                                "Save failed with status " +
-                                response.status
-                            );
-
-                        }
-
-                        return response
-                            .clone()
-                            .json()
-                            .catch(function () {
-
-                                console.warn(
-                                    "Goat milk save: response was not JSON — " +
-                                    "the Django view likely still needs the " +
-                                    "AJAX/JsonResponse handling added."
-                                );
-
-                                return null;
-
-                            });
-
-                    })
-                    .then(function (data) {
-
-                        if (data && data.success) {
-
-                            console.log(
-                                "Goat milk save: success, resetting form"
-                            );
-
-                            resetFormForNextEntry();
-
-                        } else if (data && data.success === false) {
-
-                            console.warn(
-                                "Goat milk save: validation failed",
-                                data.errors
-                            );
-
-                            form.submit();
-
-                        } else {
-
-                            /*
-                             * No usable JSON back (backend not
-                             * updated yet). Fall back to a
-                             * normal submit.
-                             */
-
-                            form.submit();
-
-                        }
-
-                    })
-                    .catch(function (error) {
-
-                        clearTimeout(timeoutId);
-
-                        console.error(
-                            "Goat milk save error:",
-                            error
-                        );
-
-                        /*
-                         * Something went wrong with the AJAX
-                         * request itself. Fall back to a
-                         * normal submit so the save still
-                         * goes through.
-                         */
-
-                        form.submit();
-
-                    });
-
-            }
-        );
-
+        saveButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            submitForm();
+        });
     }
 
-
-    /* =========================================================
-       RESET FORM FOR NEXT ENTRY
-    ========================================================= */
-
-    function resetFormForNextEntry() {
-
-        /*
-         * Close the popup and stop any voice.
-         */
-
-        closeConfirmation();
-
-
-        /*
-         * Reset goat + milk weight selection.
-         */
-
-        goatSelect.value =
-            "";
-
-        milkRadios.forEach(
-            function (radio) {
-
-                radio.checked =
-                    false;
-
-            }
-        );
-
-
-        /*
-         * Show the radio buttons again.
-         */
-
-        const quantityButtons =
-            document.querySelector(
-                ".milk-quantity-buttons"
-            );
-
-        if (quantityButtons) {
-
-            quantityButtons.style.display =
-                "";
-
+    form.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            openConfirmation();
         }
+    });
 
-
-        /*
-         * Re-enable the save button.
-         */
-
-        saveButton.disabled =
-            false;
-
-        saveButton.innerHTML =
-            `
-            <i class="bi bi-check-lg"></i>
-            Confirm &amp; Save
-            `;
-
-
-        /*
-         * Ready for the next goat.
-         */
-
-        goatSelect.focus();
-
+    if (confirmationPopup) {
+        confirmationPopup.addEventListener("click", function (event) {
+            if (event.target === confirmationPopup) closeConfirmation();
+        });
     }
 
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeConfirmation();
+    });
 
-    /* =========================================================
-       PREVENT ENTER FROM SUBMITTING DIRECTLY
-       ========================================================= */
+    window.addEventListener("beforeunload", function () {
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+    });
 
-    form.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                confirmationPopup.style.display !== "flex"
-            ) {
-
-                event.preventDefault();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       CLICK OUTSIDE POPUP
-       ========================================================= */
-
-    confirmationPopup.addEventListener(
-        "click",
-        function (event) {
-
-            /*
-             * Do not close when clicking
-             * inside popup.
-             */
-
-            if (
-                event.target ===
-                confirmationPopup
-            ) {
-
-                closeConfirmation();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       ESC KEY
-    ========================================================= */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Escape" &&
-                confirmationPopup.style.display === "flex"
-            ) {
-
-                closeConfirmation();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       CLEANUP WHEN LEAVING PAGE
-    ========================================================= */
-
-    window.addEventListener(
-        "beforeunload",
-        function () {
-
-            stopVoice();
-
-        }
-    );
-
-
+    commitMilk(0);
+    applyGoatSelection();
 });

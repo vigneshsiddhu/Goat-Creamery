@@ -1,143 +1,273 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block title %}{{ title|default:"Production Batch" }}{% endblock %}
+{% block page_title %}{{ title|default:"Production Batch" }}{% endblock %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+<style>
+.recipe-history-panel {
+    margin-top: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fafafa;
+    overflow: hidden;
+}
+.recipe-history-panel summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #374151;
+}
+.recipe-history-panel summary::-webkit-details-marker { display: none; }
+.recipe-history-panel summary::before {
+    content: "▸";
+    margin-right: 8px;
+    font-size: 12px;
+}
+.recipe-history-panel[open] summary::before { content: "▾"; }
+.recipe-history-panel-body { padding: 0 16px 16px; border-top: 1px solid #e5e7eb; }
+</style>
 {% endblock %}
+
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
-                <h3>{{ title|default:"Create Product Batch" }}</h3>
-                <p>Manage product batch production, quantity, cost and quality details.</p>
+<div class="ingredient-form-page">
+    <a href="{% url 'production:product_batch_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to production batches
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{{ title|default:"Create Production Batch" }}</h3>
+                <p>Select product first — recipe and milk batch link automatically.</p>
             </div>
+            <a href="{% url 'production:product_batch_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-        <div class="form-body">
-            <form method="post">
+
+        <div class="ingredient-form-body">
+            {% if add_another and continue_milk %}
+            <aside class="auto-save-note">
+                <i class="bi bi-check2-circle"></i>
+                <div>
+                    <strong>Milk batch {{ continue_milk.batch_number }} is closed</strong>
+                    <p>Add another product from this milk, then finish when you are done. Checkout is not shown again.</p>
+                </div>
+            </aside>
+            {% endif %}
+            <form method="post" id="product-batch-form" novalidate>
                 {% csrf_token %}
-                {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {{ form.non_field_errors }}
-                    </div>
+                {% if add_another and continue_milk %}
+                <input type="hidden" name="add_another" value="1">
+                <input type="hidden" name="milk" value="{{ continue_milk.pk }}">
                 {% endif %}
-                <div class="form-row-4">
-                    <div class="form-group">
-                        <label for="{{ form.goat_milk_batch.id_for_label }}">Milk Batch</label>
-                        {{ form.goat_milk_batch }}
-                        {% for error in form.goat_milk_batch.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <h4 class="ingredient-form-section">What are you producing?</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.product.id_for_label }}">Product <span class="form-required">*</span></label>
                         {{ form.product }}
-                        {% for error in form.product.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <span class="form-help-text">Choose the product type and flavour.</span>
+                        {% for error in form.product.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.recipe.id_for_label }}">Recipe</label>
                         {{ form.recipe }}
-                        {% for error in form.recipe.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.location.id_for_label }}">Location</label>
-                        {{ form.location }}
-                        {% for error in form.location.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <span class="form-help-text" id="recipe-help-text">Recipe loads after product is selected.</span>
+                        {% for error in form.recipe.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-row-4">
-                    <div class="form-group">
+
+                <h4 class="ingredient-form-section">How much was made?</h4>
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.quantity.id_for_label }}">Quantity <span class="form-required">*</span></label>
                         {{ form.quantity }}
-                        {% for error in form.quantity.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.quantity.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.unit.id_for_label }}">Unit <span class="form-required">*</span></label>
                         {{ form.unit }}
-                        {% for error in form.unit.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.unit.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.wastage.id_for_label }}">Wastage</label>
+                        {{ form.wastage }}
+                        {% for error in form.wastage.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Production Date <span class="form-required">*</span></label>
                         {{ form.date }}
-                        {% for error in form.date.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.time.id_for_label }}">Time</label>
                         {{ form.time }}
-                        {% for error in form.time.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.time.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.cost.id_for_label }}">Production Cost</label>
+                        {{ form.cost }}
+                        {% for error in form.cost.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-row-4">
-                    <div class="form-group">
-                        <label for="{{ form.cost.id_for_label }}">Cost <span class="form-required">*</span></label>
-                        {{ form.cost }}
-                        {% for error in form.cost.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.qr_code.id_for_label }}">QR Code</label>
-                        {{ form.qr_code }}
-                        {% for error in form.qr_code.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
+
+                <h4 class="ingredient-form-section">Quality</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.qc_status.id_for_label }}">QC Status <span class="form-required">*</span></label>
                         {{ form.qc_status }}
-                        {% for error in form.qc_status.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.qc_status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    {% if form.status %}
+                    <div class="ingredient-form-group">
                         <label for="{{ form.status.id_for_label }}">Status <span class="form-required">*</span></label>
                         {{ form.status }}
-                        {% for error in form.status.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
+                    {% endif %}
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.wastage.id_for_label }}">Wastage <span class="form-required">*</span></label>
-                        {{ form.wastage }}
-                        {% for error in form.wastage.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.notes.id_for_label }}">Notes</label>
-                        {{ form.notes }}
-                        {% for error in form.notes.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
+
+                {% with links=form.instance.milk_links.all %}
+                {% if links %}
+                <h4 class="ingredient-form-section">Milk batches</h4>
+                <div class="ingredient-form-group">
+                    <p>
+                        {% for link in links %}{{ link.goat_milk_batch.batch_number }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    </p>
+                    <span class="form-help-text">Milk batches are linked on create. This screen does not change them.</span>
                 </div>
+                {% endif %}
+                {% endwith %}
+
+                <details class="recipe-history-panel">
+                    <summary>QR & notes (optional)</summary>
+                    <div class="recipe-history-panel-body">
+                        <div class="ingredient-form-group">
+                            <label for="{{ form.qr_code.id_for_label }}">QR Code</label>
+                            {{ form.qr_code }}
+                            {% for error in form.qr_code.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                        </div>
+                        <div class="ingredient-form-group">
+                            <label for="{{ form.notes.id_for_label }}">Notes</label>
+                            {{ form.notes }}
+                            {% for error in form.notes.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+                </details>
+
                 <div class="form-actions">
                     <a href="{% url 'production:product_batch_list' %}" class="form-back-btn">
                         <i class="bi bi-arrow-left"></i>
-                        Back
+                        Cancel
                     </a>
+                    {% if form.close_milk_batch %}
+                    <button type="submit" class="form-save-btn" id="batch-save-default">
+                        <i class="bi bi-check-lg"></i>
+                        Save Batch
+                    </button>
+                    <button type="submit" name="after_close" value="product" class="form-save-btn" id="batch-save-add-batch" hidden>
+                        <i class="bi bi-plus-lg"></i>
+                        Save and add batch
+                    </button>
+                    {% else %}
                     <button type="submit" class="form-save-btn">
                         <i class="bi bi-check-lg"></i>
-                        Save
+                        {% if add_another %}Save and add batch{% else %}Save Batch{% endif %}
                     </button>
+                    {% endif %}
+                    {% if add_another %}
+                    <a href="{% url 'production:product_batch_list' %}" class="form-save-btn" style="text-decoration:none;">
+                        Finish
+                    </a>
+                    {% endif %}
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+{{ product_recipe_map|json_script:"product-recipe-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const closeMilk = document.getElementById("id_close_milk_batch");
+    const saveDefault = document.getElementById("batch-save-default");
+    const saveAddBatch = document.getElementById("batch-save-add-batch");
+
+    function toggleCheckoutSave() {
+        if (!closeMilk) return;
+        const checked = closeMilk.checked;
+        if (saveDefault) saveDefault.hidden = checked;
+        if (saveAddBatch) saveAddBatch.hidden = !checked;
+    }
+    if (closeMilk) {
+        closeMilk.addEventListener("change", toggleCheckoutSave);
+        closeMilk.addEventListener("click", toggleCheckoutSave);
+        toggleCheckoutSave();
+    }
+
+    const productSelect = document.getElementById("id_product");
+    const recipeSelect = document.getElementById("id_recipe");
+    const recipeHelp = document.getElementById("recipe-help-text");
+    const recipeDataEl = document.getElementById("product-recipe-data");
+    if (!productSelect || !recipeSelect || !recipeDataEl) return;
+
+    const recipeMap = JSON.parse(recipeDataEl.textContent);
+    let selectedRecipe = recipeSelect.value;
+
+    function updateRecipeOptions() {
+        const productId = productSelect.value;
+        const recipe = productId ? recipeMap[productId] : null;
+        recipeSelect.innerHTML = "";
+        const emptyOption = document.createElement("option");
+        emptyOption.value = "";
+        emptyOption.textContent = productId ? "No recipe (optional)" : "Select product first";
+        recipeSelect.appendChild(emptyOption);
+        if (recipe) {
+            const option = document.createElement("option");
+            option.value = recipe.id;
+            option.textContent = recipe.label;
+            if (recipe.id === selectedRecipe) option.selected = true;
+            recipeSelect.appendChild(option);
+        }
+        recipeSelect.disabled = !productId;
+        if (!productId) {
+            recipeHelp.textContent = "Recipe loads after product is selected.";
+        } else if (!recipe) {
+            recipeHelp.textContent = "No recipe for this product type — you can still save.";
+        } else {
+            recipeHelp.textContent = "Recipe matched to product type.";
+            if (!selectedRecipe) {
+                recipeSelect.value = recipe.id;
+                selectedRecipe = recipe.id;
+            }
+        }
+    }
+
+    productSelect.addEventListener("change", function () {
+        selectedRecipe = "";
+        updateRecipeOptions();
+    });
+    recipeSelect.addEventListener("change", function () {
+        selectedRecipe = recipeSelect.value;
+    });
+    updateRecipeOptions();
+});
+</script>
 {% endblock %}

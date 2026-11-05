@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Farm Milk Batch{% endblock %}
+{% block page_title %}Farm Milk Batch{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=13">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'production:goat_milk_batch_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to milk batches
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>Farm Milk Batch</h3>
+                <p>Enter collected litres and QR. Date, session, status, and wastage are saved automatically.</p>
+            </div>
+            <a href="{% url 'production:goat_milk_batch_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            <form method="post" id="milk-batch-farm-form" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <aside class="auto-save-note">
+                    <i class="bi bi-magic"></i>
+                    <div>
+                        <strong>Saved automatically — no need to enter these</strong>
+                        <p>Today’s {{ milk_time }} goat milk minus the litres you enter is saved as wastage (0 if the tank has more).</p>
+                        <div class="auto-save-pills">
+                            <span class="auto-save-pill">{{ today|date:"d M Y" }} · {{ milk_time|title }}</span>
+                            <span class="auto-save-pill">Status Collected</span>
+                            <span class="auto-save-pill">Goat milk {{ goat_milk_total|floatformat:2 }} L · {{ goat_milks|length }} goat{{ goat_milks|length|pluralize }}</span>
+                            <span class="auto-save-pill is-empty" id="wastage-pill">Wastage — enter quantity</span>
+                        </div>
+                        {% if goat_milks %}
+                        <div class="auto-save-goats">
+                            {% for row in goat_milks %}
+                            <span class="auto-save-goat">{{ row.goat.token_no }} <strong>{{ row.milk_weight|floatformat:2 }} L</strong></span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p>No goat milk recorded for {{ milk_time }} today.</p>
+                        {% endif %}
+                    </div>
+                </aside>
+
+                <h4 class="ingredient-form-section">Enter now</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.milk_quantity.id_for_label }}">Milk Quantity (L) <span class="form-required">*</span></label>
+                        {{ form.milk_quantity }}
+                        {% for error in form.milk_quantity.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.qr_code.id_for_label }}">QR Code</label>
+                        {{ form.qr_code }}
+                        {% for error in form.qr_code.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'production:goat_milk_batch_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        Save Farm Batch
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="milk-batch-farm-form">Save Farm Batch</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const qty = document.getElementById("id_milk_quantity");
+    const pill = document.getElementById("wastage-pill");
+    const goatTotal = {{ goat_milk_total|default_if_none:0 }};
+    if (!qty || !pill) return;
+
+    function updateWastage() {
+        const entered = parseFloat(qty.value);
+        if (!qty.value || Number.isNaN(entered)) {
+            pill.textContent = "Wastage — enter quantity";
+            pill.classList.add("is-empty");
+            pill.classList.remove("is-warn");
+            return;
+        }
+        const wastage = Math.max(0, goatTotal - entered);
+        pill.textContent = "Wastage " + wastage.toFixed(2) + " L";
+        pill.classList.remove("is-empty");
+        pill.classList.toggle("is-warn", wastage > 0);
+    }
+
+    qty.addEventListener("input", updateWastage);
+    updateWastage();
+});
+</script>
+{% endblock %}

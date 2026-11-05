@@ -10,10 +10,9 @@
 {% endblock %}
 
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="{% static 'css/dashboard.css' %}"
->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/reports.css' %}?v=3">
 {% endblock %}
 
 
@@ -46,6 +45,9 @@
                 <p>
                     Welcome back,
                     <strong>{{ user.username }}</strong>
+                    {% if period_start %}
+                    · last month {{ period_start|date:"d M" }} – {{ period_end|date:"d M Y" }}
+                    {% endif %}
                 </p>
 
             </div>
@@ -183,189 +185,108 @@
 
 
         <div class="dashboard-cards">
-
-
-            <!-- TOTAL GOATS -->
-
-            <div class="dashboard-card dashboard-card-goat">
-
+            <a href="{% url 'goats:list' %}" class="dashboard-card dashboard-card-goat">
                 <div class="dashboard-card-top">
-
-                    <div class="dashboard-card-icon">
-
-                        <i class="bi bi-gitlab"></i>
-
-                    </div>
-
-                    <span class="dashboard-card-label">
-                        LIVESTOCK
-                    </span>
-
+                    <div class="dashboard-card-icon"><i class="bi bi-gitlab"></i></div>
+                    <span class="dashboard-card-label">LIVESTOCK</span>
                 </div>
-
                 <div class="dashboard-card-body">
-
-                    <h3>
-                        Total Goats
-                    </h3>
-
-                    <strong>
-                        0
-                    </strong>
-
-                    <p>
-                        Registered goats
-                    </p>
-
+                    <h3>Live goats</h3>
+                    <strong>{{ live_goats }}</strong>
+                    <p>On farm now</p>
                 </div>
+                <div class="dashboard-card-footer"><i class="bi bi-arrow-right"></i> Goat register</div>
+            </a>
 
-                <div class="dashboard-card-footer">
-
-                    <i class="bi bi-arrow-right"></i>
-
-                    Goat Register
-
-                </div>
-
-            </div>
-
-
-            <!-- MILKING GOATS -->
-
-            <div class="dashboard-card dashboard-card-milk">
-
+            <a href="{% url 'reports:milk' %}" class="dashboard-card dashboard-card-milk">
                 <div class="dashboard-card-top">
-
-                    <div class="dashboard-card-icon">
-
-                        <i class="bi bi-heart-pulse-fill"></i>
-
-                    </div>
-
-                    <span class="dashboard-card-label">
-                        PRODUCTION
-                    </span>
-
+                    <div class="dashboard-card-icon"><i class="bi bi-cup-straw"></i></div>
+                    <span class="dashboard-card-label">MILK</span>
                 </div>
-
                 <div class="dashboard-card-body">
-
-                    <h3>
-                        Milking Goats
-                    </h3>
-
-                    <strong>
-                        0
-                    </strong>
-
-                    <p>
-                        Active milking goats
-                    </p>
-
+                    <h3>Last month milk</h3>
+                    <strong>{{ milk_card.headline|floatformat:1 }} <small>L</small></strong>
+                    <p>{% if milk_card.peak_day %}Peak {{ milk_card.peak_day|date:"d M" }} · {{ milk_card.peak_value|floatformat:1 }} L{% else %}Daily collection{% endif %}</p>
                 </div>
+                <div class="dashboard-card-footer"><i class="bi bi-arrow-right"></i> Milk report</div>
+            </a>
 
-                <div class="dashboard-card-footer">
-
-                    <i class="bi bi-arrow-right"></i>
-
-                    Production
-
-                </div>
-
-            </div>
-
-
-            <!-- MILK -->
-
-            <div class="dashboard-card dashboard-card-water">
-
+            <a href="{% url 'reports:sales' %}" class="dashboard-card dashboard-card-sales">
                 <div class="dashboard-card-top">
-
-                    <div class="dashboard-card-icon">
-
-                        <i class="bi bi-droplet-fill"></i>
-
-                    </div>
-
-                    <span class="dashboard-card-label">
-                        MILK
-                    </span>
-
+                    <div class="dashboard-card-icon"><i class="bi bi-currency-rupee"></i></div>
+                    <span class="dashboard-card-label">SALES</span>
                 </div>
-
                 <div class="dashboard-card-body">
-
-                    <h3>
-                        Today's Milk
-                    </h3>
-
-                    <strong>
-                        0
-                        <small>L</small>
-                    </strong>
-
-                    <p>
-                        Today's milk collection
-                    </p>
-
+                    <h3>Last month sales</h3>
+                    <strong>₹{{ sales_card.headline|floatformat:0 }}</strong>
+                    <p>{% if sales_card.peak_day %}Peak {{ sales_card.peak_day|date:"d M" }}{% else %}Invoice revenue{% endif %}</p>
                 </div>
+                <div class="dashboard-card-footer"><i class="bi bi-arrow-right"></i> Sales report</div>
+            </a>
 
-                <div class="dashboard-card-footer">
-
-                    <i class="bi bi-arrow-right"></i>
-
-                    Milk Records
-
-                </div>
-
-            </div>
-
-
-            <!-- SALES -->
-
-            <div class="dashboard-card dashboard-card-sales">
-
+            <a href="{% url 'reports:weight' %}" class="dashboard-card dashboard-card-water">
                 <div class="dashboard-card-top">
-
-                    <div class="dashboard-card-icon">
-
-                        <i class="bi bi-currency-rupee"></i>
-
-                    </div>
-
-                    <span class="dashboard-card-label">
-                        FINANCE
-                    </span>
-
+                    <div class="dashboard-card-icon"><i class="bi bi-speedometer2"></i></div>
+                    <span class="dashboard-card-label">WEIGHT</span>
                 </div>
-
                 <div class="dashboard-card-body">
-
-                    <h3>
-                        Today's Sales
-                    </h3>
-
-                    <strong>
-                        ₹0
-                    </strong>
-
-                    <p>
-                        Today's sales value
-                    </p>
-
+                    <h3>Herd average</h3>
+                    <strong>{{ weight_card.headline|floatformat:1 }} <small>kg</small></strong>
+                    <p>{{ weight_card.up_count }} up · {{ weight_card.down_count }} down vs prior month</p>
                 </div>
-
-                <div class="dashboard-card-footer">
-
-                    <i class="bi bi-arrow-right"></i>
-
-                    Sales
-
-                </div>
-
-            </div>
-
+                <div class="dashboard-card-footer"><i class="bi bi-arrow-right"></i> Weight report</div>
+            </a>
         </div>
+
+        <div class="dashboard-section-title" style="margin-top: 28px;">
+            <div>
+                <span>MIXED VIEW</span>
+                <h2>Milk, sales, and weight</h2>
+            </div>
+        </div>
+
+        <div class="report-split">
+            <section class="report-panel">
+                <h3>Milk vs sales</h3>
+                <p>Daily litres and invoice rupees on one chart.</p>
+                <canvas id="chart-mix" height="150"></canvas>
+            </section>
+            <section class="report-panel">
+                <h3>Sales map</h3>
+                <p>Where last month’s bills were made.</p>
+                <div id="report-map" class="report-map"></div>
+            </section>
+        </div>
+
+        <div class="report-split">
+            <section class="report-panel">
+                <h3>Goat milk map</h3>
+                <p>Green high · red low for the month.</p>
+                <div class="report-tile-map">
+                    {% for tile in milk_tiles %}
+                    <div class="report-tile is-{{ tile.tone }}">
+                        <strong>{{ tile.token }}</strong>
+                        <span>{{ tile.value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            <section class="report-panel">
+                <h3>Goat weight map</h3>
+                <p>Green gained · red lost vs July.</p>
+                <div class="report-tile-map">
+                    {% for tile in weight_tiles %}
+                    <div class="report-tile is-{{ tile.tone }}">
+                        <strong>{{ tile.token }}</strong>
+                        <span>{{ tile.value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+
+        {{ mix_charts|json_script:"report-charts" }}
+        {{ sales_map|json_script:"report-map-data" }}
 
 
     {% else %}
@@ -454,4 +375,12 @@
 
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+{% if business_user %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/reports.js' %}?v=2"></script>
+{% endif %}
 {% endblock %}

@@ -24,7 +24,27 @@ class Item(models.Model):
     class Meta:
         ordering = ["-created_at"]
     def __str__(self):
-        return f"{self.qr_code} - {self.product.type}"
+        return self.billing_label
+
+    @property
+    def billing_label(self):
+        flavour = self.product.flavour_display
+        type_label = (self.product.type or "").replace("_", " ").title()
+        qr = self.qr_code or ""
+        parts = []
+        if flavour:
+            parts.append(flavour)
+        if type_label:
+            parts.append(type_label)
+        if qr:
+            parts.append(qr)
+        return " · ".join(parts) or self.product.code_sku
+
+    @property
+    def shelf_days_remaining(self):
+        from django.utils import timezone
+
+        return (self.exp_date - timezone.localdate()).days
 
 class Vehicle(models.Model):
     STATUS_CHOICES = [("active", "Active"),("inactive", "Inactive"),]
@@ -34,7 +54,7 @@ class Vehicle(models.Model):
     vehicle_type = models.CharField(max_length=100)
     unit = models.CharField(max_length=20,default="kg")
     capacity = models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True)
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default="available")
+    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default="active")
     business = models.ForeignKey(Business,on_delete=models.CASCADE,related_name="vehicles")
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="created_vehicles")
     created_at = models.DateTimeField(auto_now_add=True)

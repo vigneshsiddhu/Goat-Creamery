@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reports{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reports.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="report-page">
+    <div class="report-header">
+        <div>
+            <span class="report-eyebrow">Last month</span>
+            <h1>Farm pulse</h1>
+            <p>{{ period_start|date:"d M" }} – {{ period_end|date:"d M Y" }} · vs {{ prev_start|date:"M Y" }} · {{ business.name }}</p>
+        </div>
+    </div>
+    {% include "reports/_tabs.html" %}
+
+    <div class="report-grid">
+        {% for card in cards %}
+        <article class="report-card report-card-{{ card.key }}">
+            <div class="report-card-top">
+                <div class="report-card-icon"><i class="bi {{ card.icon }}"></i></div>
+                <div>
+                    <span class="report-card-label">{{ card.title }}</span>
+                    <strong class="report-card-value">
+                        {% if card.unit == "₹" %}₹{{ card.headline|floatformat:0 }}{% else %}{{ card.headline|floatformat:1 }} {{ card.unit }}{% endif %}
+                    </strong>
+                </div>
+                <span class="report-delta is-{{ card.direction }}">
+                    {% if card.direction == "up" %}<i class="bi bi-arrow-up-right"></i>{% elif card.direction == "down" %}<i class="bi bi-arrow-down-right"></i>{% else %}<i class="bi bi-dash"></i>{% endif %}
+                    {{ card.change|floatformat:1 }}%
+                </span>
+            </div>
+
+            <div class="report-spark" aria-hidden="true">
+                {% for bar in card.bars %}
+                <span class="report-spark-bar{% if bar.kind %} is-{{ bar.kind }}{% endif %}" style="height: {{ bar.pct }}%;" title="{{ bar.date|date:'d M' }}: {{ bar.value|floatformat:1 }}"></span>
+                {% endfor %}
+            </div>
+            <div class="report-spark-legend">
+                <span>Low</span>
+                <span>Daily trend</span>
+                <span>High</span>
+            </div>
+
+            <div class="report-stats">
+                <div>
+                    <span>Highest</span>
+                    <strong>
+                        {% if card.peak_day %}{{ card.peak_day|date:"d M" }} · {% if card.unit == "₹" %}₹{{ card.peak_value|floatformat:0 }}{% else %}{{ card.peak_value|floatformat:1 }} {{ card.unit }}{% endif %}{% else %}—{% endif %}
+                    </strong>
+                </div>
+                <div>
+                    <span>Lowest</span>
+                    <strong>
+                        {% if card.dip_day %}{{ card.dip_day|date:"d M" }} · {% if card.unit == "₹" %}₹{{ card.dip_value|floatformat:0 }}{% else %}{{ card.dip_value|floatformat:1 }} {{ card.unit }}{% endif %}{% else %}—{% endif %}
+                    </strong>
+                </div>
+                {% if card.key == "weight" %}
+                <div>
+                    <span>Goats up</span>
+                    <strong class="is-up">{{ card.up_count }}</strong>
+                </div>
+                <div>
+                    <span>Goats down</span>
+                    <strong class="is-down">{{ card.down_count }}</strong>
+                </div>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

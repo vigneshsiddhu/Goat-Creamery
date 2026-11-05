@@ -1,282 +1,88 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    {% if milk %}
-        Edit Goat Milk
-    {% else %}
-        Add Goat Milk
-    {% endif %}
-{% endblock %}
-
+{% block title %}{{ title|default:"Goat Milk" }}{% endblock %}
+{% block page_title %}{{ title|default:"Goat Milk" }}{% endblock %}
 
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="{% static 'css/goat_milk.css' %}?v=13"
->
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
 {% endblock %}
 
-
 {% block content %}
-
-<div class="goat-milk-page">
-
-    <!-- =====================================================
-         FORM CARD
-    ====================================================== -->
-
-    <div class="production-form-card">
-
-
-        <!-- =================================================
-             HEADER
-        ================================================== -->
-
-        <div class="production-form-header">
-
+<div class="ingredient-form-page">
+    <a href="{% url 'production:goat_milk_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goat milk
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
             <div>
-
-                <h5>
-                    {% if milk %}
-                        Edit Goat Milk
-                    {% else %}
-                        Goat Milk Information
-                    {% endif %}
-                </h5>
-
+                <h3>{{ title|default:"Add Goat Milk" }}</h3>
                 <p>
-                    Enter the goat milk details below.
+                    {% if milk %}
+                        Update this milk record for {{ business.name }}.
+                    {% else %}
+                        One record per Token ID per date and milking time.
+                    {% endif %}
                 </p>
-
             </div>
-
-
-            <a
-                href="{% url 'production:goat_milk_list' %}"
-                class="production-back-btn"
-            >
-
+            <a href="{% url 'production:goat_milk_list' %}" class="form-back-btn">
                 <i class="bi bi-arrow-left"></i>
                 Back
-
             </a>
-
         </div>
-
-
-        <!-- =================================================
-             FORM BODY
-        ================================================== -->
-
-        <div class="production-form-body">
-
-            <form
-                method="POST"
-                id="goat-milk-form"
-            >
-
+        <div class="ingredient-form-body">
+            <form method="post" id="goat-milk-form" novalidate>
                 {% csrf_token %}
-
-
-                <!-- =================================================
-                     GOAT
-                ================================================== -->
-
-                <div class="production-form-group">
-
-                    <label for="{{ form.goat.id_for_label }}">
-                        Goat Tag
-                    </label>
-
-                    {{ form.goat }}
-
-                    {% if form.goat.errors %}
-                        <div class="production-form-error">
-                            {{ form.goat.errors }}
-                        </div>
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     MILK QUANTITY
-                ================================================== -->
-
-                <div class="production-form-group">
-
-                    <label>
-                        Milk Quantity
-                    </label>
-
-
-                    <div class="milk-quantity-buttons">
-
-                        {% for radio in form.milk_weight %}
-
-                            <label class="milk-quantity-option">
-
-                                {{ radio.tag }}
-
-                                <span>
-                                    {{ radio.choice_label }}
-                                </span>
-
-                            </label>
-
-                        {% endfor %}
-
-                    </div>
-
-
-                    {% if form.milk_weight.errors %}
-
-                        <div class="production-form-error">
-                            {{ form.milk_weight.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     DATE + TIME
-                ================================================== -->
-
-                <div class="production-form-row">
-
-
-                    <!-- DATE -->
-
-                    <div class="production-form-group">
-
-                        <label for="{{ form.date.id_for_label }}">
-                            Date
-                        </label>
-
-                        {{ form.date }}
-
-                        {% if form.date.errors %}
-
-                            <div class="production-form-error">
-                                {{ form.date.errors }}
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <!-- TIME -->
-
-                    <div class="production-form-group">
-
-                        <label for="{{ form.time.id_for_label }}">
-                            Milking Time
-                        </label>
-
-                        {{ form.time }}
-
-                        {% if form.time.errors %}
-
-                            <div class="production-form-error">
-                                {{ form.time.errors }}
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     NOTE
-                ================================================== -->
-
-                <div class="production-form-group">
-
-                    <label for="{{ form.note.id_for_label }}">
-                        Note
-                    </label>
-
-                    {{ form.note }}
-
-                    {% if form.note.errors %}
-
-                        <div class="production-form-error">
-                            {{ form.note.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- =================================================
-                     NON FIELD ERRORS
-                ================================================== -->
-
                 {% if form.non_field_errors %}
-
-                    <div class="production-form-error">
-
-                        {{ form.non_field_errors }}
-
-                    </div>
-
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-
-
-                <!-- =================================================
-                     ACTIONS
-                ================================================== -->
-
-                <div class="production-form-actions">
-
-
-                    <!-- CANCEL -->
-
-                    <a
-                        href="{% url 'production:goat_milk_list' %}"
-                        class="production-cancel-btn"
-                    >
-                        Cancel
-                    </a>
-
-
-                    <!-- SAVE / UPDATE -->
-
-                    <button
-                        type="submit"
-                        class="production-save-btn"
-                    >
-
-                        {% if milk %}
-
-                            <i class="bi bi-check-lg"></i>
-                            Update Milk
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-                            Save Milk
-
-                        {% endif %}
-
-                    </button>
-
+                <h4 class="ingredient-form-section">Milk Details</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.goat.id_for_label }}">Token ID <span class="form-required">*</span></label>
+                        {{ form.goat }}
+                        {% for error in form.goat.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.milk_weight.id_for_label }}">Milk Quantity (L) <span class="form-required">*</span></label>
+                        {{ form.milk_weight }}
+                        {% for error in form.milk_weight.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
                 </div>
-
-
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.time.id_for_label }}">Milking Time <span class="form-required">*</span></label>
+                        {{ form.time }}
+                        {% for error in form.time.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.note.id_for_label }}">Note</label>
+                    {{ form.note }}
+                    {% for error in form.note.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'production:goat_milk_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if milk %}Update Milk{% else %}Save Milk{% endif %}
+                    </button>
+                </div>
             </form>
-
         </div>
-
     </div>
-
 </div>
-
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="goat-milk-form">{% if milk %}Update Milk{% else %}Save Milk{% endif %}</button>
+</div>
 {% endblock %}

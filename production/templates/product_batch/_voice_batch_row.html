@@ -1,0 +1,72 @@
+<div class="voice-batch-row{% if row.index %} is-extra{% endif %}" data-row-index="{{ row.index }}">
+    <div class="voice-batch-row-head">
+        <h4 class="ingredient-form-section">{% if row.index %}Milk batch {{ row.index|add:1 }}{% else %}Production batch{% endif %}</h4>
+        <button type="button" class="voice-batch-remove" {% if row.index == 0 %}hidden{% endif %}>
+            <i class="bi bi-trash"></i>
+            Remove
+        </button>
+    </div>
+    <div class="ingredient-form-grid">
+        <div class="ingredient-form-group">
+            <label for="id_batch_{{ row.index }}_milk">Goat Milk Batch <span class="form-required">*</span></label>
+            <select name="batch-{{ row.index }}-goat_milk_batch" id="id_batch_{{ row.index }}_milk" class="form-input voice-batch-milk" required>
+                <option value="">Select goat milk batch</option>
+                {% for milk in milk_batches %}
+                <option value="{{ milk.pk }}"
+                    data-number="{{ milk.batch_number }}"
+                    data-date="{{ milk.date|date:'d M Y' }}"
+                    data-wastage="{{ milk.wastage }}"
+                    data-qty="{{ milk.milk_quantity }}"
+                    {% if row.goat_milk_batch|stringformat:"s" == milk.pk|stringformat:"s" %} selected{% endif %}>
+                    {{ milk.batch_number }} · {{ milk.date|date:"d M Y" }} · {{ milk.remaining }} L
+                </option>
+                {% endfor %}
+            </select>
+            {% if row.errors.goat_milk_batch %}<div class="form-error">{{ row.errors.goat_milk_batch }}</div>{% endif %}
+            <p class="voice-milk-wastage form-help-text" hidden>Wastage 0.00 L</p>
+        </div>
+    </div>
+    <p class="voice-copied-summary form-help-text" {% if not row.index %}hidden{% endif %}></p>
+    <div class="voice-copied-fields">
+        <div class="ingredient-form-grid">
+            <div class="ingredient-form-group">
+                <label for="id_batch_{{ row.index }}_product">Product batch <span class="form-required">*</span></label>
+                <select name="batch-{{ row.index }}-product" id="id_batch_{{ row.index }}_product" class="form-input voice-batch-product" required>
+                    <option value="">Select product</option>
+                    {% for product in products %}
+                    <option value="{{ product.pk }}"{% if row.product|stringformat:"s" == product.pk|stringformat:"s" %} selected{% endif %}>{{ product }}</option>
+                    {% endfor %}
+                </select>
+                {% if row.errors.product %}<div class="form-error">{{ row.errors.product }}</div>{% endif %}
+            </div>
+            <div class="ingredient-form-group">
+                <label for="id_batch_{{ row.index }}_quantity">Quantity <span class="form-required">*</span></label>
+                <div class="qty-unit-field">
+                    <input type="number" name="batch-{{ row.index }}-quantity" id="id_batch_{{ row.index }}_quantity" class="form-input qty-unit-qty voice-batch-quantity" step="0.001" min="0.001" placeholder="Quantity" value="{{ row.quantity|default_if_none:'' }}" required>
+                    <select name="batch-{{ row.index }}-unit" id="id_batch_{{ row.index }}_unit" class="form-input qty-unit-select voice-batch-unit" aria-label="Unit" required>
+                        {% for value, label in unit_choices %}
+                        <option value="{{ value }}"{% if row.unit == value or not row.unit and value == "kg" %} selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if row.errors.quantity %}<div class="form-error">{{ row.errors.quantity }}</div>{% endif %}
+                {% if row.errors.unit %}<div class="form-error">{{ row.errors.unit }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="ingredient-form-group">
+        <label>Checkout</label>
+        <label class="farm-checkbox-row">
+            <input type="checkbox" name="batch-{{ row.index }}-checkout" id="id_batch_{{ row.index }}_checkout" class="form-check-input voice-batch-checkout" value="1"{% if row.checkout %} checked{% endif %}>
+            <span>Milk batch finished — mark as closed</span>
+        </label>
+        <span class="form-help-text">Tick checkout, then Add to link another milk batch to this production batch.</span>
+        {% if row.errors.checkout %}<div class="form-error">{{ row.errors.checkout }}</div>{% endif %}
+        <div class="voice-add-more-wrap">
+            <button type="button" class="voice-add-more-btn">
+                <i class="bi bi-plus-lg"></i>
+                Add
+            </button>
+        </div>
+    </div>
+</div>

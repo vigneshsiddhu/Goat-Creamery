@@ -100,23 +100,105 @@ class FarmSpendItemForm(forms.ModelForm):
             self.fields["employee_salary"].queryset = EmployeeSalary.objects.none()
 
 class FarmExpenseForm(forms.ModelForm):
+    CATEGORY_CHOICES = [
+        ("Farm helper", "Farm helper"),
+        ("Goat Concentrate feed", "Goat Concentrate feed"),
+        ("Cow Concentrate feed", "Cow Concentrate feed"),
+        ("Tea and Snacks", "Tea and Snacks"),
+        ("Petrol", "Petrol"),
+        ("Diesel", "Diesel"),
+        ("Food", "Food"),
+        ("Agri helper male", "Agri helper male"),
+        ("Agri helper female", "Agri helper female"),
+        ("Medical", "Medical"),
+        ("Green fodder", "Green fodder"),
+        ("Milk powder", "Milk powder"),
+        ("Farm development", "Farm development"),
+        ("Insurance", "Insurance"),
+        ("Fertilizer", "Fertilizer"),
+        ("Land lease", "Land lease"),
+        ("Power weeder", "Power weeder"),
+        ("Transport", "Transport"),
+        ("Current bill", "Current bill"),
+        ("Other", "Other"),
+        ("Bike maintenance", "Bike maintenance"),
+        ("Seed", "Seed"),
+        ("Farm maintenance", "Farm maintenance"),
+        ("Dry Fodder", "Dry Fodder"),
+        ("Chemical Fertilizer", "Chemical Fertilizer"),
+        ("Tractor", "Tractor"),
+    ]
+    category = forms.ChoiceField(
+        choices=[("", "Select category")] + CATEGORY_CHOICES,
+        widget=forms.Select(attrs={"class": "form-input"}),
+    )
     class Meta:
         model = FarmExpense
         fields = ["date","category","employee","amount","comment"]
         widgets = {
-            "date": forms.DateInput(attrs={"class":"form-control","type":"date"}),
-            "category": forms.TextInput(attrs={"class":"form-control","placeholder":"Expense Category"}),
-            "employee": forms.Select(attrs={"class":"form-select"}),
-            "amount": forms.NumberInput(attrs={"class":"form-control","step":"0.01"}),
-            "comment": forms.Textarea(attrs={"class":"form-control","rows":3}),
+            "date": forms.DateInput(attrs={"class": "form-input", "type": "date"}),
+            "employee": forms.Select(attrs={"class": "form-input"}),
+            "amount": forms.NumberInput(attrs={"class": "form-input", "step": "1", "min": "1", "placeholder": "5000", "inputmode": "numeric"}),
+            "comment": forms.Textarea(attrs={"class": "form-input", "rows": 3, "placeholder": "Optional note"}),
         }
 
     def __init__(self,*args,business=None,**kwargs):
         super().__init__(*args,**kwargs)
+        from django.utils import timezone
+        self.fields["employee"].required = False
+        self.fields["comment"].required = False
+        self.fields["employee"].empty_label = "Select employee (optional)"
+        if getattr(self.instance, "pk", None) and self.instance.category:
+            current = self.instance.category
+            labels = {value for value, _ in self.CATEGORY_CHOICES}
+            if current not in labels:
+                self.fields["category"].choices = [("", "Select category"), (current, current)] + list(self.CATEGORY_CHOICES)
+        if not self.is_bound and not getattr(self.instance, "pk", None):
+            self.fields["date"].initial = timezone.localdate()
+        if getattr(self.instance, "pk", None) and self.instance.amount is not None:
+            self.initial["amount"] = int(self.instance.amount)
         if business:
             self.fields["employee"].queryset = Employee.objects.filter(business=business,active=True).order_by("name")
         else:
             self.fields["employee"].queryset = Employee.objects.none()
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get("amount")
+        if amount is None or amount <= 0:
+            raise forms.ValidationError("Amount must be greater than zero.")
+        if amount != amount.to_integral_value():
+            raise forms.ValidationError("Enter whole rupees, without paise.")
+        return amount
+
+
+class FarmExpenseVoiceForm(forms.ModelForm):
+    category = forms.ChoiceField(
+        choices=[("", "Select category")] + FarmExpenseForm.CATEGORY_CHOICES,
+        widget=forms.Select(attrs={"class": "form-input", "id": "id_category"}),
+    )
+
+    class Meta:
+        model = FarmExpense
+        fields = ["category", "amount"]
+        widgets = {
+            "amount": forms.NumberInput(attrs={
+                "class": "form-input",
+                "step": "1",
+                "min": "1",
+                "placeholder": "5000",
+                "inputmode": "numeric",
+                "id": "id_amount",
+            }),
+        }
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get("amount")
+        if amount is None or amount <= 0:
+            raise forms.ValidationError("Amount must be greater than zero.")
+        if amount != amount.to_integral_value():
+            raise forms.ValidationError("Enter whole rupees, without paise.")
+        return amount
+
 
 class BusinessSpendBookForm(forms.ModelForm):
     class Meta:

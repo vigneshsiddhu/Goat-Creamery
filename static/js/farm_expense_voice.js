@@ -34,6 +34,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const amountField =
         document.getElementById("id_amount");
 
+    if (amountField) {
+        amountField.setAttribute("step", "1");
+        amountField.setAttribute("min", "1");
+        amountField.setAttribute("placeholder", "5000");
+        amountField.setAttribute("inputmode", "numeric");
+        amountField.addEventListener("input", function () {
+            amountField.value = amountField.value.replace(/[^\d]/g, "");
+        });
+        if (amountField.value) {
+            amountField.value = amountField.value.replace(/[^\d]/g, "");
+        }
+    }
+
     const commentField =
         document.getElementById("id_comment");
 
@@ -493,13 +506,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const match =
             text.match(
-                /(?:₹|rs\.?|rupees?)?\s*(\d+(?:\.\d+)?)/i
+                /(?:₹|rs\.?|rupees?)?\s*(\d+)/i
             );
 
 
         if (match) {
 
-            return match[1];
+            return String(parseInt(match[1], 10));
         }
 
 

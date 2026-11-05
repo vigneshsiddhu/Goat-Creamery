@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Land–water map{% endblock %}
+{% block page_title %}Land–water map{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Land–water map</h2>
+                <p>Which water source is used on each land</p>
+            </div>
+            <div class="ingredient-header-actions">
+                <a href="{% url 'farm:land_water_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Map land to water
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if records %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Land</th>
+                        <th>Water</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.land.name }}</td>
+                        <td>{{ record.water.name }}</td>
+                        <td>{% if record.status %}Active{% else %}Inactive{% endif %}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'farm:land_water_edit' record.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'farm:land_water_delete' record.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-moisture"></i></div>
+            <h3>No mappings yet</h3>
+            <p>Link a land parcel to a water source.</p>
+            <a href="{% url 'farm:land_water_create' %}" class="ingredient-primary-btn">Map land to water</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

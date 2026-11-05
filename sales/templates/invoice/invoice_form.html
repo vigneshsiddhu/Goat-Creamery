@@ -1,536 +1,730 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Quick Billing{% endblock %}
+{% block page_title %}Quick Billing{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<link rel="stylesheet" href="{% static 'css/invoice_billing.css' %}?v=3">
+{% endblock %}
+
 {% block content %}
 
-<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<div class="billing-page">
+    <div class="billing-card">
 
-<div class="form-page">
-    <div class="form-card">
-
-        <div class="form-header">
-            <div class="form-header-content">
-                <h3>{{ title }}</h3>
-                <p>Create invoice and add invoice items.</p>
+        <div class="billing-header">
+            <div>
+                <h3>Quick Billing</h3>
+                <p>Select a product, then add another product as a new line.</p>
+            </div>
+            <div class="billing-header-meta">
+                {% if invoice %}
+                    <div>{{ invoice.number }}</div>
+                    <div>{{ invoice.date|date:"d M Y" }}{% if invoice.time %}, {{ invoice.time|time:"H:i" }}{% endif %}</div>
+                {% else %}
+                    <div>Auto invoice on save</div>
+                    <div>Date & time set automatically</div>
+                {% endif %}
             </div>
         </div>
 
-        <div class="form-body">
+        <form method="post" id="invoice-form" novalidate>
+            {% csrf_token %}
 
-            <form method="post" id="invoice-form">
-                {% csrf_token %}
-
-                {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                <!-- INVOICE DETAILS -->
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="{{ form.number.id_for_label }}">
-                            Invoice Number
-                            <span class="form-required">*</span>
-                        </label>
-                        {{ form.number }}
-
-                        {% for error in form.number.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.date.id_for_label }}">
-                            Date
-                            <span class="form-required">*</span>
-                        </label>
-                        {{ form.date }}
-
-                        {% for error in form.date.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-
+            {% if messages %}
+                <div class="billing-messages">
+                    {% for message in messages %}
+                        <div class="billing-message billing-message-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
                 </div>
+            {% endif %}
 
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="{{ form.time.id_for_label }}">
-                            Time
-                        </label>
-                        {{ form.time }}
-
-                        {% for error in form.time.errors %}
-                            <div class="form-error">{{ error }}</div>
+            {% if form.errors or formset.errors or form.non_field_errors or formset.non_form_errors %}
+                <div class="billing-errors" id="billing-errors">
+                    <p class="billing-errors-title">Please fix the following:</p>
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
                         {% endfor %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.customer.id_for_label }}">
-                            Customer
-                            <span class="form-required">*</span>
-                        </label>
-                        {{ form.customer }}
-
-                        {% for error in form.customer.errors %}
-                            <div class="form-error">{{ error }}</div>
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
                         {% endfor %}
-                    </div>
-
+                        {% for error in formset.non_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        {% for item_form in formset %}
+                            {% if item_form.errors %}
+                                {% for field in item_form %}
+                                    {% for error in field.errors %}
+                                        <li>Item {{ forloop.parentloop.counter }} — {{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in item_form.non_field_errors %}
+                                    <li>Item {{ forloop.counter }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
                 </div>
+            {% endif %}
 
-                <div class="form-row">
+            <div class="billing-layout">
 
-                    <div class="form-group">
-                        <label for="{{ form.payment_status.id_for_label }}">
-                            Payment Status
-                            <span class="form-required">*</span>
-                        </label>
+                <section class="billing-main">
+                    <div class="billing-items-toolbar">
+                        <div>
+                            <h4 class="billing-section-title">Order Items</h4>
+                            <p>Each line is one product. Use Add Item for another product.</p>
+                        </div>
+                        <button type="button" class="billing-add-btn" id="add-item-btn">+ Add Item</button>
+                    </div>
+
+                    {{ formset.management_form }}
+
+                    <div id="invoice-items">
+                        {% for item_form in formset %}
+                            {% include "invoice/_invoice_item_row.html" with item_form=item_form %}
+                        {% endfor %}
+                    </div>
+
+                    <details class="billing-more"{% if form.discount.errors or form.notes.errors %} open{% endif %}>
+                        <summary>More options (discount & notes)</summary>
+                        <div class="billing-more-body">
+                            <div class="billing-field{% if form.discount.errors %} has-error{% endif %}">
+                                <label for="{{ form.discount.id_for_label }}">Extra invoice discount</label>
+                                {{ form.discount }}
+                                {% for error in form.discount.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="billing-field{% if form.notes.errors %} has-error{% endif %}">
+                                <label for="{{ form.notes.id_for_label }}">Notes</label>
+                                {{ form.notes }}
+                                {% for error in form.notes.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <aside class="billing-sidebar">
+                    <h4 class="billing-section-title">Checkout</h4>
+
+                    <details class="billing-customer-panel" id="billing-customer-panel"{% if form.customer.errors or form.new_customer_name.errors or form.new_customer_number.errors or form.new_customer_gender.errors or form.new_customer_age.errors or form.new_customer_address.errors or invoice and invoice.customer %} open{% endif %}>
+                        <summary>
+                            <i class="bi bi-person"></i>
+                            Customer <small>(optional)</small>
+                            <span class="billing-customer-hint" id="billing-customer-hint">
+                                {% if invoice and invoice.customer %}{{ invoice.customer.name }}{% else %}Walk-in{% endif %}
+                            </span>
+                        </summary>
+                        <div class="billing-customer-body">
+                            <p class="billing-customer-note">Skip this section for walk-in sales. Open only when you want to link a customer.</p>
+                            <div class="billing-pill-group billing-customer-mode" id="customer-mode-pills">
+                                <button type="button" class="billing-pill is-active" data-mode="existing">Existing</button>
+                                <button type="button" class="billing-pill" data-mode="new">New customer</button>
+                            </div>
+
+                            <div id="customer-existing-panel" class="billing-customer-mode-panel">
+                                <div class="billing-field{% if form.customer.errors %} has-error{% endif %}">
+                                    <label for="{{ form.customer.id_for_label }}">Select customer</label>
+                                    {{ form.customer }}
+                                    {% for error in form.customer.errors %}
+                                        <div class="form-error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div id="customer-new-panel" class="billing-customer-mode-panel" hidden>
+                                <div class="billing-field{% if form.new_customer_name.errors %} has-error{% endif %}">
+                                    <label for="{{ form.new_customer_name.id_for_label }}">Name <span class="form-required">*</span></label>
+                                    {{ form.new_customer_name }}
+                                    {% for error in form.new_customer_name.errors %}
+                                        <div class="form-error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="billing-field{% if form.new_customer_number.errors %} has-error{% endif %}">
+                                    <label for="{{ form.new_customer_number.id_for_label }}">Phone <span class="form-required">*</span></label>
+                                    {{ form.new_customer_number }}
+                                    {% for error in form.new_customer_number.errors %}
+                                        <div class="form-error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="billing-field-row">
+                                    <div class="billing-field{% if form.new_customer_gender.errors %} has-error{% endif %}">
+                                        <label for="{{ form.new_customer_gender.id_for_label }}">Gender</label>
+                                        {{ form.new_customer_gender }}
+                                        {% for error in form.new_customer_gender.errors %}
+                                            <div class="form-error">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="billing-field{% if form.new_customer_age.errors %} has-error{% endif %}">
+                                        <label for="{{ form.new_customer_age.id_for_label }}">Age</label>
+                                        {{ form.new_customer_age }}
+                                        {% for error in form.new_customer_age.errors %}
+                                            <div class="form-error">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="billing-field{% if form.new_customer_address.errors %} has-error{% endif %}">
+                                    <label for="{{ form.new_customer_address.id_for_label }}">Address</label>
+                                    {{ form.new_customer_address }}
+                                    {% for error in form.new_customer_address.errors %}
+                                        <div class="form-error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="billing-field{% if form.payment_status.errors %} has-error{% endif %}">
+                        <label>Payment status</label>
                         {{ form.payment_status }}
-
+                        <div class="billing-pill-group billing-pill-group--status" id="payment-status-pills">
+                            <button type="button" class="billing-pill" data-target="id_payment_status" data-value="paid">Paid</button>
+                            <button type="button" class="billing-pill" data-target="id_payment_status" data-value="pending">Pending</button>
+                            <button type="button" class="billing-pill" data-target="id_payment_status" data-value="partial">Partial</button>
+                        </div>
                         {% for error in form.payment_status.errors %}
                             <div class="form-error">{{ error }}</div>
                         {% endfor %}
                     </div>
 
-                    <div class="form-group">
-                        <label for="{{ form.payment_method.id_for_label }}">
-                            Payment Method
-                            <span class="form-required">*</span>
-                        </label>
+                    <div class="billing-field{% if form.payment_method.errors %} has-error{% endif %}">
+                        <label>Payment method</label>
                         {{ form.payment_method }}
-
+                        <div class="billing-pill-group billing-pill-group--method" id="payment-method-pills">
+                            <button type="button" class="billing-pill" data-target="id_payment_method" data-value="cash">Cash</button>
+                            <button type="button" class="billing-pill" data-target="id_payment_method" data-value="upi">UPI</button>
+                            <button type="button" class="billing-pill" data-target="id_payment_method" data-value="card">Card</button>
+                            <button type="button" class="billing-pill" data-target="id_payment_method" data-value="bank_transfer">Bank</button>
+                            <button type="button" class="billing-pill" data-target="id_payment_method" data-value="credit">Credit</button>
+                        </div>
                         {% for error in form.payment_method.errors %}
                             <div class="form-error">{{ error }}</div>
                         {% endfor %}
                     </div>
 
-                </div>
-
-                <!-- INVOICE ITEMS -->
-
-                <div class="form-section-header">
-                    <div>
-                        <h4>Invoice Items</h4>
-                        <p>Add products to this invoice.</p>
+                    {% if not invoice %}
+                    <div class="billing-field{% if form.vehicle.errors %} has-error{% endif %}">
+                        <label for="{{ form.vehicle.id_for_label }}">Vehicle <small>(optional)</small></label>
+                        {{ form.vehicle }}
+                        {% for error in form.vehicle.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
                     </div>
-
-                    <button
-                        type="button"
-                        class="form-save-btn"
-                        id="add-item-btn"
-                    >
-                        + Add Item
-                    </button>
-                </div>
-
-                {{ formset.management_form }}
-
-                <div id="invoice-items"></div>
-
-                <!-- EMPTY ITEM FORM -->
-
-                <template id="invoice-empty-form">
-
-                    <div class="invoice-item-row">
-
-                        <div class="form-row-4">
-
-                            <div class="form-group">
-                                <label>Item</label>
-                                {{ formset.empty_form.item }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Unit</label>
-                                {{ formset.empty_form.unit }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Quantity</label>
-                                {{ formset.empty_form.quantity }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Price</label>
-                                {{ formset.empty_form.price }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Discount</label>
-                                {{ formset.empty_form.discount }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>GST</label>
-                                {{ formset.empty_form.gst }}
-                            </div>
-
-                            <div class="form-group">
-                                <label>Total</label>
-                                <input
-                                    type="text"
-                                    class="form-input invoice-item-total"
-                                    value="0.00"
-                                    readonly
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label>&nbsp;</label>
-
-                                <button
-                                    type="button"
-                                    class="form-delete-btn remove-item-btn"
-                                >
-                                    Remove
-                                </button>
-
-                                <div style="display:none;">
-                                    {{ formset.empty_form.DELETE }}
-                                </div>
-                            </div>
-
+                    <div class="billing-field billing-location-field">
+                        <label>GPS location <small>(optional)</small></label>
+                        <div class="billing-location-status" id="billing-location-status">
+                            <i class="bi bi-geo-alt"></i>
+                            <span id="billing-location-text">Detecting location...</span>
                         </div>
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+                    </div>
+                    {% endif %}
 
+                    <div class="billing-totals">
+                        <div class="billing-total-row">
+                            <span>Sub total</span>
+                            <strong>₹<span id="invoice-sub-total-text">0.00</span></strong>
+                        </div>
+                        <div class="billing-total-row">
+                            <span>GST</span>
+                            <strong>₹<span id="invoice-gst-total-text">0.00</span></strong>
+                        </div>
+                        <div class="billing-total-row">
+                            <span>Discount</span>
+                            <strong>₹<span id="invoice-discount-total-text">0.00</span></strong>
+                        </div>
+                        <div class="billing-total-row grand">
+                            <span>Grand total</span>
+                            <strong>₹<span id="invoice-grand-total-text">0.00</span></strong>
+                        </div>
                     </div>
 
-                </template>
+                    <input type="hidden" id="invoice-sub-total" value="0.00">
+                    <input type="hidden" id="invoice-gst-total" value="0.00">
+                    <input type="hidden" id="invoice-grand-total" value="0.00">
 
-                <!-- DISCOUNT / GST -->
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="{{ form.discount.id_for_label }}">
-                            Invoice Discount
-                        </label>
-                        {{ form.discount }}
-
-                        {% for error in form.discount.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                    <div class="billing-actions billing-actions-desktop">
+                        <button type="submit" class="billing-complete-btn" id="save-invoice-btn">
+                            Complete Bill
+                        </button>
+                        <a href="{% url 'sales:invoice_list' %}" class="billing-cancel-btn">Cancel</a>
                     </div>
+                </aside>
+            </div>
 
-                    <div class="form-group">
-                        <label for="{{ form.gst.id_for_label }}">
-                            Invoice GST
-                        </label>
-                        {{ form.gst }}
-
-                        {% for error in form.gst.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-
+            <div class="billing-mobile-bar" role="region" aria-label="Quick checkout">
+                <div class="billing-mobile-total">
+                    <span>Grand total</span>
+                    <strong>₹<span id="invoice-grand-total-mobile">0.00</span></strong>
                 </div>
+                <button type="submit" class="billing-complete-btn" id="save-invoice-btn-mobile">
+                    Complete Bill
+                </button>
+            </div>
+        </form>
 
-                <!-- TOTALS -->
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label>Sub Total</label>
-
-                        <input
-                            type="text"
-                            id="invoice-sub-total"
-                            class="form-input"
-                            value="0.00"
-                            readonly
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Grand Total</label>
-
-                        <input
-                            type="text"
-                            id="invoice-grand-total"
-                            class="form-input"
-                            value="0.00"
-                            readonly
-                        >
-                    </div>
-
-                </div>
-
-                <!-- NOTES -->
-
-                <div class="form-group">
-                    <label for="{{ form.notes.id_for_label }}">
-                        Notes
-                    </label>
-
-                    {{ form.notes }}
-
-                    {% for error in form.notes.errors %}
-                        <div class="form-error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <!-- ACTIONS -->
-
-                <div class="form-actions">
-
-                    <a
-                        href="{% url 'sales:invoice_list' %}"
-                        class="form-cancel-btn"
-                    >
-                        Cancel
-                    </a>
-
-                    <button
-                        type="submit"
-                        class="form-save-btn"
-                        id="save-invoice-btn"
-                    >
-                        Save Invoice
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        <template id="invoice-empty-form">
+            {% include "invoice/_invoice_item_row.html" with item_form=formset.empty_form %}
+        </template>
     </div>
 </div>
 
+{{ item_pricing_map|json_script:"invoice-item-pricing-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     const invoiceForm = document.getElementById("invoice-form");
     const addItemBtn = document.getElementById("add-item-btn");
     const invoiceItems = document.getElementById("invoice-items");
     const emptyFormTemplate = document.getElementById("invoice-empty-form");
-
-    const totalFormsInput = invoiceForm.querySelector(
-        'input[name$="-TOTAL_FORMS"]'
-    );
-
-    const subTotalInput = document.getElementById("invoice-sub-total");
-    const grandTotalInput = document.getElementById("invoice-grand-total");
-
+    const pricingDataEl = document.getElementById("invoice-item-pricing-data");
+    const itemPricingMap = pricingDataEl ? JSON.parse(pricingDataEl.textContent) : {};
+    const totalFormsInput = invoiceForm.querySelector('input[name$="-TOTAL_FORMS"]');
     const invoiceDiscount = document.getElementById("id_discount");
-    const invoiceGst = document.getElementById("id_gst");
 
-    if (!invoiceForm) {
-        console.error("Invoice form not found");
+    const subTotalText = document.getElementById("invoice-sub-total-text");
+    const gstTotalText = document.getElementById("invoice-gst-total-text");
+    const discountTotalText = document.getElementById("invoice-discount-total-text");
+    const grandTotalText = document.getElementById("invoice-grand-total-text");
+    const grandTotalMobile = document.getElementById("invoice-grand-total-mobile");
+
+    if (!invoiceForm || !totalFormsInput) {
         return;
     }
 
-    if (!totalFormsInput) {
-        console.error("Django TOTAL_FORMS not found");
-        return;
+    const errorBox = document.getElementById("billing-errors");
+    if (errorBox) {
+        errorBox.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    function addItem() {
+    function formatMoney(value) {
+        return (parseFloat(value) || 0).toFixed(2);
+    }
 
-        const index = parseInt(
-            totalFormsInput.value,
-            10
-        );
+    function calculateLinePricing(basePricing, quantity) {
+        const qty = parseFloat(quantity) || 1;
+        const price = parseFloat(basePricing.price) || 0;
+        const discount = parseFloat(basePricing.discount) || 0;
+        const gstPercent = parseFloat(basePricing.gst_percent) || 0;
+        let lineSubtotal = (qty * price) - discount;
+        if (lineSubtotal < 0) lineSubtotal = 0;
+        const gst = lineSubtotal * gstPercent / 100;
+        const total = lineSubtotal + gst;
+        return {
+            unit: basePricing.unit || "",
+            price: price.toFixed(2),
+            discount: discount.toFixed(2),
+            gst: gst.toFixed(2),
+            total: total.toFixed(2),
+        };
+    }
 
-        const html = emptyFormTemplate.innerHTML.replace(
-            /__prefix__/g,
-            index
-        );
+    function setRowPricing(row, data) {
+        const fields = {
+            unit: row.querySelector(".invoice-item-unit"),
+            price: row.querySelector(".invoice-item-price"),
+            discount: row.querySelector(".invoice-item-discount"),
+            gst: row.querySelector(".invoice-item-gst"),
+            total: row.querySelector(".invoice-item-total"),
+        };
+        const displays = {
+            unit: row.querySelector(".invoice-item-unit-display"),
+            price: row.querySelector(".invoice-item-price-display"),
+            gst: row.querySelector(".invoice-item-gst-display"),
+            total: row.querySelector(".invoice-item-total-text"),
+        };
 
-        invoiceItems.insertAdjacentHTML(
-            "beforeend",
-            html
-        );
+        if (fields.unit) fields.unit.value = data.unit || "";
+        if (fields.price) fields.price.value = data.price || "0.00";
+        if (fields.discount) fields.discount.value = data.discount || "0.00";
+        if (fields.gst) fields.gst.value = data.gst || "0.00";
+        if (fields.total) fields.total.value = data.total || "0.00";
+        if (displays.unit) displays.unit.textContent = data.unit || "—";
+        if (displays.price) displays.price.textContent = data.price || "0.00";
+        if (displays.gst) displays.gst.textContent = data.gst || "0.00";
+        if (displays.total) displays.total.textContent = data.total || "0.00";
+    }
 
-        totalFormsInput.value = index + 1;
+    function clearRowPricing(row) {
+        setRowPricing(row, { unit: "", price: "0.00", discount: "0.00", gst: "0.00", total: "0.00" });
+    }
 
+    function updateRowPricing(row) {
+        const itemSelect = row.querySelector(".invoice-item-select");
+        const quantityInput = row.querySelector(".invoice-item-quantity");
+        const itemId = itemSelect?.value;
+
+        if (!itemId || !itemPricingMap[itemId]) {
+            clearRowPricing(row);
+            calculateTotals();
+            return;
+        }
+
+        if (quantityInput) {
+            quantityInput.value = "1";
+        }
+
+        setRowPricing(row, calculateLinePricing(itemPricingMap[itemId], "1"));
         calculateTotals();
     }
 
+    function focusRowItemSelect(row) {
+        const itemSelect = row?.querySelector(".invoice-item-select");
+        if (itemSelect) itemSelect.focus();
+    }
+
+    function isRowActive(row) {
+        if (!row || row.style.display === "none") return false;
+        const deleteInput = row.querySelector('input[name$="-DELETE"]');
+        return !(deleteInput && deleteInput.checked);
+    }
+
+    function selectedItemIds(exceptRow) {
+        const ids = new Set();
+        invoiceItems.querySelectorAll(".invoice-item-row").forEach(function (row) {
+            if (row === exceptRow || !isRowActive(row)) return;
+            const value = row.querySelector(".invoice-item-select")?.value;
+            if (value) ids.add(value);
+        });
+        return ids;
+    }
+
+    const itemOptionCatalog = (function () {
+        const templateSelect = emptyFormTemplate?.content?.querySelector(".invoice-item-select");
+        if (!templateSelect) return [];
+        return Array.from(templateSelect.options).map(function (option) {
+            return { value: option.value, text: option.text };
+        });
+    })();
+
+    function syncItemOptions() {
+        invoiceItems.querySelectorAll(".invoice-item-row").forEach(function (row) {
+            if (!isRowActive(row)) return;
+            const select = row.querySelector(".invoice-item-select");
+            if (!select) return;
+            const current = select.value;
+            const taken = selectedItemIds(row);
+            select.innerHTML = "";
+            itemOptionCatalog.forEach(function (opt) {
+                if (opt.value && taken.has(opt.value) && opt.value !== current) return;
+                const option = document.createElement("option");
+                option.value = opt.value;
+                option.textContent = opt.text;
+                if (opt.value === current) option.selected = true;
+                select.appendChild(option);
+            });
+        });
+    }
+
+    function addItem(focusItem) {
+        const index = parseInt(totalFormsInput.value, 10);
+        const html = emptyFormTemplate.innerHTML.replace(/__prefix__/g, index);
+        invoiceItems.insertAdjacentHTML("beforeend", html);
+        totalFormsInput.value = index + 1;
+        const row = invoiceItems.lastElementChild;
+        const quantityInput = row.querySelector(".invoice-item-quantity");
+        if (quantityInput) quantityInput.value = "1";
+        if (focusItem) focusRowItemSelect(row);
+        syncItemOptions();
+        calculateTotals();
+        return row;
+    }
+
     function removeItem(row) {
-
-        const deleteInput = row.querySelector(
-            'input[name$="-DELETE"]'
-        );
-
-        if (deleteInput) {
-            deleteInput.checked = true;
-        }
-
+        const deleteInput = row.querySelector('input[name$="-DELETE"]');
+        if (deleteInput) deleteInput.checked = true;
         row.style.display = "none";
-
+        syncItemOptions();
         calculateTotals();
     }
 
     function calculateTotals() {
-
         let subTotal = 0;
+        let itemsGst = 0;
 
-        const rows = invoiceItems.querySelectorAll(
-            ".invoice-item-row"
-        );
+        invoiceItems.querySelectorAll(".invoice-item-row").forEach(function (row) {
+            const deleteInput = row.querySelector('input[name$="-DELETE"]');
+            if (deleteInput && deleteInput.checked) return;
 
-        rows.forEach(function (row) {
+            const price = parseFloat(row.querySelector(".invoice-item-price")?.value) || 0;
+            const discount = parseFloat(row.querySelector(".invoice-item-discount")?.value) || 0;
+            const gst = parseFloat(row.querySelector(".invoice-item-gst")?.value) || 0;
+            const quantity = parseFloat(row.querySelector(".invoice-item-quantity")?.value) || 0;
+            const lineSubtotal = (quantity * price) - discount;
+            const lineTotal = lineSubtotal + gst;
 
-            const deleteInput = row.querySelector(
-                'input[name$="-DELETE"]'
-            );
+            const totalField = row.querySelector(".invoice-item-total");
+            const totalText = row.querySelector(".invoice-item-total-text");
+            if (totalField) totalField.value = lineTotal.toFixed(2);
+            if (totalText) totalText.textContent = lineTotal.toFixed(2);
 
-            if (
-                deleteInput &&
-                deleteInput.checked
-            ) {
-                return;
-            }
-
-            const quantityInput = row.querySelector(
-                ".invoice-item-quantity"
-            );
-
-            const priceInput = row.querySelector(
-                ".invoice-item-price"
-            );
-
-            const discountInput = row.querySelector(
-                ".invoice-item-discount"
-            );
-
-            const totalInput = row.querySelector(
-                ".invoice-item-total"
-            );
-
-            const quantity =
-                parseFloat(quantityInput?.value) || 0;
-
-            const price =
-                parseFloat(priceInput?.value) || 0;
-
-            const discount =
-                parseFloat(discountInput?.value) || 0;
-
-            let total =
-                (quantity * price) - discount;
-
-            if (total < 0) {
-                total = 0;
-            }
-
-            if (totalInput) {
-                totalInput.value =
-                    total.toFixed(2);
-            }
-
-            subTotal += total;
+            subTotal += lineSubtotal;
+            itemsGst += gst;
         });
 
-        const discount =
-            parseFloat(invoiceDiscount?.value) || 0;
+        const invoiceDiscountValue = parseFloat(invoiceDiscount?.value) || 0;
+        let grandTotal = subTotal - invoiceDiscountValue + itemsGst;
+        if (grandTotal < 0) grandTotal = 0;
 
-        const gst =
-            parseFloat(invoiceGst?.value) || 0;
-
-        let grandTotal =
-            subTotal - discount + gst;
-
-        if (grandTotal < 0) {
-            grandTotal = 0;
-        }
-
-        subTotalInput.value =
-            subTotal.toFixed(2);
-
-        grandTotalInput.value =
-            grandTotal.toFixed(2);
+        subTotalText.textContent = formatMoney(subTotal);
+        gstTotalText.textContent = formatMoney(itemsGst);
+        discountTotalText.textContent = formatMoney(invoiceDiscountValue);
+        grandTotalText.textContent = formatMoney(grandTotal);
+        if (grandTotalMobile) grandTotalMobile.textContent = formatMoney(grandTotal);
     }
 
-    addItemBtn.addEventListener(
-        "click",
-        function () {
-            addItem();
+    function setupPillGroup(container) {
+        if (!container) return;
+        container.addEventListener("click", function (event) {
+            const pill = event.target.closest(".billing-pill");
+            if (!pill) return;
+            const select = document.getElementById(pill.dataset.target);
+            if (!select) return;
+            select.value = pill.dataset.value;
+            container.querySelectorAll(".billing-pill").forEach(function (btn) {
+                btn.classList.toggle("is-active", btn === pill);
+            });
+        });
+    }
+
+    function syncPillsFromSelect(selectId, container) {
+        const select = document.getElementById(selectId);
+        if (!select || !container) return;
+        container.querySelectorAll(".billing-pill").forEach(function (pill) {
+            pill.classList.toggle("is-active", pill.dataset.value === select.value);
+        });
+    }
+
+    setupPillGroup(document.getElementById("payment-status-pills"));
+    setupPillGroup(document.getElementById("payment-method-pills"));
+    syncPillsFromSelect("id_payment_status", document.getElementById("payment-status-pills"));
+    syncPillsFromSelect("id_payment_method", document.getElementById("payment-method-pills"));
+
+    const customerPanel = document.getElementById("billing-customer-panel");
+    const customerModePills = document.getElementById("customer-mode-pills");
+    const customerExistingPanel = document.getElementById("customer-existing-panel");
+    const customerNewPanel = document.getElementById("customer-new-panel");
+    const customerSelect = document.getElementById("id_customer");
+    const customerHint = document.getElementById("billing-customer-hint");
+    const newCustomerFields = [
+        document.getElementById("id_new_customer_name"),
+        document.getElementById("id_new_customer_number"),
+        document.getElementById("id_new_customer_gender"),
+        document.getElementById("id_new_customer_age"),
+        document.getElementById("id_new_customer_address"),
+    ];
+
+    function hasNewCustomerInput() {
+        return newCustomerFields.some(function (field) {
+            return field && field.value && field.value.trim() !== "";
+        });
+    }
+
+    function setCustomerMode(mode) {
+        const isNew = mode === "new";
+        if (customerExistingPanel) customerExistingPanel.hidden = isNew;
+        if (customerNewPanel) customerNewPanel.hidden = !isNew;
+        if (customerModePills) {
+            customerModePills.querySelectorAll(".billing-pill").forEach(function (pill) {
+                pill.classList.toggle("is-active", pill.dataset.mode === mode);
+            });
         }
-    );
-
-    invoiceItems.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target.classList.contains(
-                    "remove-item-btn"
-                )
-            ) {
-
-                const row =
-                    event.target.closest(
-                        ".invoice-item-row"
-                    );
-
-                if (row) {
-                    removeItem(row);
-                }
-            }
+        if (isNew && customerSelect) {
+            customerSelect.value = "";
         }
-    );
-
-    invoiceItems.addEventListener(
-        "input",
-        function () {
-            calculateTotals();
+        if (!isNew) {
+            newCustomerFields.forEach(function (field) {
+                if (field) field.value = "";
+            });
         }
-    );
+        updateCustomerHint();
+    }
+
+    function updateCustomerHint() {
+        if (!customerHint) return;
+        const nameField = document.getElementById("id_new_customer_name");
+        if (customerNewPanel && !customerNewPanel.hidden && nameField && nameField.value.trim()) {
+            customerHint.textContent = nameField.value.trim();
+            return;
+        }
+        if (customerSelect && customerSelect.value) {
+            const selected = customerSelect.options[customerSelect.selectedIndex];
+            customerHint.textContent = selected ? selected.text.trim() : "Walk-in";
+            return;
+        }
+        customerHint.textContent = "Walk-in";
+    }
+
+    if (customerModePills) {
+        customerModePills.addEventListener("click", function (event) {
+            const pill = event.target.closest(".billing-pill");
+            if (!pill) return;
+            setCustomerMode(pill.dataset.mode);
+        });
+    }
+
+    if (customerSelect) {
+        customerSelect.addEventListener("change", updateCustomerHint);
+    }
+    newCustomerFields.forEach(function (field) {
+        if (field) field.addEventListener("input", updateCustomerHint);
+    });
+
+    if (hasNewCustomerInput()) {
+        setCustomerMode("new");
+    } else {
+        setCustomerMode("existing");
+    }
+    updateCustomerHint();
+
+    if (!document.getElementById("id_payment_status").value) {
+        const paidPill = document.querySelector('#payment-status-pills .billing-pill[data-value="paid"]');
+        if (paidPill) paidPill.click();
+    }
+    if (!document.getElementById("id_payment_method").value) {
+        const cashPill = document.querySelector('#payment-method-pills .billing-pill[data-value="cash"]');
+        if (cashPill) cashPill.click();
+    }
+
+    addItemBtn.addEventListener("click", function () {
+        addItem(true);
+    });
+
+    invoiceItems.addEventListener("click", function (event) {
+        if (event.target.classList.contains("remove-item-btn")) {
+            removeItem(event.target.closest(".invoice-item-row"));
+            return;
+        }
+    });
+
+    invoiceItems.addEventListener("change", function (event) {
+        if (event.target.classList.contains("invoice-item-select")) {
+            const row = event.target.closest(".invoice-item-row");
+            updateRowPricing(row);
+            syncItemOptions();
+            focusRowItemSelect(row);
+        }
+    });
+
+    invoiceItems.addEventListener("input", function (event) {
+        if (event.target.classList.contains("invoice-item-quantity")) {
+            updateRowPricing(event.target.closest(".invoice-item-row"));
+        }
+    });
 
     if (invoiceDiscount) {
-        invoiceDiscount.addEventListener(
-            "input",
-            calculateTotals
-        );
+        invoiceDiscount.addEventListener("input", calculateTotals);
     }
 
-    if (invoiceGst) {
-        invoiceGst.addEventListener(
-            "input",
-            calculateTotals
-        );
+    if (invoiceItems.querySelectorAll(".invoice-item-row").length === 0) {
+        addItem(true);
+    } else {
+        invoiceItems.querySelectorAll(".invoice-item-row").forEach(updateRowPricing);
+        syncItemOptions();
     }
 
-    /*
-     * Add one empty item row initially.
-     */
     if (
-        invoiceItems.querySelectorAll(
-            ".invoice-item-row"
-        ).length === 0
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
     ) {
-        addItem();
+        document.documentElement.classList.add("is-pwa");
     }
 
-    /*
-     * IMPORTANT:
-     * Do not prevent form submission.
-     */
-    invoiceForm.addEventListener(
-        "submit",
-        function () {
-            console.log("SAVE INVOICE SUBMITTED");
+    const latInput = document.getElementById("invoice_latitude");
+    const lngInput = document.getElementById("invoice_longitude");
+    const locationText = document.getElementById("billing-location-text");
+    const locationStatus = document.getElementById("billing-location-status");
+    let geoCaptureDone = false;
 
-            const saveButton =
-                document.getElementById(
-                    "save-invoice-btn"
-                );
-
-            if (saveButton) {
-                saveButton.disabled = true;
-                saveButton.textContent = "Saving...";
+    function setLocationStatus(message, state) {
+        if (!locationText) return;
+        locationText.textContent = message;
+        if (locationStatus) {
+            locationStatus.classList.remove(
+                "is-captured",
+                "is-unavailable",
+                "is-pending"
+            );
+            if (state) {
+                locationStatus.classList.add(state);
             }
         }
-    );
+    }
 
-    calculateTotals();
+    function captureGeolocation(done) {
+        if (!latInput || !lngInput) {
+            if (done) done();
+            return;
+        }
+        if (!navigator.geolocation) {
+            setLocationStatus("Location not supported on this device", "is-unavailable");
+            if (done) done();
+            return;
+        }
+        setLocationStatus("Detecting location...", "is-pending");
+        navigator.geolocation.getCurrentPosition(
+            function (pos) {
+                latInput.value = pos.coords.latitude.toFixed(7);
+                lngInput.value = pos.coords.longitude.toFixed(7);
+                setLocationStatus(
+                    "Location captured: " + latInput.value + ", " + lngInput.value,
+                    "is-captured"
+                );
+                if (done) done();
+            },
+            function () {
+                setLocationStatus("Location unavailable — bill will save without GPS", "is-unavailable");
+                if (done) done();
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        );
+    }
 
+    if (latInput && lngInput) {
+        captureGeolocation();
+    }
+
+    invoiceForm.addEventListener("submit", function (event) {
+        invoiceItems.querySelectorAll(".invoice-item-row").forEach(updateRowPricing);
+
+        if (!latInput || !lngInput || geoCaptureDone) {
+            document.querySelectorAll(".billing-complete-btn").forEach(function (btn) {
+                btn.textContent = "Saving...";
+                btn.disabled = true;
+            });
+            return;
+        }
+
+        if (latInput.value && lngInput.value) {
+            document.querySelectorAll(".billing-complete-btn").forEach(function (btn) {
+                btn.textContent = "Saving...";
+                btn.disabled = true;
+            });
+            return;
+        }
+
+        event.preventDefault();
+        captureGeolocation(function () {
+            geoCaptureDone = true;
+            if (typeof invoiceForm.requestSubmit === "function") {
+                invoiceForm.requestSubmit();
+            } else {
+                invoiceForm.submit();
+            }
+        });
+    });
 });
 </script>
-
 {% endblock %}

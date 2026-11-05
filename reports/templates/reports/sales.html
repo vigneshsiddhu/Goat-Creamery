@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sales report{% endblock %}
+{% block page_title %}Sales report{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="{% static 'css/reports.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="report-page">
+    <div class="report-header">
+        <div>
+            <span class="report-eyebrow">Last month</span>
+            <h1>{{ report.title }}</h1>
+            <p>{{ period_start|date:"d M" }} – {{ period_end|date:"d M Y" }} · invoice revenue, mix, and city map · {{ business.name }}</p>
+        </div>
+    </div>
+    {% include "reports/_tabs.html" %}
+
+    <div class="report-kpis">
+        {% for kpi in report.kpis %}
+        <div class="report-kpi is-{{ kpi.tone }}">
+            <span>{{ kpi.label }}</span>
+            <strong>{{ kpi.value }}</strong>
+            <small>{{ kpi.note }}</small>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="report-split">
+        <section class="report-panel">
+            <h3>Daily revenue</h3>
+            <p>High and quiet days across the month.</p>
+            <canvas id="chart-daily" height="140"></canvas>
+        </section>
+        <section class="report-panel">
+            <h3>Sales map</h3>
+            <p>Invoice locations — Pondicherry and Coimbatore.</p>
+            <div id="report-map" class="report-map"></div>
+        </section>
+    </div>
+
+    <div class="report-split">
+        <section class="report-panel">
+            <h3>Weekday pattern</h3>
+            <p>Friday–Sunday should stand out.</p>
+            <canvas id="chart-weekday" height="140"></canvas>
+        </section>
+        <section class="report-panel">
+            <h3>Flavour mix</h3>
+            <p>Which gelato flavours sold.</p>
+            <canvas id="chart-flavour" height="140"></canvas>
+        </section>
+    </div>
+
+    <div class="report-split">
+        <section class="report-panel">
+            <h3>Payment mix</h3>
+            <canvas id="chart-payment" height="140"></canvas>
+        </section>
+        <section class="report-panel">
+            <h3>City split</h3>
+            <canvas id="chart-city" height="140"></canvas>
+        </section>
+    </div>
+</div>
+
+{{ report.charts|json_script:"report-charts" }}
+{{ report.map|json_script:"report-map-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/reports.js' %}?v=2"></script>
+{% endblock %}

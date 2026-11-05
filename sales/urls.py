@@ -23,6 +23,8 @@ urlpatterns = [
 
     path("invoices/",views.invoice_list,name="invoice_list"),
     path("invoices/create/",views.invoice_create,name="invoice_create"),
+    path("invoices/items/<uuid:item_id>/pricing/",views.invoice_item_pricing,name="invoice_item_pricing"),
+    path("invoices/<uuid:pk>/",views.invoice_detail,name="invoice_detail"),
     path("invoices/<uuid:pk>/edit/",views.invoice_edit,name="invoice_edit"),
     path("invoices/<uuid:pk>/delete/",views.invoice_delete,name="invoice_delete"),
 

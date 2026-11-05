@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import RedirectView
 from . import views
 
 app_name = "business"
@@ -21,8 +22,10 @@ urlpatterns = [
     # =====================================================
     # BUSINESS USERS
     # =====================================================
-    path("location",views.location_list,name="location_list"),
-    path("location/create/",views.location_create,name="location_create"),
-    path("location/<uuid:pk>/edit/",views.location_edit,name="location_edit"),
-    path("location/<uuid:pk>/delete/",views.location_delete,name="location_delete"),
+    path("locations/",views.location_list,name="location_list"),
+    path("locations/create/",views.location_create,name="location_create"),
+    path("locations/<uuid:pk>/edit/",views.location_edit,name="location_edit"),
+    path("locations/<uuid:pk>/delete/",views.location_delete,name="location_delete"),
+    path("location", RedirectView.as_view(pattern_name="business:location_list", permanent=False)),
+    path("location/", RedirectView.as_view(pattern_name="business:location_list", permanent=False)),
 ]

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if consumption %}Edit feeding{% else %}Add feeding{% endif %}{% endblock %}
+{% block page_title %}{% if consumption %}Edit feeding{% else %}Add feeding{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'farm:feedstock_list' %}?tab=daily" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to feed
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if consumption %}Edit feeding{% else %}Add feeding{% endif %}</h3>
+                <p>
+                    {% if consumption %}
+                    Update kilograms given at this feed time.
+                    {% else %}
+                    Record concentrate, dry fodder, silage, and wastage for one feeding.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'farm:feedstock_list' %}?tab=daily" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">When</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.feed_time.id_for_label }}">Feed time <span class="form-required">*</span></label>
+                        {{ form.feed_time }}
+                        {% for error in form.feed_time.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <h4 class="ingredient-form-section">Quantities (kg)</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.concentrate.id_for_label }}">Concentrate</label>
+                        {{ form.concentrate }}
+                        {% for error in form.concentrate.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.dry_fodder.id_for_label }}">Dry fodder</label>
+                        {{ form.dry_fodder }}
+                        {% for error in form.dry_fodder.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.silage.id_for_label }}">Silage</label>
+                        {{ form.silage }}
+                        {% for error in form.silage.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.wastage.id_for_label }}">Wastage</label>
+                        {{ form.wastage }}
+                        {% for error in form.wastage.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'farm:feedstock_list' %}?tab=daily" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if consumption %}Update feeding{% else %}Save feeding{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

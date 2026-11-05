@@ -1,0 +1,2 @@
+{% url 'farm:feedstock_transaction_list' as cancel_url %}
+{% include "farm/_delete.html" with farm_title="Delete transaction?" object_label=transaction.feed_stock.fodder_variety %}

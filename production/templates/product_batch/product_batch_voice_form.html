@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title|default:"Product Batch" }}{% endblock %}
+{% block page_title %}{{ title|default:"Product Batch" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=13">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'production:product_batch_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to product batches
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{{ title|default:"Create Product Batch" }}</h3>
+                <p>Add extra milk batches under this one production batch.</p>
+            </div>
+            <a href="{% url 'production:product_batch_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            <form method="post" id="product-batch-voice-form" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="batch_count" id="batch-count" value="{{ batch_count|default:1 }}">
+
+                {% if form_errors %}
+                <div class="form-non-field-errors">
+                    {% for error in form_errors %}
+                    <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <aside class="auto-save-note">
+                    <i class="bi bi-magic"></i>
+                    <div>
+                        <strong>Saved automatically </strong>
+                        <p>Date, time, recipe, cost, QC passed, and active status</p>
+                        <div class="auto-save-pills">
+                            <span class="auto-save-pill">{{ today|date:"d M Y" }} · {{ production_time|time:"h:i A" }}</span>
+                            <span class="auto-save-pill">QC Passed · Active</span>
+                            <span class="auto-save-pill">Cost from recipe</span>
+                            <span class="auto-save-pill is-empty" id="mapped-recipe">Recipe after product select</span>
+                            <span class="auto-save-pill is-empty" id="milk-wastage-pill">Milk Used — select milk and quantity</span>
+                        </div>
+                    </div>
+                </aside>
+
+                <div id="voice-batch-rows">
+                    {% for row in batch_rows %}
+                    {% include "product_batch/_voice_batch_row.html" with row=row %}
+                    {% endfor %}
+                </div>
+
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'production:product_batch_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        Save
+                    </button>
+                </div>
+            </form>
+
+            <section class="voice-recipe-list" id="product-recipe-panel">
+                <h4 class="ingredient-form-section">Recipe ingredients</h4>
+                <p class="form-help-text" id="product-recipe-empty">Select a product and enter quantity to see ingredient grams.</p>
+                <div id="product-recipe-list"></div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="product-batch-voice-form">Save</button>
+</div>
+
+{{ product_recipe_map|json_script:"product-recipe-map" }}
+{{ milk_batch_map|json_script:"milk-batch-map" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/product_batch_voice.js' %}?v=16"></script>
+{% endblock %}

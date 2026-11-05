@@ -1,0 +1,2 @@
+{% url 'business:business_user_list' as cancel_url %}
+{% include "farm/_delete.html" with farm_title="Remove business user?" object_label=business_user.user.username %}

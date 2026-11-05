@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ ingredient.name }}{% endblock %}
+{% block page_title %}{{ ingredient.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'production:ingredient_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to ingredients
+    </a>
+
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ ingredient.name }}</h2>
+                <p>{{ ingredient.code }} · {{ business.name }}</p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">
+                {% if latest_price %}{{ latest_price.get_status_display }}{% else %}No price{% endif %}
+            </span>
+        </div>
+
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Stock Available</span>
+                    <strong>
+                        {% if latest_price %}
+                            {{ latest_price.stock }} {{ latest_price.unit }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Stock Price</span>
+                    <strong>
+                        {% if latest_price %}
+                            ₹{{ latest_price.stock_price|floatformat:2 }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>MRP</span>
+                    <strong>{% if latest_price %}₹{{ latest_price.mrp|floatformat:2 }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>GST</span>
+                    <strong>{% if latest_price %}{{ latest_price.gst }}%{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Last Updated</span>
+                    <strong>{% if latest_price %}{{ latest_price.date|date:"d M Y" }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Unit</span>
+                    <strong>{% if latest_price %}{{ latest_price.unit }}{% else %}—{% endif %}</strong>
+                </div>
+            </div>
+
+            {% if ingredient.details %}
+            <div class="ingredient-detail-field" style="margin-bottom: 18px;">
+                <span>Details</span>
+                <strong>{{ ingredient.details }}</strong>
+            </div>
+            {% endif %}
+
+            {% if price_history %}
+            <h4 class="ingredient-form-section">Price History</h4>
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Added Qty</th>
+                            <th>Stock</th>
+                            <th>Unit</th>
+                            <th>MRP</th>
+                            <th>Stock Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for price in price_history %}
+                        <tr>
+                            <td>{{ price.date|date:"d M Y" }}</td>
+                            <td>{{ price.quantity }}</td>
+                            <td>{{ price.stock }}</td>
+                            <td>{{ price.unit }}</td>
+                            <td>₹{{ price.mrp|floatformat:2 }}</td>
+                            <td>₹{{ price.stock_price|floatformat:2 }}</td>
+                            <td>{{ price.get_status_display }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <div class="ingredient-detail-actions">
+                <a href="{% url 'production:ingredient_edit' ingredient.pk %}" class="ingredient-btn ingredient-btn-edit">Edit Ingredient</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

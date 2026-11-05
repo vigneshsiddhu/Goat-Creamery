@@ -1,425 +1,163 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Goat Weight
-{% endblock %}
+{% block title %}Goat Weight{% endblock %}
+{% block page_title %}Goat Weight{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{% static 'css/goat_weight.css' %}?v=34">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/goat_weight.css' %}?v=40">
 {% endblock %}
 
 {% block content %}
-
-<div class="production-page">
-
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="production-page-header">
-
-        <div class="production-page-header-content">
-
-            <h3>
-                Goat Weight
-            </h3>
-
-            <p>
-                Manage goat weight records for {{ business.name }}.
-            </p>
-
-        </div>
-
-        <a
-            href="{% url 'production:goat_weight_create' %}"
-            class="production-add-btn"
-        >
-            <i class="bi bi-plus-lg"></i>
-            <span>Add Weight</span>
-        </a>
-
-        <a
-                href="{% url 'production:goat_weight_voice_create' %}"
-                class="production-add-btn"
-            >
-
-                <i class="bi bi-mic-fill"></i>
-
-                Voice Goat Weight
-
-            </a>
-
-    </div>
-
-
-    <!-- =====================================================
-         SUMMARY CARDS
-    ====================================================== -->
-
-    <div class="weight-summary-cards">
-
-        <!-- TOTAL RECORDS -->
-
-        <div class="weight-summary-card weight-card-purple">
-
-            <div class="weight-card-icon">
-                <i class="bi bi-clipboard2-data"></i>
-            </div>
-
-            <div class="weight-card-content">
-
-                <span>
-                    Total Records
-                </span>
-
-                <strong>
-                    {{ total_records|default:"0" }}
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- AVERAGE -->
-
-        <div class="weight-summary-card weight-card-blue">
-
-            <div class="weight-card-icon">
-                <i class="bi bi-speedometer2"></i>
-            </div>
-
-            <div class="weight-card-content">
-
-                <span>
-                    Average Weight
-                </span>
-
-                <strong>
-                    {{ average_weight|default:"0" }}
-                    <small>kg</small>
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- LATEST -->
-
-        <div class="weight-summary-card weight-card-green">
-
-            <div class="weight-card-icon">
-                <i class="bi bi-graph-up-arrow"></i>
-            </div>
-
-            <div class="weight-card-content">
-
-                <span>
-                    Latest Weight
-                </span>
-
-                <strong>
-                    {{ latest_weight|default:"0" }}
-                    <small>kg</small>
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- HEAVIEST -->
-
-        <div class="weight-summary-card weight-card-orange">
-
-            <div class="weight-card-icon">
-                <i class="bi bi-trophy"></i>
-            </div>
-
-            <div class="weight-card-content">
-
-                <span>
-                    Heaviest Goat
-                </span>
-
-                <strong>
-                    {{ heaviest_weight|default:"0" }}
-                    <small>kg</small>
-                </strong>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         TABLE CARD
-    ====================================================== -->
-
-    <div class="production-list-card">
-
-        <!-- TABLE HEADER -->
-
-        <div class="production-table-header">
-
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
             <div>
-
-                <h4>
-                    Weight Records
-                </h4>
-
-                <p>
-                    Weight history of goats in this business.
-                </p>
-
+                <h2>Goat Weight</h2>
+                <p>Weight records for {{ business.name }}</p>
             </div>
-
-            <div class="production-record-count">
-
-                {{ total_records|default:"0" }} Records
-
+            <div class="ingredient-header-actions">
+                <a href="{% url 'production:goat_weight_voice_create' %}" class="ingredient-secondary-btn">
+                    <i class="bi bi-mic-fill"></i>
+                    Voice Weight
+                </a>
+                <a href="{% url 'production:goat_weight_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Weight
+                </a>
             </div>
-
         </div>
 
-
-        <!-- TABLE -->
-
-        <div class="production-table-wrapper">
-
-            <table class="production-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Goat</th>
-
-                        <th>Weight</th>
-
-                        <th>Date</th>
-
-                        <th>Note</th>
-
-                        <th>Created By</th>
-
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    {% for weight in weights %}
-
-                    <tr>
-
-                        <!-- GOAT -->
-
-                        <td>
-
-                            <div class="weight-goat-info">
-
-                                <div class="weight-goat-icon">
-
-                                    <i class="bi bi-gitlab"></i>
-
-                                </div>
-
-                                <div class="weight-goat-details">
-
-                                    <span class="production-token">
-
-                                        {{ weight.goat.token_no }}
-
-                                    </span>
-
-                                    {% if weight.goat.rfid %}
-
-                                        <small>
-
-                                            RFID:
-                                            {{ weight.goat.rfid }}
-
-                                        </small>
-
-                                    {% endif %}
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <!-- WEIGHT -->
-
-                        <td>
-
-                            <span class="weight-value">
-
-                                {{ weight.weight }}
-
-                                <small>
-                                    kg
-                                </small>
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- DATE -->
-
-                        <td>
-
-                            <span class="weight-date">
-
-                                <i class="bi bi-calendar3"></i>
-
-                                {{ weight.date|date:"d-m-Y" }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- NOTE -->
-
-                        <td>
-
-                            {% if weight.note %}
-
-                                <span class="weight-note">
-
-                                    {{ weight.note }}
-
-                                </span>
-
-                            {% else %}
-
-                                <span class="weight-no-note">
-                                    —
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- CREATED BY -->
-
-                        <td>
-
-                            <span class="weight-created-by">
-
-                                <i class="bi bi-person"></i>
-
-                                {{ weight.created_by.username }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- ACTIONS -->
-
-                        <td>
-
-                            <div class="production-actions">
-
-                                <a
-                                    href="{% url 'production:goat_weight_update' weight.id %}"
-                                    class="production-edit"
-                                >
-
-                                    <i class="bi bi-pencil"></i>
-
-                                    <span>Edit</span>
-
-                                </a>
-
-
-                                <a
-                                    href="{% url 'production:goat_weight_delete' weight.id %}"
-                                    class="production-delete"
-                                >
-
-                                    <i class="bi bi-trash"></i>
-
-                                    <span>Delete</span>
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    {% empty %}
-
-                    <!-- EMPTY -->
-
-                    <tr>
-
-                        <td
-                            colspan="6"
-                            class="production-empty"
-                        >
-
-                            <div class="weight-empty-content">
-
-                                <div class="weight-empty-icon">
-
-                                    <i class="bi bi-speedometer2"></i>
-
-                                </div>
-
-                                <h4>
-                                    No Weight Records
-                                </h4>
-
-                                <p>
-                                    Start recording goat weights to
-                                    track growth and performance.
-                                </p>
-
-                                <a
-                                    href="{% url 'production:goat_weight_create' %}"
-                                    class="weight-empty-btn"
-                                >
-
-                                    <i class="bi bi-plus-lg"></i>
-
-                                    Add First Weight
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
+        <div class="weight-summary-cards">
+            <div class="weight-summary-card weight-card-purple">
+                <div class="weight-card-icon"><i class="bi bi-clipboard2-data"></i></div>
+                <div class="weight-card-content">
+                    <span>Total Records</span>
+                    <strong>{{ total_records|default:"0" }}</strong>
+                </div>
+            </div>
+            <div class="weight-summary-card weight-card-blue">
+                <div class="weight-card-icon"><i class="bi bi-speedometer2"></i></div>
+                <div class="weight-card-content">
+                    <span>Average Weight</span>
+                    <strong>{{ average_weight|floatformat:2 }} <small>kg</small></strong>
+                </div>
+            </div>
+            <div class="weight-summary-card weight-card-green">
+                <div class="weight-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                <div class="weight-card-content">
+                    <span>Latest Weight</span>
+                    <strong>{{ latest_weight|floatformat:2 }} <small>kg</small></strong>
+                    {% if latest_goat %}<em>{{ latest_goat.token_no }}</em>{% endif %}
+                </div>
+            </div>
+            <div class="weight-summary-card weight-card-orange">
+                <div class="weight-card-icon"><i class="bi bi-trophy"></i></div>
+                <div class="weight-card-content">
+                    <span>Heaviest Goat</span>
+                    <strong>{{ heaviest_weight|floatformat:2 }} <small>kg</small></strong>
+                    {% if heaviest_goat %}<em>{{ heaviest_goat.token_no }}</em>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if weights %}
+        <div class="ingredient-toolbar">
+            <form method="get" class="ingredient-search">
+                <i class="bi bi-tag"></i>
+                <select id="token-filter" name="token" class="weight-token-filter" onchange="this.form.submit()">
+                    <option value="">All Token IDs</option>
+                    {% for token in token_ids %}
+                    <option value="{{ token }}"{% if selected_token == token %} selected{% endif %}>{{ token }}</option>
                     {% endfor %}
-
-                </tbody>
-
-            </table>
-
+                </select>
+            </form>
+            <span class="ingredient-count">{{ page_obj.paginator.count }} record{{ page_obj.paginator.count|pluralize }}</span>
         </div>
 
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Token ID</th>
+                        <th>Weight</th>
+                        <th>Date</th>
+                        <th>Note</th>
+                        <th>Created By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for weight in weights %}
+                    <tr data-weight-row data-token="{{ weight.goat.token_no }}">
+                        <td>
+                            <span class="ingredient-name">{{ weight.goat.token_no }}</span>
+                            {% if weight.goat.rfid %}
+                            <span class="ingredient-code">RFID {{ weight.goat.rfid }}</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="ingredient-stock-pill">{{ weight.weight }} kg</span></td>
+                        <td>{{ weight.date|date:"d M Y" }}</td>
+                        <td>{% if weight.note %}{{ weight.note }}{% else %}<span class="ingredient-code">—</span>{% endif %}</td>
+                        <td>{{ weight.created_by }}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'production:goat_weight_detail' weight.id %}" class="ingredient-btn ingredient-btn-view">View</a>
+                                <a href="{% url 'production:goat_weight_update' weight.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'production:goat_weight_delete' weight.id %}" class="ingredient-btn ingredient-btn-delete">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="ingredient-cards">
+            {% for weight in weights %}
+            <div class="ingredient-card-item" data-weight-card data-token="{{ weight.goat.token_no }}">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ weight.goat.token_no }}</div>
+                        <div class="ingredient-code">{{ weight.date|date:"d M Y" }}</div>
+                    </div>
+                    <span class="ingredient-stock-pill">{{ weight.weight }} kg</span>
+                </div>
+                <div class="ingredient-card-metrics">
+                    <div class="ingredient-metric">
+                        <span>Note</span>
+                        <strong>{% if weight.note %}{{ weight.note }}{% else %}—{% endif %}</strong>
+                    </div>
+                    <div class="ingredient-metric">
+                        <span>Created By</span>
+                        <strong>{{ weight.created_by }}</strong>
+                    </div>
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'production:goat_weight_detail' weight.id %}" class="ingredient-btn ingredient-btn-view">View</a>
+                    <a href="{% url 'production:goat_weight_update' weight.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'production:goat_weight_delete' weight.id %}" class="ingredient-btn ingredient-btn-delete">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <h3>No weight records yet</h3>
+            <p>Add a weight or use voice entry to start tracking growth.</p>
+            <a href="{% url 'production:goat_weight_create' %}" class="ingredient-primary-btn">Add Weight</a>
+        </div>
+        {% endif %}
+        {% include "includes/pagination.html" %}
     </div>
-
 </div>
-
 {% endblock %}

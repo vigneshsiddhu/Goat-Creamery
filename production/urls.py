@@ -14,7 +14,8 @@ urlpatterns = [
 
     path("goat-weight/",views.goat_weight_list,name="goat_weight_list"),
     path("goat-weight/create/",views.goat_weight_create,name="goat_weight_create"),
-    path("goat-weight/voice/create/",views.goat_weight_voice_create,name="goat_wight_voice_create"),
+    path("goat-weight/voice/create/",views.goat_weight_voice_create,name="goat_weight_voice_create"),
+    path("goat-weight/<uuid:id>/",views.goat_weight_detail,name="goat_weight_detail"),
     path("goat-weight/<uuid:id>/edit/",views.goat_weight_update,name="goat_weight_update"),
     path("goat-weight/<uuid:id>/delete/",views.goat_weight_delete,name="goat_weight_delete"),
 
@@ -25,11 +26,14 @@ urlpatterns = [
     path("goat-milk/",views.goat_milk_list,name="goat_milk_list"),
     path("goat-milk/create/",views.goat_milk_create,name="goat_milk_create"),
     path("goat-milk/voice/create/", views.goat_milk_voice_create,   name="goat_milk_voice_create"),
+    path("goat-milk/<uuid:id>/",views.goat_milk_detail,name="goat_milk_detail"),
     path("goat-milk/<uuid:id>/edit/",views.goat_milk_update,name="goat_milk_update"),
     path("goat-milk/<uuid:id>/delete/",views.goat_milk_delete,name="goat_milk_delete"),
     
     path("goat-milk-batches/",views.goat_milk_batch_list,name="goat_milk_batch_list"),
     path("goat-milk-batches/create/",views.goat_milk_batch_create,name="goat_milk_batch_create"),
+    path("goat-milk-batches/farm/create/",views.goat_milk_batch_farm_create,name="goat_milk_batch_farm_create"),
+    path("goat-milk-batches/<uuid:pk>/",views.goat_milk_batch_detail,name="goat_milk_batch_detail"),
     path("goat-milk-batches/<uuid:pk>/edit/",views.goat_milk_batch_edit,name="goat_milk_batch_edit"),
     path("goat-milk-batches/<uuid:pk>/delete/",views.goat_milk_batch_delete,name="goat_milk_batch_delete"),
 
@@ -40,6 +44,7 @@ urlpatterns = [
 
     path("products/",views.product_list,name="product_list"),
     path("products/create/",views.product_create,name="product_create"),
+    path("products/<uuid:pk>/",views.product_detail,name="product_detail"),
     path("products/<uuid:pk>/edit/",views.product_edit,name="product_edit"),
     path("products/<uuid:pk>/delete/",views.product_delete,name="product_delete"),
 
@@ -50,6 +55,7 @@ urlpatterns = [
 
     path("ingredients/",views.ingredient_list,name="ingredient_list"),
     path("ingredients/create/",views.ingredient_create,name="ingredient_create"),
+    path("ingredients/<uuid:pk>/",views.ingredient_detail,name="ingredient_detail"),
     path("ingredients/<uuid:pk>/edit/",views.ingredient_edit,name="ingredient_edit"),
     path("ingredients/<uuid:pk>/delete/",views.ingredient_delete,name="ingredient_delete"),
 
@@ -60,6 +66,7 @@ urlpatterns = [
 
     path("recipes/",views.recipe_list,name="recipe_list"),
     path("recipes/create/",views.recipe_create,name="recipe_create"),
+    path("recipes/<uuid:pk>/",views.recipe_detail,name="recipe_detail"),
     path("recipes/<uuid:pk>/edit/",views.recipe_edit,name="recipe_edit"),
     path("recipes/<uuid:pk>/delete/",views.recipe_delete,name="recipe_delete"),
 
@@ -69,7 +76,10 @@ urlpatterns = [
     path("recipe-items/<uuid:pk>/delete/",views.recipe_item_delete,name="recipe_item_delete"),
 
     path("product-batches/",views.product_batch_list,name="product_batch_list"),
+    path("product-batches/inactive/",views.product_batch_inactive,name="product_batch_inactive"),
     path("product-batches/create/",views.product_batch_create,name="product_batch_create"),
+    path("product-batches/voice/create/",views.product_batch_voice_create,name="product_batch_voice_create"),
+    path("product-batches/<uuid:pk>/",views.product_batch_detail,name="product_batch_detail"),
     path("product-batches/<uuid:pk>/edit/",views.product_batch_edit,name="product_batch_edit"),
     path("product-batches/<uuid:pk>/delete/",views.product_batch_delete,name="product_batch_delete"),
 ]

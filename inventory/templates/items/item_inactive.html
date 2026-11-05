@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inactive Production Batch{% endblock %}
+{% block page_title %}Inactive Production Batch{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=13">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'inventory:item_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to items
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>Inactive production batch</h3>
+                <p>Mark an active production batch as inactive. Only active batches appear here.</p>
+            </div>
+            <a href="{% url 'inventory:item_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if error %}
+                <div class="form-non-field-errors">{{ error }}</div>
+                {% endif %}
+
+                <div class="ingredient-form-group">
+                    <label for="id_product_batch">Production Batch <span class="form-required">*</span></label>
+                    <select name="product_batch" id="id_product_batch" class="form-input" required>
+                        <option value="">Select active production batch</option>
+                        {% for batch in active_batches %}
+                        <option value="{{ batch.pk }}"{% if selected_batch|stringformat:"s" == batch.pk|stringformat:"s" %} selected{% endif %}>
+                            {{ batch.batch_number }} · {{ batch.product }} · {{ batch.date|date:"d M Y" }} · {{ batch.quantity }} {{ batch.unit }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if not active_batches %}
+                    <span class="form-help-text">No active production batches to close.</span>
+                    {% endif %}
+                </div>
+
+                <div class="ingredient-form-group">
+                    <label>Checkout</label>
+                    <label class="farm-checkbox-row">
+                        <input type="checkbox" name="checkout" id="id_checkout" class="form-check-input" value="1"{% if checkout %} checked{% endif %}>
+                        <span>Production batch finished — mark as inactive</span>
+                    </label>
+                </div>
+
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'inventory:item_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
+                    <button type="submit" class="form-save-btn"{% if not active_batches %} disabled{% endif %}>
+                        <i class="bi bi-check-lg"></i>
+                        Checkout
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Voice Farm Expenses{% endblock %}
+{% block page_title %}Voice Farm Expenses{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=14">
+<link rel="stylesheet" href="{% static 'css/goat_weight.css' %}?v=44">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page weight-voice-page">
+    <a href="{% url 'finance:farm_expense_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to farm expenses
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>Voice Farm Expenses</h3>
+                <p>Pick category, enter amount, then confirm by voice. Saved for today.</p>
+            </div>
+            <a href="{% url 'finance:farm_expense_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="post" id="farm-expense-voice-form" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {% for error in form.category.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                {% for error in form.amount.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+
+                <div class="weight-voice-step">
+                    <div class="weight-voice-step-title"><span>1</span> Category</div>
+                    {{ form.category }}
+                </div>
+
+                <div class="weight-voice-step">
+                    <div class="weight-voice-step-title"><span>2</span> Amount</div>
+                    {{ form.amount }}
+                    <button type="button" class="form-save-btn weight-voice-confirm-inline" data-expense-confirm>
+                        <i class="bi bi-volume-up-fill"></i>
+                        Speak & Confirm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="expense-voice-confirmation" class="weight-confirmation-overlay">
+    <div class="weight-confirmation-popup">
+        <div class="weight-confirmation-icon">
+            <i class="bi bi-volume-up-fill"></i>
+        </div>
+        <h4>Confirm Farm Expense</h4>
+        <p id="expense-voice-text" class="weight-confirmation-text"></p>
+        <div class="weight-confirmation-details">
+            <div class="weight-confirmation-detail">
+                <span>Category</span>
+                <strong id="expense-confirmation-category">—</strong>
+            </div>
+            <div class="weight-confirmation-detail">
+                <span>Amount</span>
+                <strong id="expense-confirmation-amount">—</strong>
+            </div>
+        </div>
+        <div class="weight-confirmation-actions">
+            <button type="button" id="expense-confirmation-cancel" class="weight-confirmation-change-btn">
+                <i class="bi bi-pencil"></i>
+                Change
+            </button>
+            <button type="button" id="expense-confirmation-save" class="weight-confirmation-save-btn">
+                <i class="bi bi-check-lg"></i>
+                Confirm & Save
+            </button>
+        </div>
+    </div>
+</div>
+
+{% if last_saved_expense %}
+{{ last_saved_expense|json_script:"last-saved-expense" }}
+<div id="expense-share-overlay" class="weight-confirmation-overlay is-open" style="display:flex">
+    <div class="weight-confirmation-popup">
+        <div class="weight-confirmation-icon expense-share-icon">
+            <i class="bi bi-check-lg"></i>
+        </div>
+        <h4>Expense saved</h4>
+        <p class="weight-confirmation-text">Share this expense if you want to send it.</p>
+        <div class="weight-confirmation-details expense-share-details">
+            <div class="weight-confirmation-detail">
+                <span>Date</span>
+                <strong>{{ last_saved_expense.date }}</strong>
+            </div>
+            <div class="weight-confirmation-detail">
+                <span>Category</span>
+                <strong>{{ last_saved_expense.category }}</strong>
+            </div>
+            <div class="weight-confirmation-detail">
+                <span>Amount</span>
+                <strong>₹{{ last_saved_expense.amount }}</strong>
+            </div>
+        </div>
+        <div class="weight-confirmation-actions expense-share-actions">
+            <button type="button" id="expense-share-whatsapp" class="expense-share-whatsapp-btn">
+                <i class="bi bi-whatsapp"></i>
+                WhatsApp
+            </button>
+            <button type="button" id="expense-share-button" class="weight-confirmation-save-btn">
+                <i class="bi bi-share-fill"></i>
+                Share
+            </button>
+        </div>
+        <button type="button" id="expense-share-close" class="expense-share-close-btn weight-confirmation-save-btn">
+            <!-- <button type="button" id="expense-confirmation-save" class="weight-confirmation-save-btn"> -->
+                <i class="bi bi-check-lg"></i>
+            Add another
+        </button>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/farm_expense_voice_confirm.js' %}?v=3" defer></script>
+{% endblock %}

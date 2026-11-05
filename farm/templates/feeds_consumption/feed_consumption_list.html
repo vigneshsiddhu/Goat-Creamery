@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Feed consumption{% endblock %}
+{% block page_title %}Feed consumption{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Feed consumption</h2>
+                <p>Daily feeding for {{ business.name }}</p>
+            </div>
+            <div class="ingredient-header-actions">
+                <a href="{% url 'farm:feed_consumption_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add consumption
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if consumptions %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Concentrate</th>
+                        <th>Dry fodder</th>
+                        <th>Silage</th>
+                        <th>Wastage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in consumptions %}
+                    <tr>
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.get_feed_time_display }}</td>
+                        <td>{{ item.concentrate }}</td>
+                        <td>{{ item.dry_fodder }}</td>
+                        <td>{{ item.silage }}</td>
+                        <td>{{ item.wastage }}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'farm:feed_consumption_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'farm:feed_consumption_delete' item.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-basket"></i></div>
+            <h3>No consumption yet</h3>
+            <p>Record morning, afternoon, or evening feeding.</p>
+            <a href="{% url 'farm:feed_consumption_create' %}" class="ingredient-primary-btn">Add consumption</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

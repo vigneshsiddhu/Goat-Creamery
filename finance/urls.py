@@ -26,6 +26,7 @@ urlpatterns = [
 
     path("farm-expenses/",views.farm_expense_list,name="farm_expense_list"),
     path("farm-expenses/create/",views.farm_expense_create,name="farm_expense_create"),
+    path("farm-expenses/voice/create/",views.farm_expense_voice_create,name="farm_expense_voice_create"),
     path("farm-expenses/<uuid:pk>/edit/",views.farm_expense_edit,name="farm_expense_edit"),
     path("farm-expenses/<uuid:pk>/delete/",views.farm_expense_delete,name="farm_expense_delete"),
 

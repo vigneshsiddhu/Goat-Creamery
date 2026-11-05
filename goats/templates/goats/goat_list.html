@@ -1,349 +1,186 @@
 {% extends "base.html" %}
-
 {% load static %}
 
-{% block title %}
-Goats
-{% endblock %}
+{% block title %}Goats{% endblock %}
+{% block page_title %}Goats{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/goat_list.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="goat-page">
-
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="goat-page-header">
-
-        <div class="goat-header-content">
-
-            <h2>
-                Goats
-            </h2>
-
-            <p>
-                Manage your goats
-            </p>
-
-        </div>
-
-        <div class="goat-header-actions">
-
-            <a
-                href="{% url 'goats:create' %}"
-                class="goat-add-btn"
-            >
-
-                <i class="bi bi-plus-lg"></i>
-
-                Add Goat
-
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- =====================================================
-     GOAT SUMMARY CARDS
-====================================================== -->
-
-    <div class="goat-summary-grid">
-        <!-- TOTAL LIVE -->
-        <div class="goat-summary-card goat-summary-total">
-            <div class="goat-summary-icon">
-                <i class="bi bi-gitlab"></i>
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Goats</h2>
+                <p>{{ business.name }} · herd register</p>
             </div>
-            <div class="goat-summary-content">
-                <span class="goat-summary-label">
-                    Total Live Goats
-                </span>
-                <strong class="goat-summary-value">
-                    {{ total_live }}
-                </strong>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'goats:create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add goat
+                </a>
             </div>
         </div>
-        <!-- ADULT MALE -->
-        <div class="goat-summary-card goat-summary-male">
-            <div class="goat-summary-icon">
-                <i class="bi bi-gender-male"></i>
+
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="goat-kpi-row">
+            <div class="goat-kpi goat-kpi-live">
+                <span class="goat-kpi-icon"><i class="bi bi-heart-pulse"></i></span>
+                <div class="goat-kpi-copy">
+                    <span>Live</span>
+                    <strong>{{ total_live }}</strong>
+                </div>
             </div>
-            <div class="goat-summary-content">
-                <span class="goat-summary-label">
-                    Adult Male
-                </span>
-                <strong class="goat-summary-value">
-                    {{ adult_male }}
-                </strong>
+            <div class="goat-kpi goat-kpi-male">
+                <span class="goat-kpi-icon"><i class="bi bi-gender-male"></i></span>
+                <div class="goat-kpi-copy">
+                    <span>Adult male</span>
+                    <strong>{{ adult_male }}</strong>
+                </div>
+            </div>
+            <div class="goat-kpi goat-kpi-female">
+                <span class="goat-kpi-icon"><i class="bi bi-gender-female"></i></span>
+                <div class="goat-kpi-copy">
+                    <span>Adult female</span>
+                    <strong>{{ adult_female }}</strong>
+                </div>
+            </div>
+            <div class="goat-kpi goat-kpi-kid-male">
+                <span class="goat-kpi-icon"><i class="bi bi-gender-male"></i></span>
+                <div class="goat-kpi-copy">
+                    <span>Male kids</span>
+                    <strong>{{ kid_male }}</strong>
+                </div>
+            </div>
+            <div class="goat-kpi goat-kpi-kid-female">
+                <span class="goat-kpi-icon"><i class="bi bi-gender-female"></i></span>
+                <div class="goat-kpi-copy">
+                    <span>Female kids</span>
+                    <strong>{{ kid_female }}</strong>
+                </div>
             </div>
         </div>
-        <!-- ADULT FEMALE -->
-        <div class="goat-summary-card goat-summary-female">
-            <div class="goat-summary-icon">
-                <i class="bi bi-gender-female"></i>
-            </div>
-            <div class="goat-summary-content">
-                <span class="goat-summary-label">
-                    Adult Female
-                </span>
-                <strong class="goat-summary-value">
-                    {{ adult_female }}
-                </strong>
-            </div>
+
+        {% if goats %}
+        <div class="ingredient-toolbar">
+            <label class="ingredient-search" for="goat-search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="goat-search" placeholder="Search token, RFID, breed..." autocomplete="off">
+            </label>
+            <span class="ingredient-count">{{ goats|length }} on this page</span>
         </div>
-        <!-- KID MALE -->
-        <div class="goat-summary-card goat-summary-kid-male">
-            <div class="goat-summary-icon">
-                <i class="bi bi-gender-male"></i>
-            </div>
-            <div class="goat-summary-content">
-                <span class="goat-summary-label">
-                    Male Kids
-                </span>
-                <strong class="goat-summary-value">
-                    {{ kid_male }}
-                </strong>
-            </div>
-        </div>
-        <!-- KID FEMALE -->
-        <div class="goat-summary-card goat-summary-kid-female">
-            <div class="goat-summary-icon">
-                <i class="bi bi-gender-female"></i>
-            </div>
-            <div class="goat-summary-content">
-                <span class="goat-summary-label">
-                    Female Kids
-                </span>
-                <strong class="goat-summary-value">
-                    {{ kid_female }}
-                </strong>
-            </div>
-        </div>
-    </div>
-    <!-- =====================================================
-         GOAT TABLE
-    ====================================================== -->
 
-    <div class="goat-list-card">
-
-        <div class="goat-list-table-wrapper">
-
-            <table class="goat-list-table">
-
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table" id="goat-table">
                 <thead>
-
                     <tr>
-
-                        <th>Token No</th>
-
+                        <th>Token</th>
                         <th>RFID</th>
-
                         <th>Breed</th>
-
                         <th>Maturity</th>
-
                         <th>Gender</th>
-
                         <th>DOB</th>
-
                         <th>Status</th>
-
-                        <th>Created By</th>
-
                         <th>Actions</th>
-
                     </tr>
-
                 </thead>
-
-
                 <tbody>
-
                     {% for goat in goats %}
-
-                    <tr>
-
-                        <!-- TOKEN -->
-
+                    <tr data-goat-row>
+                        <td><span class="ingredient-name">{{ goat.token_no }}</span></td>
+                        <td>{{ goat.rfid|default:"—" }}</td>
+                        <td>{{ goat.get_breed_variety_display }}</td>
+                        <td>{{ goat.get_maturity_display }}</td>
+                        <td>{{ goat.get_gender_display }}</td>
+                        <td>{% if goat.dob %}{{ goat.dob|date:"d M Y" }}{% else %}—{% endif %}</td>
                         <td>
-
-                            <span class="goat-list-name">
-                                {{ goat.token_no }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- RFID -->
-
-                        <td>
-                            {{ goat.rfid|default:"-" }}
-                        </td>
-
-
-                        <!-- BREED -->
-
-                        <td>
-                            {{ goat.breed_variety|default:"-" }}
-                        </td>
-
-
-                        <!-- MATURITY -->
-
-                        <td>
-                            {{ goat.maturity|default:"-" }}
-                        </td>
-
-
-                        <!-- GENDER -->
-
-                        <td>
-                            {{ goat.gender|default:"-" }}
-                        </td>
-
-
-                        <!-- DOB -->
-
-                        <td>
-                            {% if goat.dob %}
-                                {{ goat.dob|date:"d-m-Y" }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
                             {% if goat.live %}
-
-                                <span class="goat-list-status-active">
-                                    Active
-                                </span>
-
+                            <span class="ingredient-stock-pill">Live</span>
                             {% else %}
-
-                                <span class="goat-list-status-inactive">
-                                    Inactive
-                                </span>
-
+                            <span class="ingredient-stock-pill empty">Not live</span>
                             {% endif %}
-
                         </td>
-
-
-                        <!-- CREATED BY -->
-
                         <td>
-
-                            {% if goat.created_by %}
-                                {{ goat.created_by.username }}
-                            {% else %}
-                                -
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- ACTIONS -->
-
-                        <td>
-
-                            <div class="goat-list-actions">
-
-                                <a
-                                    href="{% url 'goats:update' goat.id %}"
-                                    class="goat-list-edit"
-                                >
-
-                                    <i class="bi bi-pencil"></i>
-
-                                    Edit
-
-                                </a>
-
-
-                                <a
-                                    href="{% url 'goats:delete' goat.id %}"
-                                    class="goat-list-delete"
-                                >
-
-                                    <i class="bi bi-trash"></i>
-
-                                    Delete
-
-                                </a>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'goats:update' goat.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'goats:delete' goat.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
                             </div>
-
                         </td>
-
                     </tr>
-
-
-                    {% empty %}
-
-                    <tr>
-
-                        <td
-                            colspan="9"
-                            class="goat-list-empty"
-                        >
-
-                            <div class="goat-empty-content">
-
-                                <div class="goat-empty-icon">
-
-                                    <i class="bi bi-gitlab"></i>
-
-                                </div>
-
-                                <div class="goat-empty-title">
-
-                                    No goats found
-
-                                </div>
-
-                                <div class="goat-empty-text">
-
-                                    Start by adding your first goat.
-
-                                </div>
-
-                                <a
-                                    href="{% url 'goats:create' %}"
-                                    class="goat-empty-add"
-                                >
-
-                                    <i class="bi bi-plus-lg"></i>
-
-                                    Add Goat
-
-                                </a>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
 
+        <div class="ingredient-cards" id="goat-cards">
+            {% for goat in goats %}
+            <div class="ingredient-card-item" data-goat-card>
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ goat.token_no }}</div>
+                        <div class="ingredient-code">{{ goat.get_breed_variety_display }} · {{ goat.get_maturity_display }} {{ goat.get_gender_display }}</div>
+                    </div>
+                    {% if goat.live %}
+                    <span class="ingredient-stock-pill">Live</span>
+                    {% else %}
+                    <span class="ingredient-stock-pill empty">Not live</span>
+                    {% endif %}
+                </div>
+                <div class="ingredient-card-metrics">
+                    <div class="ingredient-metric">
+                        <span>RFID</span>
+                        <strong>{{ goat.rfid|default:"—" }}</strong>
+                    </div>
+                    <div class="ingredient-metric">
+                        <span>DOB</span>
+                        <strong>{% if goat.dob %}{{ goat.dob|date:"d M Y" }}{% else %}—{% endif %}</strong>
+                    </div>
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'goats:update' goat.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'goats:delete' goat.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-gitlab"></i></div>
+            <h3>No goats yet</h3>
+            <p>Add the first animal to the herd register.</p>
+            <a href="{% url 'goats:create' %}" class="ingredient-primary-btn">Add goat</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<script>
+(function () {
+    const search = document.getElementById("goat-search");
+    if (!search) return;
+    const rows = document.querySelectorAll("[data-goat-row]");
+    const cards = document.querySelectorAll("[data-goat-card]");
+    search.addEventListener("input", function () {
+        const q = search.value.trim().toLowerCase();
+        rows.forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+        cards.forEach(function (card) {
+            card.style.display = card.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+    });
+})();
+</script>
 {% endblock %}

@@ -10,15 +10,30 @@ from business.models import Business
 # GOAT
 # =========================================================
 class Goat(models.Model):
+    BREED_CHOICES = [
+        ("Jakharana", "Jakharana"),
+        ("Thalacherry", "Thalacherry"),
+        ("Boer", "Boer"),
+        ("Sirohi", "Sirohi"),
+        ("Sojat", "Sojat"),
+    ]
+    GENDER_CHOICES = [
+        ("MALE", "Male"),
+        ("FEMALE", "Female"),
+    ]
+    MATURITY_CHOICES = [
+        ("ADULT", "Adult"),
+        ("KID", "Kid"),
+    ]
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     token_no = models.CharField(max_length=50,unique=True)
     rfid = models.CharField(max_length=100,unique=True,null=True,blank=True)
-    breed_variety = models.CharField(max_length=100)
+    breed_variety = models.CharField(max_length=100, choices=BREED_CHOICES)
     dob = models.DateField(null=True,blank=True)
     age = models.PositiveIntegerField(null=True,blank=True)
     live = models.BooleanField(default=True)
-    gender = models.CharField(max_length=20)
-    maturity = models.CharField(max_length=20)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
+    maturity = models.CharField(max_length=20, choices=MATURITY_CHOICES)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name="created_goats")
     business = models.ForeignKey(Business,on_delete=models.CASCADE,related_name="goats")
     created_at = models.DateTimeField(auto_now_add=True)

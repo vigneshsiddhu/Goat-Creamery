@@ -1,168 +1,92 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Diseases
-{% endblock %}
+{% block title %}Diseases{% endblock %}
+{% block page_title %}Diseases{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{% static 'css/disease.css' %}">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="disease-page">
-
-    <!-- HEADER -->
-
-    <div class="disease-page-header">
-
-        <div>
-
-            <h3>Disease Management</h3>
-
-            <p>
-                Manage goat diseases for {{ business.name }}.
-            </p>
-
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Diseases</h2>
+                <p>{{ business.name }} · catalogue</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'goats:disease_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add disease
+                </a>
+            </div>
         </div>
-
-        <a href="{% url 'goats:disease_create' %}"
-           class="disease-add-btn">
-
-            <i class="bi bi-plus-lg"></i>
-            Add Disease
-
-        </a>
-
-    </div>
-
-
-    <!-- LIST CARD -->
-
-    <div class="disease-list-card">
-
-        <div class="disease-table-wrapper">
-
-            <table class="disease-table">
-
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if diseases %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
                 <thead>
-
                     <tr>
                         <th>Disease</th>
                         <th>Symptoms</th>
-                        <th>Impact on Goat</th>
+                        <th>Impact</th>
                         <th>Treatment</th>
-                        <th>Created By</th>
+                        <th>Created by</th>
                         <th>Actions</th>
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     {% for disease in diseases %}
-
                     <tr>
-
+                        <td><span class="ingredient-name">{{ disease.name }}</span></td>
+                        <td>{% if disease.symptoms %}{{ disease.symptoms|truncatechars:80 }}{% else %}—{% endif %}</td>
+                        <td>{% if disease.impact_goat %}{{ disease.impact_goat|truncatechars:80 }}{% else %}—{% endif %}</td>
+                        <td>{% if disease.treatment %}{{ disease.treatment|truncatechars:80 }}{% else %}—{% endif %}</td>
+                        <td>{{ disease.created_by|default:"—" }}</td>
                         <td>
-
-                            <span class="disease-name">
-                                {{ disease.name }}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            {% if disease.symptoms %}
-                                {{ disease.symptoms|truncatechars:100 }}
-                            {% else %}
-                                —
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-
-                            {% if disease.impact_goat %}
-                                {{ disease.impact_goat|truncatechars:100 }}
-                            {% else %}
-                                —
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-
-                            {% if disease.treatment %}
-                                {{ disease.treatment|truncatechars:100 }}
-                            {% else %}
-                                —
-                            {% endif %}
-
-                        </td>
-
-
-                        <td>
-                            {{ disease.created_by }}
-                        </td>
-
-
-                        <td>
-
-                            <div class="disease-actions">
-
-                                <a href="{% url 'goats:disease_update' disease.id %}"
-                                   class="disease-edit">
-
-                                    <i class="bi bi-pencil"></i>
-                                    Edit
-
-                                </a>
-
-
-                                <a href="{% url 'goats:disease_delete' disease.id %}"
-                                   class="disease-delete">
-
-                                    <i class="bi bi-trash"></i>
-                                    Delete
-
-                                </a>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'goats:disease_update' disease.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'goats:disease_delete' disease.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
                             </div>
-
                         </td>
-
                     </tr>
-
-                    {% empty %}
-
-                    <tr>
-
-                        <td colspan="6"
-                            class="disease-empty">
-
-                            No diseases found.
-
-                        </td>
-
-                    </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
+        <div class="ingredient-cards">
+            {% for disease in diseases %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ disease.name }}</div>
+                        <div class="ingredient-code">{% if disease.symptoms %}{{ disease.symptoms|truncatechars:60 }}{% else %}No symptoms noted{% endif %}</div>
+                    </div>
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'goats:disease_update' disease.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'goats:disease_delete' disease.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-virus"></i></div>
+            <h3>No diseases yet</h3>
+            <p>Add common conditions so health records can reference them.</p>
+            <a href="{% url 'goats:disease_create' %}" class="ingredient-primary-btn">Add disease</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
-
 {% endblock %}

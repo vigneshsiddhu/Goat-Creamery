@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if feedstock %}Edit stock{% else %}Add stock{% endif %}{% endblock %}
+{% block page_title %}{% if feedstock %}Edit stock{% else %}Add stock{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'farm:feedstock_list' %}?tab=stock" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to feed
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if feedstock %}Edit stock{% else %}Add stock{% endif %}</h3>
+                <p>
+                    {% if feedstock %}
+                    Update variety, weight, and rate. Total amount updates as you type.
+                    {% else %}
+                    Record a fodder lot. Total amount = weight × rate.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'farm:feedstock_list' %}?tab=stock" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Stock lot</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.fodder_variety.id_for_label }}">Feed variety <span class="form-required">*</span></label>
+                        {{ form.fodder_variety }}
+                        <span class="form-help-text">Choose silage, kodi fodder, punnaku, maize, or concentrate.</span>
+                        {% for error in form.fodder_variety.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.stock_weight.id_for_label }}">Stock weight (kg) <span class="form-required">*</span></label>
+                        {{ form.stock_weight }}
+                        {% for error in form.stock_weight.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.rate.id_for_label }}">Rate per kg (₹) <span class="form-required">*</span></label>
+                        {{ form.rate }}
+                        {% for error in form.rate.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-group">
+                    <label>Total amount</label>
+                    <div class="form-readonly-value" id="feed-stock-total">₹0.00</div>
+                    <span class="form-help-text">Suggested total: stock weight × rate per kg.</span>
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'farm:feedstock_list' %}?tab=stock" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if feedstock %}Update stock{% else %}Save stock{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const weightInput = document.getElementById("{{ form.stock_weight.id_for_label }}");
+    const rateInput = document.getElementById("{{ form.rate.id_for_label }}");
+    const totalBox = document.getElementById("feed-stock-total");
+    if (!weightInput || !rateInput || !totalBox) return;
+
+    function parseAmount(value) {
+        const amount = Number.parseFloat(String(value).replace(/,/g, ""));
+        return Number.isFinite(amount) ? amount : null;
+    }
+
+    function updateTotal() {
+        const weight = parseAmount(weightInput.value);
+        const rate = parseAmount(rateInput.value);
+        if (weight === null || rate === null || weight < 0 || rate < 0) {
+            totalBox.textContent = "₹0.00";
+            return;
+        }
+        const total = weight * rate;
+        totalBox.textContent = "₹" + total.toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    weightInput.addEventListener("input", updateTotal);
+    rateInput.addEventListener("input", updateTotal);
+    updateTotal();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if item.qr_code %}{{ item.qr_code }}{% else %}{{ item.product.code_sku }}{% endif %}{% endblock %}
+{% block page_title %}Item{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/item_detail.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="item-lite-page">
+    <a href="{% url 'inventory:item_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to items
+    </a>
+
+    <section class="item-lite-hero">
+        <div class="item-lite-hero-top">
+            <div>
+                <h1>{{ item.product.type|title }}{% if item.product.variant %} · {{ item.product.variant|title }}{% endif %}</h1>
+                <p class="item-lite-hero-sub">
+                    {% if item.qr_code %}{{ item.qr_code }}{% else %}{{ item.product.code_sku }}{% endif %}
+                    · Batch {{ item.product_batch.batch_number }}
+                </p>
+            </div>
+            <div class="item-lite-badges">
+                {% if item.status %}
+                <span class="item-lite-badge ok"><i class="bi bi-check-circle"></i> Active</span>
+                {% else %}
+                <span class="item-lite-badge bad"><i class="bi bi-pause-circle"></i> Inactive</span>
+                {% endif %}
+                {% if shelf_days_remaining < 0 %}
+                <span class="item-lite-badge bad"><i class="bi bi-exclamation-triangle"></i> Expired</span>
+                {% elif shelf_days_remaining == 0 %}
+                <span class="item-lite-badge warn"><i class="bi bi-clock"></i> Today</span>
+                {% elif shelf_days_remaining <= 7 %}
+                <span class="item-lite-badge warn"><i class="bi bi-clock"></i> {{ shelf_days_remaining }}d left</span>
+                {% else %}
+                <span class="item-lite-badge ok"><i class="bi bi-clock"></i> {{ shelf_days_remaining }}d left</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="item-lite-kpis">
+            <div class="item-lite-kpi">
+                <span>Price</span>
+                <strong>₹{{ item.price.mrp|floatformat:0 }}</strong>
+            </div>
+            <div class="item-lite-kpi">
+                <span>Pack</span>
+                <strong class="small">{{ item.price.quantity }} {{ item.price.unit }}</strong>
+            </div>
+            <div class="item-lite-kpi">
+                <span>Expires</span>
+                <strong class="small">{{ item.exp_date|date:"d M Y" }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <article class="item-lite-card">
+        {% if active_location %}
+        <div class="item-lite-location-banner">
+            <div class="item-lite-location-icon"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="item-lite-location-text">
+                <strong>
+                    {% if active_location.location %}{{ active_location.location.name }}{% endif %}
+                    {% if active_location.location and active_location.vehicle %} · {% endif %}
+                    {% if active_location.vehicle %}{{ active_location.vehicle.number }}{% endif %}
+                    {% if not active_location.location and not active_location.vehicle %}Assigned{% endif %}
+                </strong>
+                <span>
+                    Loaded {% if active_location.loaded_at %}{{ active_location.loaded_at|date:"d M, H:i" }}{% else %}—{% endif %}
+                    {% if active_location.unloaded_at %} · Sold {{ active_location.unloaded_at|date:"d M, H:i" }}{% endif %}
+                </span>
+            </div>
+        </div>
+        {% else %}
+        <div class="item-lite-location-banner no-loc">
+            <div class="item-lite-location-icon"><i class="bi bi-geo-alt"></i></div>
+            <div class="item-lite-location-text">
+                <strong>Not on vehicle / city</strong>
+                <span>No active location record</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="item-lite-card-head"><i class="bi bi-box-seam"></i> Item</div>
+        <div class="item-lite-rows">
+            <div class="item-lite-row"><label>QR Code</label><strong>{% if item.qr_code %}{{ item.qr_code }}{% else %}—{% endif %}</strong></div>
+            <div class="item-lite-row"><label>Packed</label><strong>{{ item.packed_date|date:"d M Y" }}{% if item.time %}, {{ item.time|time:"H:i" }}{% endif %}</strong></div>
+            <div class="item-lite-row"><label>Expiry</label><strong>{{ item.exp_date|date:"d M Y" }}</strong></div>
+        </div>
+
+        <div class="item-lite-card-head"><i class="bi bi-tag"></i> Product</div>
+        <div class="item-lite-rows">
+            <div class="item-lite-row"><label>SKU</label><strong>{{ item.product.code_sku }}</strong></div>
+            <div class="item-lite-row"><label>Type</label><strong>{{ item.product.type|title }}</strong></div>
+            <div class="item-lite-row"><label>Variant</label><strong>{% if item.product.variant %}{{ item.product.variant|title }}{% else %}—{% endif %}</strong></div>
+            <div class="item-lite-row"><label>Life span</label><strong>{% if item.product.life_span_value %}{{ item.product.life_span_value }} {{ item.product.life_span_unit }}{% else %}—{% endif %}</strong></div>
+        </div>
+
+        {% if goat_milk_batches %}
+        <div class="item-lite-card-head"><i class="bi bi-droplet"></i> Milk batch</div>
+        <div class="item-lite-rows">
+            {% for milk in goat_milk_batches %}
+            <div class="item-lite-row"><label>Batch</label><strong>{{ milk.batch_number }}</strong></div>
+            <div class="item-lite-row"><label>Collected</label><strong>{{ milk.date|date:"d M Y" }} · {{ milk.get_milk_time_display }}</strong></div>
+            <div class="item-lite-row"><label>QR</label><strong>{% if milk.qr_code %}{{ milk.qr_code }}{% else %}—{% endif %}</strong></div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="item-lite-card-head"><i class="bi bi-list-ul"></i> Ingredients</div>
+        {% if recipe_ingredients %}
+        <div class="item-lite-chips">
+            {% for line in recipe_ingredients %}
+            <div class="item-lite-chip">
+                <code>{{ line.ingredient.code }}</code>
+                <span>{{ line.ingredient.name }}</span>
+                <small>{{ line.quantity }} {{ line.unit }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="item-lite-empty">No recipe ingredients for this product type.</div>
+        {% endif %}
+
+        {% if location_history %}
+        <details class="item-lite-collapse" open>
+            <summary><i class="bi bi-clock-history"></i> Previous location records ({{ location_history|length }})</summary>
+            <div class="item-lite-collapse-body">
+                {% for loc in location_history %}
+                <div class="item-lite-history-item">
+                    <strong>
+                        {% if loc.location %}{{ loc.location.name }}{% else %}—{% endif %}
+                        {% if loc.vehicle %} · {{ loc.vehicle.number }}{% endif %}
+                        · {% if loc.status %}Active{% else %}Archived{% endif %}
+                    </strong>
+                    <span>
+                        Loaded {% if loc.loaded_at %}{{ loc.loaded_at|date:"d M Y, H:i" }}{% else %}—{% endif %}
+                        {% if loc.time %} ({{ loc.time|time:"H:i" }}){% endif %}
+                        {% if loc.unloaded_at %} · Sold {{ loc.unloaded_at|date:"d M Y, H:i" }}{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </details>
+        {% endif %}
+
+        {% if item.description %}
+        <div class="item-lite-card-head"><i class="bi bi-sticky"></i> Notes</div>
+        <div class="item-lite-empty" style="color:#374151;">{{ item.description }}</div>
+        {% endif %}
+    </article>
+
+    <div class="item-lite-actions">
+        <a href="{% url 'inventory:item_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,200 +1,67 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-
-    {% if disease %}
-        Edit Disease
-    {% else %}
-        Add Disease
-    {% endif %}
-
-{% endblock %}
+{% block title %}{% if disease %}Edit disease{% else %}Add disease{% endif %}{% endblock %}
+{% block page_title %}{% if disease %}Edit disease{% else %}Add disease{% endif %}{% endblock %}
 
 {% block extra_css %}
-
-<link rel="stylesheet"
-      href="{% static 'css/disease.css' %}">
-
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="disease-page">
-
-    <div class="disease-form-card">
-
-
-        <!-- HEADER -->
-
-        <div class="disease-form-header">
-
+<div class="ingredient-form-page">
+    <a href="{% url 'goats:disease_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to diseases
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
             <div>
-
-                <h5>
-
-                    {% if disease %}
-                        Edit Disease
-                    {% else %}
-                        Disease Information
-                    {% endif %}
-
-                </h5>
-
-                <p>
-
-                    {% if disease %}
-                        Update the disease details below.
-                    {% else %}
-                        Enter the disease details below.
-                    {% endif %}
-
-                </p>
-
+                <h3>{% if disease %}Edit disease{% else %}Add disease{% endif %}</h3>
+                <p>Name is required. Symptoms, impact, and treatment are optional.</p>
             </div>
-
-
-            <a href="{% url 'goats:disease_list' %}"
-               class="disease-back-btn">
-
+            <a href="{% url 'goats:disease_list' %}" class="form-back-btn">
                 <i class="bi bi-arrow-left"></i>
                 Back
-
             </a>
-
         </div>
-
-
-        <!-- FORM BODY -->
-
-        <div class="disease-form-body">
-
-            <form method="POST">
-
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
                 {% csrf_token %}
-
-
-                <!-- DISEASE NAME -->
-
-                <div class="disease-form-group">
-
-                    <label for="{{ form.name.id_for_label }}">
-                        Disease Name
-                    </label>
-
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Catalogue</h4>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.name.id_for_label }}">Name <span class="form-required">*</span></label>
                     {{ form.name }}
-
-                    {% if form.name.errors %}
-
-                        <div class="disease-form-error">
-                            {{ form.name.errors }}
-                        </div>
-
-                    {% endif %}
-
+                    {% for error in form.name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- SYMPTOMS -->
-
-                <div class="disease-form-group">
-
-                    <label for="{{ form.symptoms.id_for_label }}">
-                        Symptoms
-                    </label>
-
+                <div class="ingredient-form-group">
+                    <label for="{{ form.symptoms.id_for_label }}">Symptoms</label>
                     {{ form.symptoms }}
-
-                    {% if form.symptoms.errors %}
-
-                        <div class="disease-form-error">
-                            {{ form.symptoms.errors }}
-                        </div>
-
-                    {% endif %}
-
+                    {% for error in form.symptoms.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- IMPACT -->
-
-                <div class="disease-form-group">
-
-                    <label for="{{ form.impact_goat.id_for_label }}">
-                        Impact on Goat
-                    </label>
-
+                <div class="ingredient-form-group">
+                    <label for="{{ form.impact_goat.id_for_label }}">Impact on goat</label>
                     {{ form.impact_goat }}
-
-                    {% if form.impact_goat.errors %}
-
-                        <div class="disease-form-error">
-                            {{ form.impact_goat.errors }}
-                        </div>
-
-                    {% endif %}
-
+                    {% for error in form.impact_goat.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- TREATMENT -->
-
-                <div class="disease-form-group">
-
-                    <label for="{{ form.treatment.id_for_label }}">
-                        Treatment
-                    </label>
-
+                <div class="ingredient-form-group">
+                    <label for="{{ form.treatment.id_for_label }}">Treatment</label>
                     {{ form.treatment }}
-
-                    {% if form.treatment.errors %}
-
-                        <div class="disease-form-error">
-                            {{ form.treatment.errors }}
-                        </div>
-
-                    {% endif %}
-
+                    {% for error in form.treatment.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- ACTIONS -->
-
-                <div class="disease-form-actions">
-
-                    <a href="{% url 'goats:disease_list' %}"
-                       class="disease-cancel-btn">
-
-                        Cancel
-
-                    </a>
-
-
-                    <button type="submit"
-                            class="disease-save-btn">
-
-                        {% if disease %}
-
-                            <i class="bi bi-check-lg"></i>
-                            Update Disease
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-                            Add Disease
-
-                        {% endif %}
-
+                <div class="form-actions">
+                    <a href="{% url 'goats:disease_list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if disease %}Update disease{% else %}Save disease{% endif %}
                     </button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}

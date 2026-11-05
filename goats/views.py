@@ -2,9 +2,9 @@ from django.shortcuts import get_object_or_404,redirect,render
 from django.contrib import messages
 from django.db.models import Count,Q
 from myfarm.permissions import permission_required
+from myfarm.pagination import paginate
 from .forms import GoatForm,DiseaseForm,DeathGoatForm,GoatHealthForm
 from .models import Goat,Disease,DeathGoat,GoatHealth
-import pdb
 # =========================================================
 # GOAT
 # =========================================================
@@ -19,8 +19,10 @@ def goat_list(request):
         kid_male=Count("id",filter=Q(gender="MALE",maturity="KID")),
         kid_female=Count("id",filter=Q(gender="FEMALE",maturity="KID")),
     )
+    page = paginate(request, goats)
     return render(request,"goats/goat_list.html",{
-        "goats":goats,
+        "goats":page,
+        "page_obj":page,
         "business":business,
         "total_live":goat_counts["total_live"],
         "adult_male":goat_counts["adult_male"],
@@ -87,7 +89,8 @@ def goat_delete(request,id):
 def disease_list(request):
     business = request.business
     diseases = Disease.objects.filter(business=business).select_related("created_by")
-    return render(request,"disease/disease_list.html",{"diseases":diseases,"business":business})
+    page = paginate(request, diseases)
+    return render(request,"disease/disease_list.html",{"diseases":page,"page_obj":page,"business":business})
 
 # =========================================================
 # DISEASE CREATE
@@ -147,7 +150,8 @@ def disease_delete(request,pk):
 def death_goat_list(request):
     business = request.business
     deaths = DeathGoat.objects.filter(business=business).select_related("goat","disease","created_by")
-    return render(request,"death_goat/death_goat_list.html",{"deaths":deaths,"business":business})
+    page = paginate(request, deaths)
+    return render(request,"death_goat/death_goat_list.html",{"deaths":page,"page_obj":page,"business":business})
 
 # =========================================================
 # DEATH GOAT CREATE
@@ -216,8 +220,8 @@ def death_goat_delete(request,pk):
 def goat_health_list(request):
     business = request.business
     objects = GoatHealth.objects.filter(business=business).select_related("goat","disease","created_by")
-    # pdb.set_trace()
-    return render(request,"goat_health/goat_health_list.html",{"health_records":objects,"business":business})
+    page = paginate(request, objects)
+    return render(request,"goat_health/goat_health_list.html",{"health_records":page,"page_obj":page,"business":business})
 
 # =========================================================
 # GOAT HEALTH CREATE
@@ -227,7 +231,6 @@ def goat_health_create(request):
     business = request.business
     form = GoatHealthForm(request.POST or None,business=business)
     if request.method == "POST" and form.is_valid():
-        pdb.set_trace()
         obj = form.save(commit=False)
         obj.business = business
         obj.created_by = request.business_user.user
@@ -259,7 +262,6 @@ def goat_health_update(request,pk):
 def goat_health_delete(request,pk):
     business = request.business
     obj = get_object_or_404(GoatHealth,pk=pk,business=business)
-    # pdb.set_trace()
     if request.method == "POST":
         obj.delete()
         messages.success(request,"Goat health record deleted successfully.")

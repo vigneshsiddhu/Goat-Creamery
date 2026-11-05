@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if land %}Edit land{% else %}Add land{% endif %}{% endblock %}
+{% block page_title %}{% if land %}Edit land{% else %}Add land{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'farm:land_list' %}?tab=land" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to land & water
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if land %}Edit land{% else %}Add land{% endif %}</h3>
+                <p>
+                    {% if land %}
+                    Update parcel name, size unit, and Indian soil or sand type.
+                    {% else %}
+                    Name the parcel, pick area unit, and choose the soil or sand variety.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'farm:land_list' %}?tab=land" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <h4 class="ingredient-form-section">Land identity</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.name.id_for_label }}">Land name <span class="form-required">*</span></label>
+                        {{ form.name }}
+                        <span class="form-help-text">A name used on the farm (e.g. Borewell plot).</span>
+                        {% for error in form.name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.location.id_for_label }}">Location</label>
+                        {{ form.location }}
+                        <span class="form-help-text">Optional business location this parcel belongs to.</span>
+                        {% for error in form.location.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <h4 class="ingredient-form-section">Area</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.area.id_for_label }}">Area <span class="form-required">*</span></label>
+                        {{ form.area }}
+                        <span class="form-help-text">Numeric size of the land.</span>
+                        {% for error in form.area.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.unit.id_for_label }}">Unit <span class="form-required">*</span></label>
+                        {{ form.unit }}
+                        <span class="form-help-text">Acre, hectare, cent, guntha, bigha, and other Indian units.</span>
+                        {% for error in form.unit.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <h4 class="ingredient-form-section">Soil / sand</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.soil_type.id_for_label }}">Soil type</label>
+                        {{ form.soil_type }}
+                        <span class="form-help-text">Indian agricultural soils and sand varieties (alluvial, red, laterite, river sand, and more).</span>
+                        {% for error in form.soil_type.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'farm:land_list' %}?tab=land" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if land %}Update land{% else %}Save land{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

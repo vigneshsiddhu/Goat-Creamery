@@ -1,230 +1,129 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Goat Milk Voice Entry
-{% endblock %}
-
+{% block title %}Goat Milk Voice Entry{% endblock %}
+{% block page_title %}Voice Milk{% endblock %}
 
 {% block extra_css %}
-
-<link
-    rel="stylesheet"
-    href="{% static 'css/goat_milk.css' %}?v=36"
->
-
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/goat_weight.css' %}?v=43">
 {% endblock %}
-
 
 {% block content %}
+<div class="ingredient-form-page weight-voice-page">
+    <a href="{% url 'production:goat_milk_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goat milk
+    </a>
 
-<div class="production-page">
-
-    <div class="goat-milk-form-card">
-
-    <!-- =====================================================
-
-         HEADER
-
-    ====================================================== -->
-
-    <div class="goat-milk-form-header">
-
-        <div>
-
-            <h3>
-
-                Goat Milk Entry
-
-            </h3>
-
-            <p>
-
-                Select the goat tag and milk quantity.
-
-            </p>
-
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>Voice Milk</h3>
+                <p>Pick Token ID, set litres, then confirm by voice. Saved for today.</p>
+            </div>
+            <a href="{% url 'production:goat_milk_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
 
-        <a
-
-            href="{% url 'production:goat_milk_list' %}"
-
-            class="goat-milk-back-btn"
-
-        >
-
-            <i class="bi bi-arrow-left"></i>
-
-            Back
-
-        </a>
-
-    </div>
-
-    <!-- =====================================================
-
-         FORM
-
-    ====================================================== -->
-
-    <div class="goat-milk-form-body">
-
-        <form
-
-            method="POST"
-
-            id="goat-milk-form"
-
-        >
-
-            {% csrf_token %}
-
-            <!-- =================================================
-
-                 GOAT TAG
-
-            ================================================== -->
-
-            <div class="goat-milk-form-group">
-
-                <label for="{{ form.goat.id_for_label }}">
-
-                    Goat Tag
-
-                </label>
-
-                <div class="goat-milk-select-wrapper">
-
-                    <i class="bi bi-tag-fill"></i>
-
-                    {{ form.goat }}
-
-                    <i class="bi bi-chevron-down goat-milk-select-arrow"></i>
-
-                </div>
-
-                {% if form.goat.errors %}
-
-                    <div class="goat-milk-form-error">
-
-                        {{ form.goat.errors }}
-
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-            <!-- =================================================
-
-                 MILK WEIGHT
-
-            ================================================== -->
-
-            <div class="goat-milk-form-group">
-
-                <label>
-
-                    Milk Weight
-
-                </label>
-
-                <div class="milk-quantity-buttons">
-
-                    {% for radio in form.milk_weight %}
-
-                        <label class="milk-quantity-option">
-
-                            {{ radio.tag }}
-
-                            <span>
-
-                                {{ radio.choice_label }}
-
-                            </span>
-
-                        </label>
-
-                    {% endfor %}
-
-                </div>
-
-                {% if form.milk_weight.errors %}
-
-                    <div class="goat-milk-form-error">
-
-                        {{ form.milk_weight.errors }}
-
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-            <!-- =================================================
-
-                 NON FIELD ERRORS
-
-            ================================================== -->
-
-            {% if form.non_field_errors %}
-
-                <div class="goat-milk-form-error">
-
-                    {{ form.non_field_errors }}
-
-                </div>
-
+        <div class="ingredient-form-body">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
             {% endif %}
 
-            <!-- =================================================
+            <form method="post" id="goat-milk-form" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="milk_weight" id="id_milk_weight" value="{{ form.milk_weight.value|default:'' }}">
 
-                 ACTIONS
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {% for error in form.goat.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                {% for error in form.milk_weight.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
 
-            ================================================== -->
+                <div class="weight-voice-step">
+                    <div class="weight-voice-step-title"><span>1</span> Token ID</div>
+                    <select name="goat" id="id_goat" class="form-input">
+                        <option value="">Select Token ID</option>
+                        {% for goat in goats %}
+                        <option
+                            value="{{ goat.id }}"
+                            data-last-weight="{% if goat.last_milk %}{{ goat.last_milk }}{% endif %}"
+                            {% if form.goat.value|stringformat:"s" == goat.id|stringformat:"s" %}selected{% endif %}
+                        >{{ goat.token_no }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-            <div class="goat-milk-form-actions">
-
-                <a
-
-                    href="{% url 'production:goat_milk_list' %}"
-
-                    class="goat-milk-cancel-btn"
-
-                >
-
-                    <i class="bi bi-x-lg"></i>
-
-                    Cancel
-
-                </a>
-
-                <button
-
-                    type="submit"
-
-                    class="goat-milk-save-btn"
-
-                >
-
-                    <i class="bi bi-check-lg"></i>
-
-                    Save Milk
-
-                </button>
-
-            </div>
-
-        </form>
-
+                <div class="weight-voice-step">
+                    <div class="weight-voice-step-title"><span>2</span> Milk Quantity</div>
+                    <div class="weight-keypad-display" id="milk-keypad-display">
+                        <span id="milk-display-goat">Select Token ID</span>
+                        <strong>
+                            <span id="milk-display-value">0.0</span><span class="weight-caret" aria-hidden="true"></span>
+                            <small>L</small>
+                        </strong>
+                    </div>
+                    <div class="weight-keypad" id="milk-keypad">
+                        <button type="button" data-key="1">1</button>
+                        <button type="button" data-key="2">2</button>
+                        <button type="button" data-key="3">3</button>
+                        <button type="button" data-key="4">4</button>
+                        <button type="button" data-key="5">5</button>
+                        <button type="button" data-key="6">6</button>
+                        <button type="button" data-key="7">7</button>
+                        <button type="button" data-key="8">8</button>
+                        <button type="button" data-key="9">9</button>
+                        <button type="button" data-key=".">.</button>
+                        <button type="button" data-key="0">0</button>
+                        <button type="button" data-key="back">⌫</button>
+                    </div>
+                    <button type="button" class="form-save-btn weight-voice-confirm-inline" data-milk-confirm>
+                        <i class="bi bi-volume-up-fill"></i>
+                        Speak & Confirm
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
 </div>
 
+<div id="milk-voice-confirmation" class="weight-confirmation-overlay">
+    <div class="weight-confirmation-popup">
+        <div class="weight-confirmation-icon">
+            <i class="bi bi-volume-up-fill"></i>
+        </div>
+        <h4>Confirm Goat Milk</h4>
+        <p id="milk-voice-text" class="weight-confirmation-text"></p>
+        <div class="weight-confirmation-details">
+            <div class="weight-confirmation-detail">
+                <span>Token ID</span>
+                <strong id="milk-confirmation-goat">—</strong>
+            </div>
+            <div class="weight-confirmation-detail">
+                <span>Milk</span>
+                <strong id="milk-confirmation-value">—</strong>
+            </div>
+        </div>
+        <div class="weight-confirmation-actions">
+            <button type="button" id="milk-confirmation-cancel" class="weight-confirmation-change-btn">
+                <i class="bi bi-pencil"></i>
+                Change
+            </button>
+            <button type="button" id="milk-confirmation-save" class="weight-confirmation-save-btn">
+                <i class="bi bi-check-lg"></i>
+                Confirm & Save
+            </button>
+        </div>
+    </div>
 </div>
-
 {% endblock %}
 
-
-
+{% block extra_js %}
+<script src="{% static 'js/goat_milk.js' %}?v=40" defer></script>
+{% endblock %}

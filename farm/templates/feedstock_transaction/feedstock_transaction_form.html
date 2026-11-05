@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if transaction %}Edit stock adjustment{% else %}Add stock adjustment{% endif %}{% endblock %}
+{% block page_title %}{% if transaction %}Edit stock adjustment{% else %}Add stock adjustment{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'farm:feedstock_list' %}?tab=adjust" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to feed
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if transaction %}Edit stock adjustment{% else %}Add stock adjustment{% endif %}</h3>
+                <p>
+                    {% if transaction %}
+                    Update this stock in or out record.
+                    {% else %}
+                    Log purchase, consumption, adjustment, wastage, or return.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'farm:feedstock_list' %}?tab=adjust" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Stock adjustment</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.feed_stock.id_for_label }}">Feed stock <span class="form-required">*</span></label>
+                        {{ form.feed_stock }}
+                        <span class="form-help-text">Lot this movement belongs to.</span>
+                        {% for error in form.feed_stock.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.transaction_type.id_for_label }}">Type <span class="form-required">*</span></label>
+                        {{ form.transaction_type }}
+                        {% for error in form.transaction_type.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.quantity_kg.id_for_label }}">Quantity (kg) <span class="form-required">*</span></label>
+                        {{ form.quantity_kg }}
+                        {% for error in form.quantity_kg.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.note.id_for_label }}">Note</label>
+                    {{ form.note }}
+                    {% for error in form.note.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'farm:feedstock_list' %}?tab=adjust" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if transaction %}Update adjustment{% else %}Save adjustment{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -869,3 +869,8 @@
     }
 
 }
+
+a.dashboard-card {
+    text-decoration: none;
+    color: inherit;
+}

@@ -1,321 +1,107 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Businesses
-{% endblock %}
+{% block title %}Business{% endblock %}
+{% block page_title %}Business{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/business_list.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="business-page">
-
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="business-page-header">
-
-        <div class="business-header-content">
-
-            <h2>
-                Businesses
-            </h2>
-
-            <p>
-                Manage your businesses and business information.
-            </p>
-
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Business</h2>
+                <p>{{ business.name }} · company profile</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'business:create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add business
+                </a>
+            </div>
         </div>
-
-        <div class="business-header-actions">
-
-            <a
-                href="{% url 'business:create' %}"
-                class="business-add-btn"
-            >
-                <i class="bi bi-plus-lg"></i>
-                Add Business
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         MESSAGES
-    ====================================================== -->
-
-    {% if messages %}
-
-        <div class="business-messages">
-
+        {% if messages %}
+        <div class="farm-hub-messages">
             {% for message in messages %}
-
-                <div class="business-message business-message-{{ message.tags }}">
-
-                    <i class="bi bi-info-circle"></i>
-
-                    <span>
-                        {{ message }}
-                    </span>
-
-                </div>
-
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
             {% endfor %}
-
         </div>
-
-    {% endif %}
-
-
-    <!-- =====================================================
-         BUSINESS TABLE CARD
-    ====================================================== -->
-
-    <div class="business-list-card">
-
-        <div class="business-list-table-wrapper">
-
-            <table class="business-list-table">
-
+        {% endif %}
+        {% if businesses %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
                 <thead>
-
                     <tr>
-
                         <th>Business</th>
-
                         <th>GSTIN</th>
-
                         <th>Phone</th>
-
                         <th>Owner</th>
-
-                        <th>Created By</th>
-
+                        <th>Created by</th>
                         <th>Status</th>
-
                         <th>Actions</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody>
-
-                    {% for business in businesses %}
-
+                    {% for item in businesses %}
                     <tr>
-
-                        <!-- BUSINESS -->
-
                         <td>
-
-                            <div class="business-list-business">
-
-                                <span class="business-list-name">
-                                    {{ business.name }}
-                                </span>
-
-                                {% if business.address %}
-
-                                    <span class="business-list-address">
-
-                                        <i class="bi bi-geo-alt"></i>
-
-                                        {{ business.address }}
-
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
+                            <span class="ingredient-name">{{ item.name }}</span>
+                            {% if item.address %}<div class="ingredient-code">{{ item.address|truncatechars:60 }}</div>{% endif %}
                         </td>
-
-
-                        <!-- GSTIN -->
-
+                        <td>{{ item.gstn|default:"—" }}</td>
+                        <td>{{ item.phone_number|default:"—" }}</td>
+                        <td>{{ item.owner.username }}</td>
+                        <td>{{ item.created_by.username }}</td>
                         <td>
-
-                            <span class="business-list-value">
-
-                                {{ business.gstn|default:"-" }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- PHONE -->
-
-                        <td>
-
-                            <span class="business-list-value">
-
-                                {{ business.phone_number|default:"-" }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- OWNER -->
-
-                        <td>
-
-                            <span class="business-list-user">
-
-                                <i class="bi bi-person"></i>
-
-                                {{ business.owner.username }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- CREATED BY -->
-
-                        <td>
-
-                            <span class="business-list-user">
-
-                                <i class="bi bi-person-plus"></i>
-
-                                {{ business.created_by.username }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            {% if business.status %}
-
-                                <span class="business-list-status-active">
-
-                                    <span class="business-status-dot"></span>
-
-                                    Active
-
-                                </span>
-
+                            {% if item.status %}
+                            <span class="ingredient-stock-pill">Active</span>
                             {% else %}
-
-                                <span class="business-list-status-inactive">
-
-                                    <span class="business-status-dot"></span>
-
-                                    Inactive
-
-                                </span>
-
+                            <span class="ingredient-stock-pill empty">Inactive</span>
                             {% endif %}
-
                         </td>
-
-
-                        <!-- ACTIONS -->
-
                         <td>
-
-                            <div class="business-list-actions">
-
-                                <a
-                                    href="{% url 'business:update' business.id %}"
-                                    class="business-list-edit"
-                                    title="Edit Business"
-                                >
-
-                                    <i class="bi bi-pencil"></i>
-
-                                    <span>Edit</span>
-
-                                </a>
-
-
-                                <a
-                                    href="{% url 'business:delete' business.id %}"
-                                    class="business-list-delete"
-                                    title="Delete Business"
-                                >
-
-                                    <i class="bi bi-trash"></i>
-
-                                    <span>Delete</span>
-
-                                </a>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'business:update' item.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'business:delete' item.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
                             </div>
-
                         </td>
-
                     </tr>
-
-                    {% empty %}
-
-                    <!-- =================================================
-                         EMPTY STATE
-                    ================================================== -->
-
-                    <tr>
-
-                        <td
-                            colspan="7"
-                            class="business-list-empty"
-                        >
-
-                            <div class="business-empty-icon">
-
-                                <i class="bi bi-building"></i>
-
-                            </div>
-
-                            <div class="business-empty-title">
-
-                                No Businesses Found
-
-                            </div>
-
-                            <div class="business-empty-text">
-
-                                You don't have any businesses yet.
-
-                            </div>
-
-                            <a
-                                href="{% url 'business:create' %}"
-                                class="business-empty-btn"
-                            >
-
-                                <i class="bi bi-plus-lg"></i>
-
-                                Add Business
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
+        <div class="ingredient-cards">
+            {% for item in businesses %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ item.name }}</div>
+                        <div class="ingredient-code">{{ item.phone_number|default:"No phone" }}</div>
+                    </div>
+                    {% if item.status %}
+                    <span class="ingredient-stock-pill">Active</span>
+                    {% else %}
+                    <span class="ingredient-stock-pill empty">Inactive</span>
+                    {% endif %}
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'business:update' item.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'business:delete' item.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-building"></i></div>
+            <h3>No businesses yet</h3>
+            <p>Create a company profile to continue.</p>
+            <a href="{% url 'business:create' %}" class="ingredient-primary-btn">Add business</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
-
 {% endblock %}

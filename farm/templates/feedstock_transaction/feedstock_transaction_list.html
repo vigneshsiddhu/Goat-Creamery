@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Feed transactions{% endblock %}
+{% block page_title %}Feed transactions{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Feed transactions</h2>
+                <p>Purchases, consumption, and adjustments</p>
+            </div>
+            <div class="ingredient-header-actions">
+                <a href="{% url 'farm:feedstock_transaction_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add transaction
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if transactions %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Stock</th>
+                        <th>Type</th>
+                        <th>Qty kg</th>
+                        <th>Note</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in transactions %}
+                    <tr>
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.feed_stock.fodder_variety }}</td>
+                        <td>{{ item.transaction_type }}</td>
+                        <td>{{ item.quantity_kg }}</td>
+                        <td>{{ item.note|default:"—" }}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'farm:feedstock_transaction_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'farm:feedstock_transaction_delete' item.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-arrow-left-right"></i></div>
+            <h3>No transactions yet</h3>
+            <p>Log feed in and out against a stock lot.</p>
+            <a href="{% url 'farm:feedstock_transaction_create' %}" class="ingredient-primary-btn">Add transaction</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

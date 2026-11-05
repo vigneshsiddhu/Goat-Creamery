@@ -1,106 +1,202 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block title %}{{ title|default:"Item" }}{% endblock %}
+{% block page_title %}{{ title|default:"Item" }}{% endblock %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
 {% endblock %}
+
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
+<div class="ingredient-form-page">
+    <a href="{% url 'inventory:item_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to items
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
                 <h3>{{ title|default:"Create Item" }}</h3>
-                <p>Manage product item, pricing and packing details.</p>
+                <p>Pick a product first — batches and prices filter automatically.</p>
             </div>
+            <a href="{% url 'inventory:item_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-        <div class="form-body">
-            <form method="post">
+
+        <div class="ingredient-form-body">
+            <form method="post" id="item-form" novalidate>
                 {% csrf_token %}
                 {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {{ form.non_field_errors }}
-                    </div>
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-                <div class="form-row-4">
-                    <div class="form-group">
-                        <label for="{{ form.qr_code.id_for_label }}">QR Code</label>
-                        {{ form.qr_code }}
-                        {% for error in form.qr_code.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
+
+                <h4 class="ingredient-form-section">Product</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.product.id_for_label }}">Product <span class="form-required">*</span></label>
                         {{ form.product }}
-                        {% for error in form.product.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <span class="form-help-text" id="item-product-help">Select product to load batches and prices.</span>
+                        {% for error in form.product.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.product_batch.id_for_label }}">Product Batch <span class="form-required">*</span></label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.product_batch.id_for_label }}">Production Batch <span class="form-required">*</span></label>
                         {{ form.product_batch }}
-                        {% for error in form.product_batch.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.price.id_for_label }}">Price <span class="form-required">*</span></label>
-                        {{ form.price }}
-                        {% for error in form.price.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <span class="form-help-text" id="item-batch-help">Batches for selected product.</span>
+                        {% for error in form.product_batch.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-row-4">
-                    <div class="form-group">
-                        <label for="{{ form.time.id_for_label }}">Time</label>
-                        {{ form.time }}
-                        {% for error in form.time.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.price.id_for_label }}">Price / Pack Size <span class="form-required">*</span></label>
+                        {{ form.price }}
+                        <span class="form-help-text" id="item-price-help">Active prices for selected product.</span>
+                        {% for error in form.price.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.qr_code.id_for_label }}">QR Code</label>
+                        {{ form.qr_code }}
+                        <span class="form-help-text">Optional — scan or enter label code.</span>
+                        {% for error in form.qr_code.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <h4 class="ingredient-form-section">Packing Dates</h4>
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.packed_date.id_for_label }}">Packed Date <span class="form-required">*</span></label>
                         {{ form.packed_date }}
-                        {% for error in form.packed_date.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.packed_date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.exp_date.id_for_label }}">Expiry Date <span class="form-required">*</span></label>
                         {{ form.exp_date }}
-                        {% for error in form.exp_date.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.exp_date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.status.id_for_label }}">Status</label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.time.id_for_label }}">Packed Time</label>
+                        {{ form.time }}
+                        {% for error in form.time.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                {% if form.status %}
+                <div class="ingredient-form-group">
+                    <label class="form-check-label" style="display:flex;align-items:center;gap:8px;">
                         {{ form.status }}
-                        {% for error in form.status.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <span>Item is active and available for sale</span>
+                    </label>
+                    {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="ingredient-form-group">
+                    <label for="{{ form.description.id_for_label }}">Notes</label>
+                    {{ form.description }}
+                    {% for error in form.description.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+
+                <h4 class="ingredient-form-section">Place <small>(optional)</small></h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.location.id_for_label }}">City</label>
+                        {{ form.location }}
+                        <span class="form-help-text">Optional — where this item is placed.</span>
+                        {% for error in form.location.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.vehicle.id_for_label }}">Vehicle</label>
+                        {{ form.vehicle }}
+                        <span class="form-help-text">Optional — vehicle carrying this item.</span>
+                        {% for error in form.vehicle.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.description.id_for_label }}">Description</label>
-                        {{ form.description }}
-                        {% for error in form.description.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                </div>
+
                 <div class="form-actions">
                     <a href="{% url 'inventory:item_list' %}" class="form-back-btn">
                         <i class="bi bi-arrow-left"></i>
-                        Back
+                        Cancel
                     </a>
                     <button type="submit" class="form-save-btn">
                         <i class="bi bi-check-lg"></i>
-                        Save
+                        Save Item
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+{{ product_batch_map|json_script:"item-batch-data" }}
+{{ product_price_map|json_script:"item-price-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const productSelect = document.getElementById("id_product");
+    const batchSelect = document.getElementById("id_product_batch");
+    const priceSelect = document.getElementById("id_price");
+    const batchDataEl = document.getElementById("item-batch-data");
+    const priceDataEl = document.getElementById("item-price-data");
+    if (!productSelect || !batchSelect || !priceSelect || !batchDataEl || !priceDataEl) return;
+
+    const batchMap = JSON.parse(batchDataEl.textContent);
+    const priceMap = JSON.parse(priceDataEl.textContent);
+    let selectedBatch = batchSelect.value;
+    let selectedPrice = priceSelect.value;
+
+    function refillSelect(select, items, emptyLabel, selectedValue) {
+        select.innerHTML = "";
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = emptyLabel;
+        select.appendChild(empty);
+        items.forEach(function (item) {
+            const option = document.createElement("option");
+            option.value = item.id;
+            option.textContent = item.label;
+            if (item.id === selectedValue) option.selected = true;
+            select.appendChild(option);
+        });
+        select.disabled = !productSelect.value;
+    }
+
+    function updateDependentFields() {
+        const productId = productSelect.value;
+        const batches = productId ? (batchMap[productId] || []) : [];
+        const prices = productId ? (priceMap[productId] || []) : [];
+        refillSelect(
+            batchSelect,
+            batches,
+            productId ? (batches.length ? "Select batch" : "No batches for this product") : "Select product first",
+            selectedBatch
+        );
+        refillSelect(
+            priceSelect,
+            prices,
+            productId ? (prices.length ? "Select price" : "No prices for this product") : "Select product first",
+            selectedPrice
+        );
+    }
+
+    productSelect.addEventListener("change", function () {
+        selectedBatch = "";
+        selectedPrice = "";
+        updateDependentFields();
+    });
+    batchSelect.addEventListener("change", function () {
+        selectedBatch = batchSelect.value;
+    });
+    priceSelect.addEventListener("change", function () {
+        selectedPrice = priceSelect.value;
+    });
+    updateDependentFields();
+});
+</script>
 {% endblock %}

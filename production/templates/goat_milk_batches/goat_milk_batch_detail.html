@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ batch.batch_number }}{% endblock %}
+{% block page_title %}Milk Batch{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'production:goat_milk_batch_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to milk batches
+    </a>
+
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ batch.batch_number }}</h2>
+                <p>{{ batch.date|date:"d M Y" }} · {{ batch.get_milk_time_display }} · {{ business.name }}</p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">{{ batch.status|default:"—" }}</span>
+        </div>
+
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Milk Quantity</span>
+                    <strong>{{ batch.milk_quantity }} L</strong>
+                </div>
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Wastage</span>
+                    <strong>{{ batch.wastage }} L</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Date</span>
+                    <strong>{{ batch.date|date:"d M Y" }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Milk Time</span>
+                    <strong>{{ batch.get_milk_time_display }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Packed Date</span>
+                    <strong>{% if batch.packed_date %}{{ batch.packed_date|date:"d M Y, H:i" }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Expiry Date</span>
+                    <strong>{% if batch.exp_date %}{{ batch.exp_date|date:"d M Y, H:i" }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>QR Code</span>
+                    <strong>{% if batch.qr_code %}{{ batch.qr_code }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Last Updated</span>
+                    <strong>{{ batch.updated_at|date:"d M Y" }}</strong>
+                </div>
+            </div>
+
+            <div class="ingredient-detail-actions">
+                <a href="{% url 'production:goat_milk_batch_edit' batch.pk %}" class="ingredient-btn ingredient-btn-edit">Edit Batch</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

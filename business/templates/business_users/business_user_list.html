@@ -1,248 +1,117 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Business Users | Goat Creamery
-{% endblock %}
-
-{% block page_title %}
-    Business Users
-{% endblock %}
+{% block title %}Business users{% endblock %}
+{% block page_title %}Business users{% endblock %}
 
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="{% static 'css/business_user_list.css' %}"
->
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="business-user-list-page">
-
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
-
-    <div class="business-user-list-header">
-
-        <div class="business-user-header-content">
-
-            <h2>
-                Business Users
-            </h2>
-
-            <p>
-                Manage users assigned to {{ business.name }}.
-            </p>
-
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Business users</h2>
+                <p>{{ business.name }} · access</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'business:business_user_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add user
+                </a>
+            </div>
         </div>
-
-        <div class="business-user-header-actions">
-
-            <!-- BACK TO BUSINESS -->
-
-            <a
-                href="{% url 'business:business_user_list' %}"
-                class="business-user-back-btn"
-            >
-                <i class="bi bi-arrow-left"></i>
-                <span>Businesses</span>
-            </a>
-
-            <!-- ADD USER -->
-
-            <a
-                href="{% url 'business:business_user_create' %}"
-                class="business-user-add-btn"
-            >
-                <i class="bi bi-person-plus"></i>
-                <span>Add User</span>
-            </a>
-
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
         </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         TABLE
-    ====================================================== -->
-
-    <div class="business-user-list-card">
-
-        <div class="business-user-list-table-wrapper">
-
-            <table class="business-user-list-table">
-
+        {% endif %}
+        {% if business_users %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
                 <thead>
                     <tr>
-
                         <th>User</th>
-                        <th>Business</th>
                         <th>Role</th>
                         <th>Status</th>
-                        <th>Created</th>
+                        <th>Added</th>
                         <th>Actions</th>
-
                     </tr>
                 </thead>
-
                 <tbody>
-
-                    {% for business_user in business_users %}
-
+                    {% for member in business_users %}
                     <tr>
-
-                        <!-- USER -->
-
                         <td>
-
-                            <span class="business-user-list-name">
-                                {{ business_user.user.username }}
-                            </span>
-
-                            {% if business_user.user.email %}
-
-                            <span class="business-user-list-email">
-                                {{ business_user.user.email }}
-                            </span>
-
+                            <span class="ingredient-name">{{ member.user.username }}</span>
+                            {% if member.user.email %}<div class="ingredient-code">{{ member.user.email }}</div>{% endif %}
+                        </td>
+                        <td>
+                            {% if member.role == "SUPER_ADMIN" %}Super Admin
+                            {% elif member.role == "ADMIN" %}Admin
+                            {% elif member.role == "FARM_MANAGER" %}Farm Manager
+                            {% elif member.role == "SALES_PERSON" %}Sales Person
+                            {% else %}{{ member.role }}
                             {% endif %}
-
                         </td>
-
-
-                        <!-- BUSINESS -->
-
                         <td>
-
-                            <span class="business-user-list-business">
-                                {{ business_user.business.name }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- ROLE -->
-
-                        <td>
-
-                            <span class="business-user-list-role">
-                                {{ business_user.role|title }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            {% if business_user.is_active %}
-
-                                <span class="business-user-list-status-active">
-                                    Active
-                                </span>
-
+                            {% if member.is_active %}
+                            <span class="ingredient-stock-pill">Active</span>
                             {% else %}
-
-                                <span class="business-user-list-status-inactive">
-                                    Inactive
-                                </span>
-
+                            <span class="ingredient-stock-pill empty">Inactive</span>
                             {% endif %}
-
                         </td>
-
-
-                        <!-- CREATED -->
-
+                        <td>{{ member.created_at|date:"d M Y" }}</td>
                         <td>
-
-                            <span class="business-user-list-date">
-                                {{ business_user.created_at|date:"d M Y" }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- ACTIONS -->
-
-                        <td>
-
-                            <div class="business-user-list-actions">
-
-                                <a
-                                    href="{% url 'business:business_user_edit' business_user.id %}"
-                                    class="business-user-list-edit"
-                                    title="Edit User"
-                                >
-                                    <i class="bi bi-pencil"></i>
-                                    <span>Edit</span>
-                                </a>
-
-
-                                <a
-                                    href="{% url 'business:business_user_delete' business_user.id %}"
-                                    class="business-user-list-delete"
-                                    title="Remove User"
-                                >
-                                    <i class="bi bi-person-dash"></i>
-                                    <span>Remove</span>
-                                </a>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'business:business_user_edit' member.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'business:business_user_delete' member.id %}" class="ingredient-btn ingredient-btn-view">Remove</a>
                             </div>
-
                         </td>
-
                     </tr>
-
-                    {% empty %}
-
-                    <!-- EMPTY -->
-
-                    <tr>
-
-                        <td
-                            colspan="6"
-                            class="business-user-list-empty"
-                        >
-
-                            <div class="business-user-empty-icon">
-                                <i class="bi bi-people"></i>
-                            </div>
-
-                            <div class="business-user-empty-title">
-                                No Business Users
-                            </div>
-
-                            <div class="business-user-empty-text">
-                                No users have been assigned to this business yet.
-                            </div>
-
-                            <a
-                                href="{% url 'business:business_user_create' %}"
-                                class="business-user-empty-btn"
-                            >
-                                <i class="bi bi-person-plus"></i>
-                                Add First User
-                            </a>
-
-                        </td>
-
-                    </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
+        <div class="ingredient-cards">
+            {% for member in business_users %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ member.user.username }}</div>
+                        <div class="ingredient-code">
+                            {% if member.role == "SUPER_ADMIN" %}Super Admin
+                            {% elif member.role == "ADMIN" %}Admin
+                            {% elif member.role == "FARM_MANAGER" %}Farm Manager
+                            {% elif member.role == "SALES_PERSON" %}Sales Person
+                            {% else %}{{ member.role }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if member.is_active %}
+                    <span class="ingredient-stock-pill">Active</span>
+                    {% else %}
+                    <span class="ingredient-stock-pill empty">Inactive</span>
+                    {% endif %}
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'business:business_user_edit' member.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'business:business_user_delete' member.id %}" class="ingredient-btn ingredient-btn-view">Remove</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-people"></i></div>
+            <h3>No users yet</h3>
+            <p>Assign a login and role for this business.</p>
+            <a href="{% url 'business:business_user_create' %}" class="ingredient-primary-btn">Add user</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
-
 {% endblock %}

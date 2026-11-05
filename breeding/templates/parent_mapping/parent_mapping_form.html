@@ -1,179 +1,59 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-
-    {% if mapping %}
-        Edit Parent Mapping
-    {% else %}
-        Add Parent Mapping
-    {% endif %}
-
-{% endblock %}
-
+{% block title %}{% if mapping %}Edit parent mapping{% else %}Add parent mapping{% endif %}{% endblock %}
+{% block page_title %}{% if mapping %}Edit parent mapping{% else %}Add parent mapping{% endif %}{% endblock %}
 
 {% block extra_css %}
-
-<link rel="stylesheet"
-      href="{% static 'css/parent_mapping.css' %}">
-
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
-
 {% block content %}
-
-<div class="parent-mapping-page">
-
-    <div class="parent-mapping-form-card">
-
-
-        <!-- FORM HEADER -->
-        <div class="parent-mapping-form-header">
-
-            <div class="parent-mapping-form-header-content">
-
-                <div>
-
-                    <h5>
-
-                        {% if mapping %}
-                            Edit Parent Mapping
-                        {% else %}
-                            Parent Mapping Information
-                        {% endif %}
-
-                    </h5>
-
-                    <p>
-
-                        {% if mapping %}
-                            Update the parent and child goat details below.
-                        {% else %}
-                            Select the child goat and its parent goat below.
-                        {% endif %}
-
-                    </p>
-
-                </div>
-
-
-                <a href="{% url 'breeding:parent_mapping_list' %}"
-                   class="parent-mapping-back-btn">
-
-                    <i class="bi bi-arrow-left"></i>
-                    Back
-
-                </a>
-
+<div class="ingredient-form-page">
+    <a href="{% url 'breeding:parent_mapping_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to parent mapping
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if mapping %}Edit parent mapping{% else %}Add parent mapping{% endif %}</h3>
+                <p>Select a kid and its dam (adult female).</p>
             </div>
-
+            <a href="{% url 'breeding:parent_mapping_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-
-
-        <!-- FORM BODY -->
-        <div class="parent-mapping-form-body">
-
-            <form method="POST">
-
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
                 {% csrf_token %}
-
-
-                <!-- CHILD + PARENT -->
-                <div class="parent-mapping-form-row">
-
-
-                    <!-- CHILD -->
-                    <div class="parent-mapping-form-group">
-
-                        <label for="{{ form.child.id_for_label }}">
-                            Child Goat
-                        </label>
-
-                        {{ form.child }}
-
-                        {% if form.child.errors %}
-
-                            <div class="parent-mapping-form-error">
-                                {{ form.child.errors }}
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <!-- PARENT -->
-                    <div class="parent-mapping-form-group">
-
-                        <label for="{{ form.parent.id_for_label }}">
-                            Parent Goat
-                        </label>
-
-                        {{ form.parent }}
-
-                        {% if form.parent.errors %}
-
-                            <div class="parent-mapping-form-error">
-                                {{ form.parent.errors }}
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- NON FIELD ERRORS -->
                 {% if form.non_field_errors %}
-
-                    <div class="parent-mapping-form-error">
-
-                        {{ form.non_field_errors }}
-
-                    </div>
-
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-
-
-                <!-- ACTIONS -->
-                <div class="parent-mapping-form-actions">
-
-
-                    <a href="{% url 'breeding:parent_mapping_list' %}"
-                       class="parent-mapping-cancel-btn">
-
-                        Cancel
-
-                    </a>
-
-
-                    <button type="submit"
-                            class="parent-mapping-save-btn">
-
-                        {% if mapping %}
-
-                            <i class="bi bi-check-lg"></i>
-                            Update Mapping
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-                            Add Mapping
-
-                        {% endif %}
-
-                    </button>
-
+                <h4 class="ingredient-form-section">Relationship</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.child.id_for_label }}">Kid <span class="form-required">*</span></label>
+                        {{ form.child }}
+                        {% for error in form.child.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.parent.id_for_label }}">Dam <span class="form-required">*</span></label>
+                        {{ form.parent }}
+                        {% for error in form.parent.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
                 </div>
-
-
+                <div class="form-actions">
+                    <a href="{% url 'breeding:parent_mapping_list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if mapping %}Update mapping{% else %}Save mapping{% endif %}
+                    </button>
+                </div>
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}

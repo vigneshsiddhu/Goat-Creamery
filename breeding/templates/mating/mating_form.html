@@ -1,76 +1,69 @@
 {% extends "base.html" %}
+{% load static %}
 
-    {% load static %}
+{% block title %}{% if mating %}Edit mating{% else %}Add mating{% endif %}{% endblock %}
+{% block page_title %}{% if mating %}Edit mating{% else %}Add mating{% endif %}{% endblock %}
 
-    {% block title %}
-    Matting
-    {% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
 
-
-    {% block extra_css %}
-
-    <link rel="stylesheet" href="{% static 'css/mating.css' %}">
-
-    {% endblock %}
-
-
-    {% block content %}
-    <div class="mating-page">
-
-        <div class="mating-form-card">
-
-            <div class="mating-form-header">
-                Matting Information
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'breeding:mating_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to breeding
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if mating %}Edit mating{% else %}Add mating{% endif %}</h3>
+                <p>Pair a live adult male with a live adult female.</p>
             </div>
-
-            <div class="mating-form-body">
-
-                <form method="POST">
-                    {% csrf_token %}
-
-                    <div class="mating-form-row">
-
-                        <div class="mating-form-group">
-                            <label>Male Goat</label>
-                            {{ form.male }}
-                        </div>
-
-                        <div class="mating-form-group">
-                            <label>Female Goat</label>
-                            {{ form.female }}
-                        </div>
-
-                    </div>
-
-                    <div class="mating-form-group">
-                        <label>Mating Date</label>
-                        {{ form.mating_date }}
-                    </div>
-
-                    <div class="mating-form-group">
-                        <label>Comment</label>
-                        {{ form.comment }}
-                    </div>
-
-                    <div class="mating-form-actions">
-
-                        <a href="{% url 'breeding:mating_list' %}"
-                        class="mating-cancel-btn">
-                            Cancel
-                        </a>
-
-                        <button type="submit"
-                                class="mating-save-btn">
-                            Save Mating
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
-
+            <a href="{% url 'breeding:mating_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Pairing</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.male.id_for_label }}">Male <span class="form-required">*</span></label>
+                        {{ form.male }}
+                        {% for error in form.male.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.female.id_for_label }}">Female <span class="form-required">*</span></label>
+                        {{ form.female }}
+                        {% for error in form.female.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.mating_date.id_for_label }}">Mating date <span class="form-required">*</span></label>
+                    {{ form.mating_date }}
+                    {% for error in form.mating_date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.comment.id_for_label }}">Comment</label>
+                    {{ form.comment }}
+                    {% for error in form.comment.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'breeding:mating_list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if mating %}Update mating{% else %}Save mating{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 {% endblock %}

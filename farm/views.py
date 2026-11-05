@@ -1,24 +1,30 @@
-from django.shortcuts import render
-from django.contrib import messages
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
-
-from myfarm.permissions import permission_required
-
-# from .forms import FeedStockForm
-from .models import FeedStock
-
 from django.contrib import messages
-from django.shortcuts import get_object_or_404,redirect,render
-from farm.models import Land,Water,LandWater,FeedConsumption,FeedStock,FeedStockTransaction
+
+from farm.models import Land, Water, LandWater, FeedConsumption, FeedStock, FeedStockTransaction
 from myfarm.permissions import permission_required
-from .forms import LandForm,WaterForm,LandWaterForm,FeedStockForm,FeedStockTransactionForm,FeedConsumptionForm
+from .forms import LandForm, WaterForm, LandWaterForm, FeedStockForm, FeedStockTransactionForm, FeedConsumptionForm
+
+
+def land_hub_redirect(tab="land"):
+    return redirect(f"{reverse('farm:land_list')}?tab={tab}")
 
 
 @permission_required("land.view")
 def land_list(request):
     business = request.business
-    lands = Land.objects.filter(business=business).select_related("location","created_by")
-    return render(request,"land/land_list.html",{"lands":lands,"business":business,"business_user":request.business_user})
+    tab = request.GET.get("tab", "land")
+    if tab not in {"land", "water", "map"}:
+        tab = "land"
+    return render(request, "land/land_list.html", {
+        "business": business,
+        "business_user": request.business_user,
+        "active_tab": tab,
+        "lands": Land.objects.filter(business=business).select_related("location", "created_by"),
+        "waters": Water.objects.filter(business=business).select_related("created_by"),
+        "records": LandWater.objects.filter(business=business).select_related("land", "water", "created_by"),
+    })
 
 
 @permission_required("land.create")
@@ -32,7 +38,7 @@ def land_create(request):
             land.created_by = request.user
             land.save()
             messages.success(request,f"{land.name} created successfully.")
-            return redirect("land:land_list")
+            return land_hub_redirect("land")
     else:
         form = LandForm(business=business)
     return render(request,"land/land_form.html",{"form":form,"land":None,"business":business})
@@ -50,7 +56,7 @@ def land_edit(request,pk):
             updated_land.created_by = land.created_by
             updated_land.save()
             messages.success(request,"Land updated successfully.")
-            return redirect("land:land_list")
+            return land_hub_redirect("land")
     else:
         form = LandForm(instance=land,business=business)
     return render(request,"land/land_form.html",{"form":form,"land":land,"business":business})
@@ -64,15 +70,13 @@ def land_delete(request,pk):
         land_name = land.name
         land.delete()
         messages.success(request,f"{land_name} deleted successfully.")
-        return redirect("land:land_list")
+        return land_hub_redirect("land")
     return render(request,"land/land_delete.html",{"land":land,"business":business})
 
 
 @permission_required("water.view")
 def water_list(request):
-    business = request.business
-    waters = Water.objects.filter(business=business).select_related("created_by")
-    return render(request,"water/water_list.html",{"waters":waters,"business":business,"business_user":request.business_user})
+    return land_hub_redirect("water")
 
 
 @permission_required("water.create")
@@ -86,7 +90,7 @@ def water_create(request):
             water.created_by = request.user
             water.save()
             messages.success(request,f"{water.name} created successfully.")
-            return redirect("water:water_list")
+            return land_hub_redirect("water")
     else:
         form = WaterForm()
     return render(request,"water/water_form.html",{"form":form,"water":None,"business":business})
@@ -104,7 +108,7 @@ def water_edit(request,pk):
             updated_water.created_by = water.created_by
             updated_water.save()
             messages.success(request,"Water source updated successfully.")
-            return redirect("water:water_list")
+            return land_hub_redirect("water")
     else:
         form = WaterForm(instance=water)
     return render(request,"water/water_form.html",{"form":form,"water":water,"business":business})
@@ -118,15 +122,13 @@ def water_delete(request,pk):
         water_name = water.name
         water.delete()
         messages.success(request,f"{water_name} deleted successfully.")
-        return redirect("water:water_list")
+        return land_hub_redirect("water")
     return render(request,"water/water_delete.html",{"water":water,"business":business})
 
 
 @permission_required("land_water.view")
 def land_water_list(request):
-    business = request.business
-    records = LandWater.objects.filter(business=business).select_related("land","water","created_by")
-    return render(request,"land_water/land_water_list.html",{"records":records,"business":business,"business_user":request.business_user})
+    return land_hub_redirect("map")
 
 
 @permission_required("land_water.create")
@@ -140,7 +142,7 @@ def land_water_create(request):
             record.created_by = request.user
             record.save()
             messages.success(request,"Land water record created successfully.")
-            return redirect("land_water:land_water_list")
+            return land_hub_redirect("map")
     else:
         form = LandWaterForm(business=business)
     return render(request,"land_water/land_water_form.html",{"form":form,"record":None,"business":business})
@@ -158,7 +160,7 @@ def land_water_edit(request,pk):
             updated_record.created_by = record.created_by
             updated_record.save()
             messages.success(request,"Land water record updated successfully.")
-            return redirect("land_water:land_water_list")
+            return land_hub_redirect("map")
     else:
         form = LandWaterForm(instance=record,business=business)
     return render(request,"land_water/land_water_form.html",{"form":form,"record":record,"business":business})
@@ -171,15 +173,30 @@ def land_water_delete(request,pk):
     if request.method == "POST":
         record.delete()
         messages.success(request,"Land water record deleted successfully.")
-        return redirect("land_water:land_water_list")
+        return land_hub_redirect("map")
     return render(request,"land_water/land_water_delete.html",{"record":record,"business":business})
+
+
+def feed_hub_redirect(tab="daily"):
+    return redirect(f"{reverse('farm:feedstock_list')}?tab={tab}")
 
 
 @permission_required("feedstock.view")
 def feedstock_list(request):
     business = request.business
-    feedstocks = FeedStock.objects.filter(business=business).select_related("created_by")
-    return render(request,"feedstock/feedstock_list.html",{"feedstocks":feedstocks,"business":business,"business_user":request.business_user})
+    tab = request.GET.get("tab", "daily")
+    if tab == "moves":
+        tab = "adjust"
+    if tab not in {"daily", "stock", "adjust"}:
+        tab = "daily"
+    return render(request, "feedstock/feedstock_list.html", {
+        "business": business,
+        "business_user": request.business_user,
+        "active_tab": tab,
+        "feedstocks": FeedStock.objects.filter(business=business).select_related("created_by"),
+        "transactions": FeedStockTransaction.objects.filter(feed_stock__business=business).select_related("feed_stock", "created_by"),
+        "consumptions": FeedConsumption.objects.filter(business=business).select_related("created_by"),
+    })
 
 
 @permission_required("feedstock.create")
@@ -195,7 +212,7 @@ def feedstock_create(request):
             feedstock.current_stock_kg = feedstock.stock_weight
             feedstock.save()
             messages.success(request,f"{feedstock.fodder_variety} stock created successfully.")
-            return redirect("feedstock:feedstock_list")
+            return feed_hub_redirect("stock")
     else:
         form = FeedStockForm()
     return render(request,"feedstock/feedstock_form.html",{"form":form,"feedstock":None,"business":business})
@@ -214,7 +231,7 @@ def feedstock_edit(request,pk):
             updated_feedstock.total_amount = updated_feedstock.stock_weight * updated_feedstock.rate
             updated_feedstock.save()
             messages.success(request,"Feed stock updated successfully.")
-            return redirect("feedstock:feedstock_list")
+            return feed_hub_redirect("stock")
     else:
         form = FeedStockForm(instance=feedstock)
 
@@ -229,16 +246,14 @@ def feedstock_delete(request,pk):
     if request.method == "POST":
         feedstock.delete()
         messages.success(request,"Feed stock deleted successfully.")
-        return redirect("feedstock:feedstock_list")
+        return feed_hub_redirect("stock")
 
     return render(request,"feedstock/feedstock_delete.html",{"feedstock":feedstock,"business":business})
 
 
 @permission_required("feedstock_transaction.view")
 def feedstock_transaction_list(request):
-    business = request.business
-    transactions = FeedStockTransaction.objects.filter(feed_stock__business=business).select_related("feed_stock","created_by")
-    return render(request,"feedstock_transaction/feedstock_transaction_list.html",{"transactions":transactions,"business":business,"business_user":request.business_user})
+    return feed_hub_redirect("adjust")
 
 
 @permission_required("feedstock_transaction.create")
@@ -253,7 +268,7 @@ def feedstock_transaction_create(request):
             transaction.created_by = request.user
             transaction.save()
             messages.success(request,"Feed stock transaction created successfully.")
-            return redirect("feedstock_transaction:feedstock_transaction_list")
+            return feed_hub_redirect("adjust")
     else:
         form = FeedStockTransactionForm(business=business)
 
@@ -273,7 +288,7 @@ def feedstock_transaction_edit(request,pk):
             updated_transaction.created_by = transaction.created_by
             updated_transaction.save()
             messages.success(request,"Feed stock transaction updated successfully.")
-            return redirect("feedstock_transaction:feedstock_transaction_list")
+            return feed_hub_redirect("adjust")
     else:
         form = FeedStockTransactionForm(instance=transaction,business=business)
 
@@ -288,15 +303,13 @@ def feedstock_transaction_delete(request,pk):
     if request.method == "POST":
         transaction.delete()
         messages.success(request,"Feed stock transaction deleted successfully.")
-        return redirect("feedstock_transaction:feedstock_transaction_list")
+        return feed_hub_redirect("adjust")
 
     return render(request,"feedstock_transaction/feedstock_transaction_delete.html",{"transaction":transaction,"business":business})
 
 @permission_required("feed_consumption.view")
 def feed_consumption_list(request):
-    business = request.business
-    consumptions = FeedConsumption.objects.filter(business=business).select_related("created_by")
-    return render(request,"feeds_consumption/feed_consumption_list.html",{"consumptions":consumptions,"business":business,"business_user":request.business_user})
+    return feed_hub_redirect("daily")
 
 
 @permission_required("feed_consumption.create")
@@ -312,7 +325,7 @@ def feed_consumption_create(request):
             consumption.created_by = request.user
             consumption.save()
             messages.success(request,"Feed consumption created successfully.")
-            return redirect("feed_consumption:feed_consumption_list")
+            return feed_hub_redirect("daily")
     else:
         form = FeedConsumptionForm()
 
@@ -333,7 +346,7 @@ def feed_consumption_edit(request,pk):
             updated_consumption.created_by = consumption.created_by
             updated_consumption.save()
             messages.success(request,"Feed consumption updated successfully.")
-            return redirect("feed_consumption:feed_consumption_list")
+            return feed_hub_redirect("daily")
     else:
         form = FeedConsumptionForm(instance=consumption)
 
@@ -348,7 +361,7 @@ def feed_consumption_delete(request,pk):
     if request.method == "POST":
         consumption.delete()
         messages.success(request,"Feed consumption deleted successfully.")
-        return redirect("feed_consumption:feed_consumption_list")
+        return feed_hub_redirect("daily")
 
     return render(request,"feeds_consumption/feed_consumption_delete.html",{"consumption":consumption,"business":business})
 

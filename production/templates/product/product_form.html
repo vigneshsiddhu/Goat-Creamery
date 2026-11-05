@@ -2,174 +2,121 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
 {% endblock %}
 
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
-                <h3>{{ title|default:"Product" }}</h3>
-                <p>Create or update product details.</p>
+<div class="ingredient-form-page">
+    <a href="{% url 'production:product_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to products
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{{ title|default:"Create Product" }}</h3>
+                <p>Product details only. Add pricing separately from Product Prices.</p>
             </div>
+            <a href="{% url 'production:product_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
 
-        <div class="form-body">
-            <form method="post">
+        <div class="ingredient-form-body">
+            <form method="post" id="product-form" novalidate>
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {% for error in form.non_field_errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.goat_milk_batch.id_for_label }}">
-                            Goat Milk Batch
-                            {% if form.goat_milk_batch.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
-                        {{ form.goat_milk_batch }}
-                        {% for error in form.goat_milk_batch.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label for="{{ form.type.id_for_label }}">
-                            Product Type
-                            {% if form.type.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                <h4 class="ingredient-form-section">Product Details</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.type.id_for_label }}">Product Type <span class="form-required">*</span></label>
                         {{ form.type }}
-                        {% for error in form.type.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.type.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.variant.id_for_label }}">
-                            Variant / Flavour
-                            {% if form.variant.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.variant.id_for_label }}">Variant / Flavour <span class="form-required">*</span></label>
                         {{ form.variant }}
-                        {% for error in form.variant.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.variant.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="{{ form.storage_type.id_for_label }}">
-                            Storage Type
-                            {% if form.storage_type.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.storage_type.id_for_label }}">Storage Type <span class="form-required">*</span></label>
                         {{ form.storage_type }}
-                        {% for error in form.storage_type.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.storage_type.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                </div>
-
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label for="{{ form.storage_temp_min.id_for_label }}">
-                            Minimum Storage Temperature (°C)
-                        </label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.storage_temp_min.id_for_label }}">Min Temp (°C)</label>
                         {{ form.storage_temp_min }}
-                        {% for error in form.storage_temp_min.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.storage_temp_min.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.storage_temp_max.id_for_label }}">
-                            Maximum Storage Temperature (°C)
-                        </label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.storage_temp_max.id_for_label }}">Max Temp (°C)</label>
                         {{ form.storage_temp_max }}
-                        {% for error in form.storage_temp_max.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.status.id_for_label }}">
-                            Status
-                            {% if form.status.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
-                        {{ form.status }}
-                        {% for error in form.status.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.storage_temp_max.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.life_span_unit.id_for_label }}">
-                            Shelf Life Unit
-                            {% if form.life_span_unit.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
-                        {{ form.life_span_unit }}
-                        {% for error in form.life_span_unit.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.life_span_value.id_for_label }}">
-                            Shelf Life
-                            {% if form.life_span_value.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.life_span_value.id_for_label }}">Shelf Life <span class="form-required">*</span></label>
                         {{ form.life_span_value }}
-                        {% for error in form.life_span_value.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.life_span_value.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.life_span_unit.id_for_label }}">Shelf Life Unit <span class="form-required">*</span></label>
+                        {{ form.life_span_unit }}
+                        {% for error in form.life_span_unit.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="{{ form.description.id_for_label }}">
-                        Description
-                    </label>
+                {% if form.status %}
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.status.id_for_label }}">Status <span class="form-required">*</span></label>
+                        {{ form.status }}
+                        {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="ingredient-form-group" style="margin-bottom:14px;">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
                     {{ form.description }}
-                    {% for error in form.description.errors %}
-                        <span class="form-error">{{ error }}</span>
-                    {% endfor %}
+                    {% for error in form.description.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
 
-                <div class="form-actions">
-                    <a
-                        href="{% url 'production:product_list' %}"
-                        class="form-cancel-btn"
-                    >
-                        Cancel
-                    </a>
+                {% if product %}
+                <p class="form-help-text">
+                    SKU: {{ product.code_sku }} ·
+                    <a href="{% url 'production:product_price_create' %}?product={{ product.pk }}">Add product price</a>
+                </p>
+                {% endif %}
 
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'production:product_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
+                    </a>
                     <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
                         Save Product
                     </button>
                 </div>
             </form>
         </div>
     </div>
+</div>
+
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="product-form">Save Product</button>
 </div>
 {% endblock %}

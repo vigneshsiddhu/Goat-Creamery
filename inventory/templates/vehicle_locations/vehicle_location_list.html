@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vehicle locations{% endblock %}
+{% block page_title %}Vehicle locations{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Vehicle locations</h2>
+                <p>{{ business.name }} · where the fleet was</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'inventory:vehicle_location_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Log location
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if vehicle_locations %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Comment</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in vehicle_locations %}
+                    <tr>
+                        <td><span class="ingredient-name">{{ record.vehicle.number }}</span></td>
+                        <td>{{ record.location }}</td>
+                        <td>{{ record.date|date:"d M Y" }}</td>
+                        <td>{% if record.time %}{{ record.time|time:"H:i" }}{% else %}—{% endif %}</td>
+                        <td>
+                            {% if record.status %}
+                            <span class="ingredient-stock-pill">Active</span>
+                            {% else %}
+                            <span class="ingredient-stock-pill empty">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>{% if record.comment %}{{ record.comment|truncatechars:40 }}{% else %}—{% endif %}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'inventory:vehicle_location_edit' record.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'inventory:vehicle_location_delete' record.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="ingredient-cards">
+            {% for record in vehicle_locations %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ record.vehicle.number }}</div>
+                        <div class="ingredient-code">{{ record.location }} · {{ record.date|date:"d M Y" }}</div>
+                    </div>
+                    {% if record.status %}
+                    <span class="ingredient-stock-pill">Active</span>
+                    {% else %}
+                    <span class="ingredient-stock-pill empty">Inactive</span>
+                    {% endif %}
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'inventory:vehicle_location_edit' record.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'inventory:vehicle_location_delete' record.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-geo-alt"></i></div>
+            <h3>No vehicle locations yet</h3>
+            <p>Log a vehicle at a city or area.</p>
+            <a href="{% url 'inventory:vehicle_location_create' %}" class="ingredient-primary-btn">Log location</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

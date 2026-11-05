@@ -1,0 +1,46 @@
+<div class="invoice-item-row{% if item_form.errors %} has-errors{% endif %}">
+    {{ item_form.id }}
+    <div class="invoice-item-top">
+        <div class="form-group">
+            <label>Product</label>
+            {{ item_form.item }}
+            {% for error in item_form.item.errors %}
+                <div class="form-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <button type="button" class="invoice-item-remove remove-item-btn" title="Remove item" aria-label="Remove item">&times;</button>
+    </div>
+    <div class="invoice-item-bottom">
+        {{ item_form.quantity }}
+        <div class="invoice-item-qty-total">
+            <span class="invoice-meta-chip">Qty <strong>1</strong></span>
+            <div class="invoice-item-line-total">
+                <span>Line total</span>
+                <strong>₹<span class="invoice-item-total-text">0.00</span></strong>
+            </div>
+        </div>
+        <div class="invoice-item-meta">
+            <span class="invoice-meta-chip">Unit: <strong class="invoice-item-unit-display">{{ item_form.unit.value|default:"—" }}</strong></span>
+            <span class="invoice-meta-chip">Rate: <strong>₹<span class="invoice-item-price-display">{{ item_form.price.value|default:"0.00" }}</span></strong></span>
+            <span class="invoice-meta-chip">GST: <strong>₹<span class="invoice-item-gst-display">{{ item_form.gst.value|default:"0.00" }}</span></strong></span>
+        </div>
+    </div>
+    {% if item_form.errors %}
+        <div class="invoice-item-errors">
+            {% for field in item_form %}
+                {% for error in field.errors %}
+                    <div class="form-error">{{ field.label }}: {{ error }}</div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in item_form.non_field_errors %}
+                <div class="form-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {{ item_form.unit }}
+    {{ item_form.price }}
+    {{ item_form.discount }}
+    {{ item_form.gst }}
+    <input type="text" class="invoice-item-total" value="0.00" hidden aria-hidden="true">
+    <div style="display:none;">{{ item_form.DELETE }}</div>
+</div>

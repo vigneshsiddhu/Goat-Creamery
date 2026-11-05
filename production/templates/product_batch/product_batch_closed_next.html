@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Milk batch closed{% endblock %}
+{% block page_title %}Milk batch closed{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>Milk batch closed</h3>
+                <p>{{ continue_milk.batch_number }} is closed. Choose what to add next.</p>
+            </div>
+        </div>
+        <div class="ingredient-form-body">
+            {% if messages %}
+            <div class="farm-hub-messages">
+                {% for message in messages %}
+                <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="ingredient-form-grid">
+                <a href="{{ add_product_url }}" class="ingredient-primary-btn" style="justify-content:center;">
+                    <i class="bi bi-plus-lg"></i>
+                    Add another product batch
+                </a>
+                <a href="{% url 'production:goat_milk_batch_create' %}" class="ingredient-primary-btn" style="justify-content:center;">
+                    <i class="bi bi-plus-lg"></i>
+                    Add another milk batch
+                </a>
+            </div>
+            <p class="form-help-text" style="margin-top:12px;">
+                Product batch uses the closed milk and will not show checkout again.
+            </p>
+            <div class="form-actions">
+                <a href="{% url 'production:product_batch_list' %}" class="form-back-btn">Finish</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

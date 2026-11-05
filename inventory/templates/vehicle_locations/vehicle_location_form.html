@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if vehicle_location %}Edit vehicle location{% else %}Log vehicle location{% endif %}{% endblock %}
+{% block page_title %}{% if vehicle_location %}Edit vehicle location{% else %}Log vehicle location{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'inventory:vehicle_location_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to vehicle locations
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if vehicle_location %}Edit vehicle location{% else %}Log vehicle location{% endif %}</h3>
+                <p>Vehicle, place, and date are required. Time and comment are optional.</p>
+            </div>
+            <a href="{% url 'inventory:vehicle_location_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Record</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.vehicle.id_for_label }}">Vehicle <span class="form-required">*</span></label>
+                        {{ form.vehicle }}
+                        {% for error in form.vehicle.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.location.id_for_label }}">Location <span class="form-required">*</span></label>
+                        {{ form.location }}
+                        {% for error in form.location.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.time.id_for_label }}">Time</label>
+                        {{ form.time }}
+                        {% for error in form.time.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="ingredient-form-group">
+                    <label>Status</label>
+                    <label class="farm-checkbox-row" for="{{ form.status.id_for_label }}">
+                        {{ form.status }}
+                        <span>Active</span>
+                    </label>
+                    {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.comment.id_for_label }}">Comment</label>
+                    {{ form.comment }}
+                    {% for error in form.comment.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'inventory:vehicle_location_list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if vehicle_location %}Update record{% else %}Save record{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

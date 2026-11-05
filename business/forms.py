@@ -9,44 +9,51 @@ class BusinessForm(forms.ModelForm):
     class Meta:
         model = Business
         fields = ["name","address","gstn","phone_number","owner","status"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-input", "placeholder": "e.g. Goat Creamery"}),
+            "address": forms.Textarea(attrs={"class": "form-input", "rows": 3, "placeholder": "Optional address"}),
+            "gstn": forms.TextInput(attrs={"class": "form-input", "placeholder": "Optional GSTIN"}),
+            "phone_number": forms.TextInput(attrs={"class": "form-input", "placeholder": "Optional phone"}),
+            "owner": forms.Select(attrs={"class": "form-input"}),
+            "status": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields["owner"].queryset = User.objects.filter(is_active=True).order_by("username")
-        self.fields["owner"].widget.attrs.update({"class":"form-select"})
-        self.fields["name"].widget.attrs.update({"class":"form-control","placeholder":"Enter business name"})
-        self.fields["address"].widget.attrs.update({"class":"form-control","rows":3,"placeholder":"Enter business address"})
-        self.fields["gstn"].widget.attrs.update({"class":"form-control","placeholder":"Enter GSTIN"})
-        self.fields["phone_number"].widget.attrs.update({"class":"form-control","placeholder":"Enter phone number"})
-        self.fields["status"].widget.attrs.update({"class":"form-select"})
+        self.fields["owner"].empty_label = "Select owner"
+        self.fields["address"].required = False
+        self.fields["gstn"].required = False
+        self.fields["phone_number"].required = False
+        self.fields["status"].required = False
 
 
 class BusinessUserForm(forms.ModelForm):
+    ROLE_CHOICES = [
+        ("SUPER_ADMIN", "Super Admin"),
+        ("ADMIN", "Admin"),
+        ("FARM_MANAGER", "Farm Manager"),
+        ("SALES_PERSON", "Sales Person"),
+    ]
+    role = forms.ChoiceField(
+        choices=ROLE_CHOICES,
+        widget=forms.Select(attrs={"class": "form-input"}),
+    )
+
     class Meta:
         model = BusinessUser
-        fields = ["user","business","role","is_active"]
+        fields = ["user","role","is_active"]
         widgets = {
-            "user":forms.Select(attrs={"class":"form-select"}),
-            "business":forms.Select(attrs={"class":"form-select"}),
-            "role":forms.Select(attrs={"class":"form-select"}),
-            "is_active":forms.CheckboxInput(attrs={"class":"form-check-input"}),
+            "user": forms.Select(attrs={"class": "form-input"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
     def __init__(self,*args,business=None,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields["user"].queryset = User.objects.filter(is_active=True).order_by("username")
-
-        if business:
-            self.fields["business"].queryset = Business.objects.filter(pk=business.pk)
-            self.fields["business"].initial = business
-            self.fields["business"].disabled = True
-        else:
-            self.fields["business"].queryset = Business.objects.all().order_by("name")
-
-        self.fields["role"].choices = [
-            ("","Select Business Role"),
-            ("ADMIN","Admin"),
-            ("FARM_MANAGER","Farm Manager"),
-            ("SALES_PERSON","Sales Person"),
-        ]
+        self.fields["user"].empty_label = "Select user"
+        self.fields["role"].choices = [("", "Select role")] + list(self.ROLE_CHOICES)
+        self.fields["is_active"].required = False
 
 
 class LocationForm(forms.ModelForm):
@@ -65,10 +72,18 @@ class LocationForm(forms.ModelForm):
         business = kwargs.pop("business",None)
         super().__init__(*args,**kwargs)
 
-        if business:
-            self.fields["parent"].queryset = Location.objects.filter(business=business,status=True).exclude(pk=self.instance.pk)
-
+        self.fields["parent"].queryset = Location.objects.none()
+        self.fields["parent"].empty_label = "No parent"
         self.fields["parent"].required = False
+        self.fields["latitude"].required = False
+        self.fields["longitude"].required = False
+        self.fields["status"].required = False
+        self.fields["type"].choices = [("", "Select type")] + list(Location.LOCATION_TYPES)
+        if business:
+            parents = Location.objects.filter(business=business, status=True)
+            if self.instance and self.instance.pk:
+                parents = parents.exclude(pk=self.instance.pk)
+            self.fields["parent"].queryset = parents.order_by("name")
     def clean(self):
         cleaned_data = super().clean()
         location_type = cleaned_data.get("type")

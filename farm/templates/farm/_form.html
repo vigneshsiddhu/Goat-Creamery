@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ farm_title }}{% endblock %}
+{% block page_title %}{{ farm_title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{{ cancel_url }}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        {{ back_label|default:"Back" }}
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{{ farm_title }}</h3>
+                <p>{{ farm_subtitle }}</p>
+            </div>
+            <a href="{{ cancel_url }}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="ingredient-form-grid">
+                    {% for field in form.visible_fields %}
+                    <div class="ingredient-form-group">
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                        <label for="{{ field.id_for_label }}" style="display:flex;align-items:center;gap:8px;">
+                            {{ field }}
+                            <span>{{ field.label }}</span>
+                        </label>
+                        {% else %}
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="form-required">*</span>{% endif %}
+                        </label>
+                        {{ field }}
+                        {% endif %}
+                        {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="form-actions">
+                    <a href="{{ cancel_url }}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {{ submit_label|default:"Save" }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

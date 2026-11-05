@@ -1,8 +1,12 @@
 from django.contrib import messages
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404,redirect,render
+from django.utils import timezone
+from calendar import month_name
 from myfarm.permissions import permission_required
+from myfarm.pagination import paginate
 from .models import Employee,EmployeeSalary,FarmSpendBook,FarmSpendItem,FarmExpense,BusinessSpendBook,BusinessSpendItem,BusinessExpense
-from .forms import EmployeeForm,EmployeeSalaryForm,FarmSpendBookForm,FarmSpendItemForm,FarmExpenseForm,BusinessSpendBookForm,BusinessSpendItemForm,BusinessExpenseForm
+from .forms import EmployeeForm,EmployeeSalaryForm,FarmSpendBookForm,FarmSpendItemForm,FarmExpenseForm,FarmExpenseVoiceForm,BusinessSpendBookForm,BusinessSpendItemForm,BusinessExpenseForm
 
 @permission_required("employee.view")
 def employee_list(request):
@@ -204,7 +208,30 @@ def farm_spend_item_delete(request,pk):
 def farm_expense_list(request):
     business = request.business
     expenses = FarmExpense.objects.filter(business=business).select_related("employee","created_by")
-    return render(request,"finance/farm_expense_list.html",{"expenses":expenses,"business":business,"business_user":request.business_user})
+    today = timezone.localdate()
+    if today.month == 1:
+        last_year, last_month = today.year - 1, 12
+    else:
+        last_year, last_month = today.year, today.month - 1
+    last_month_total = expenses.filter(date__year=last_year, date__month=last_month).aggregate(total=Sum("amount"))["total"] or 0
+    current_month_total = expenses.filter(date__year=today.year, date__month=today.month).aggregate(total=Sum("amount"))["total"] or 0
+    today_total = expenses.filter(date=today).aggregate(total=Sum("amount"))["total"] or 0
+    page = paginate(request, expenses)
+    return render(
+        request,
+        "farm_expenses/farm_expense_list.html",
+        {
+            "objects": page,
+            "page_obj": page,
+            "business": business,
+            "business_user": request.business_user,
+            "last_month_name": month_name[last_month],
+            "last_month_total": last_month_total,
+            "current_month_name": month_name[today.month],
+            "current_month_total": current_month_total,
+            "today_total": today_total,
+        },
+    )
 
 @permission_required("farm_expense.create")
 def farm_expense_create(request):
@@ -220,7 +247,34 @@ def farm_expense_create(request):
             return redirect("finance:farm_expense_list")
     else:
         form = FarmExpenseForm(business=business)
-    return render(request,"finance/farm_expense_form.html",{"form":form,"expense":None,"business":business})
+    return render(request,"farm_expenses/farm_expense_form.html",{"form":form,"expense":None,"business":business})
+
+@permission_required("farm_expense.create")
+def farm_expense_voice_create(request):
+    business = request.business
+    if request.method == "POST":
+        form = FarmExpenseVoiceForm(request.POST)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.date = timezone.localdate()
+            expense.business = business
+            expense.created_by = request.user
+            expense.save()
+            request.session["last_voice_farm_expense"] = {
+                "category": expense.category,
+                "amount": str(int(expense.amount)),
+                "date": expense.date.strftime("%d %b %Y"),
+            }
+            messages.success(request, "Farm expense created successfully.")
+            return redirect("finance:farm_expense_voice_create")
+    else:
+        form = FarmExpenseVoiceForm()
+    last_saved_expense = request.session.pop("last_voice_farm_expense", None)
+    return render(
+        request,
+        "farm_expenses/farm_expense_voice_form.html",
+        {"form": form, "business": business, "last_saved_expense": last_saved_expense},
+    )
 
 @permission_required("farm_expense.update")
 def farm_expense_edit(request,pk):
@@ -237,7 +291,7 @@ def farm_expense_edit(request,pk):
             return redirect("finance:farm_expense_list")
     else:
         form = FarmExpenseForm(instance=expense,business=business)
-    return render(request,"finance/farm_expense_form.html",{"form":form,"expense":expense,"business":business})
+    return render(request,"farm_expenses/farm_expense_form.html",{"form":form,"expense":expense,"business":business})
 
 @permission_required("farm_expense.delete")
 def farm_expense_delete(request,pk):
@@ -247,7 +301,7 @@ def farm_expense_delete(request,pk):
         expense.delete()
         messages.success(request,"Farm expense deleted successfully.")
         return redirect("finance:farm_expense_list")
-    return render(request,"finance/farm_expense_delete.html",{"expense":expense,"business":business})
+    return render(request,"farm_expenses/farm_expense_delete.html",{"expense":expense,"business":business})
 
 @permission_required("business_spend_book.view")
 def business_spend_book_list(request):

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ milk.goat.token_no }} · Milk{% endblock %}
+{% block page_title %}Goat Milk{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'production:goat_milk_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goat milk
+    </a>
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ milk.goat.token_no }}</h2>
+                <p>{{ milk.date|date:"d M Y" }} · {{ milk.get_time_display }} · {{ business.name }}</p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">{{ milk.milk_weight }} L</span>
+        </div>
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Milk Quantity</span>
+                    <strong>{{ milk.milk_weight }} L</strong>
+                </div>
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Milking Time</span>
+                    <strong>{{ milk.get_time_display }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Token ID</span>
+                    <strong>{{ milk.goat.token_no }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Date</span>
+                    <strong>{{ milk.date|date:"d M Y" }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Created By</span>
+                    <strong>{{ milk.created_by }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Recorded</span>
+                    <strong>{{ milk.created_at|date:"d M Y, H:i" }}</strong>
+                </div>
+            </div>
+            {% if milk.note %}
+            <div class="ingredient-detail-field" style="margin-bottom: 18px;">
+                <span>Note</span>
+                <strong>{{ milk.note }}</strong>
+            </div>
+            {% endif %}
+            <div class="ingredient-detail-actions">
+                <a href="{% url 'production:goat_milk_update' milk.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                <a href="{% url 'production:goat_milk_delete' milk.id %}" class="ingredient-btn ingredient-btn-delete">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

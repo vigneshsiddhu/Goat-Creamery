@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Item Locations{% endblock %}
+{% block page_title %}Item Locations{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Item Locations</h2>
+                <p>Current item placement for {{ business.name }} — create a new record to update</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'inventory:item_location_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Assign Location
+                </a>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if objects %}
+        <div class="ingredient-toolbar">
+            <label class="ingredient-search" for="item-location-search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="item-location-search" placeholder="Search item, city, vehicle..." autocomplete="off">
+            </label>
+            <span class="ingredient-count">{{ objects|length }} active</span>
+        </div>
+
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>City</th>
+                        <th>Vehicle</th>
+                        <th>Price</th>
+                        <th>Expiry Date</th>
+                        <th>Shelf Life</th>
+                        <th>Loaded</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in objects %}
+                    {% with days=object.item.shelf_days_remaining %}
+                    <tr data-item-location-row>
+                        <td>
+                            <span class="ingredient-name">{{ object.item.product.type|title }}{% if object.item.product.variant %} · {{ object.item.product.variant|title }}{% endif %}</span>
+                            <span class="ingredient-code">{{ object.item.product_batch.batch_number }}</span>
+                        </td>
+                        <td>{% if object.location %}{{ object.location.name }}{% else %}—{% endif %}</td>
+                        <td>{% if object.vehicle %}{{ object.vehicle.number }}{% else %}—{% endif %}</td>
+                        <td>
+                            <span class="ingredient-stock-pill">₹{{ object.item.price.mrp|floatformat:2 }}</span>
+                            <span class="ingredient-code">{{ object.item.price.quantity }} {{ object.item.price.unit }}</span>
+                        </td>
+                        <td>{{ object.item.exp_date|date:"d M Y" }}</td>
+                        <td>
+                            <span class="ingredient-stock-pill{% if days < 0 %} empty{% elif days <= 7 %} low{% endif %}">
+                                {% if days < 0 %}Expired{% elif days == 0 %}Today{% else %}{{ days }}d left{% endif %}
+                            </span>
+                        </td>
+                        <td>{% if object.loaded_at %}{{ object.loaded_at|date:"d M Y, H:i" }}{% else %}—{% endif %}</td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'inventory:item_detail' object.item.pk %}" class="ingredient-btn ingredient-btn-view">View</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="ingredient-cards" id="item-location-cards">
+            {% for object in objects %}
+            {% with days=object.item.shelf_days_remaining %}
+            <div class="ingredient-card-item" data-item-location-card>
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ object.item.product.type|title }}</div>
+                        <div class="ingredient-code">{{ object.item.product_batch.batch_number }}</div>
+                    </div>
+                    <span class="ingredient-stock-pill{% if days < 0 %} empty{% elif days <= 7 %} low{% endif %}">
+                        {% if days < 0 %}Expired{% elif days == 0 %}Today{% else %}{{ days }}d{% endif %}
+                    </span>
+                </div>
+                <div class="ingredient-card-meta">
+                    <span>{% if object.location %}{{ object.location.name }}{% else %}—{% endif %}</span>
+                    <span>{% if object.vehicle %}{{ object.vehicle.number }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="ingredient-card-meta">
+                    <span>₹{{ object.item.price.mrp|floatformat:2 }}</span>
+                    <span>Exp: {{ object.item.exp_date|date:"d M Y" }}</span>
+                </div>
+                <div class="ingredient-card-actions">
+                    <a href="{% url 'inventory:item_detail' object.item.pk %}" class="ingredient-btn ingredient-btn-view">View</a>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-pin-map"></i></div>
+            <h3>No active item locations</h3>
+            <p>Assign an item to a city or vehicle. Updates always create a new record.</p>
+            <a href="{% url 'inventory:item_location_create' %}" class="ingredient-primary-btn">Assign Location</a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% if objects %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const search = document.getElementById("item-location-search");
+    if (!search) return;
+    const rows = document.querySelectorAll("[data-item-location-row]");
+    const cards = document.querySelectorAll("[data-item-location-card]");
+    search.addEventListener("input", function () {
+        const q = search.value.trim().toLowerCase();
+        rows.forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+        cards.forEach(function (card) {
+            card.style.display = card.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+    });
+});
+</script>
+{% endif %}
+{% include "includes/pagination.html" %}
+{% endblock %}

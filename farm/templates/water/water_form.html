@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if water %}Edit water{% else %}Add water{% endif %}{% endblock %}
+{% block page_title %}{% if water %}Edit water{% else %}Add water{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'farm:land_list' %}?tab=water" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to land & water
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if water %}Edit water{% else %}Add water{% endif %}</h3>
+                <p>
+                    {% if water %}
+                    Update the source name and type used on the farm.
+                    {% else %}
+                    Name the source and pick borewell, pond, river, or another type.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'farm:land_list' %}?tab=water" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <h4 class="ingredient-form-section">Water source</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.name.id_for_label }}">Name <span class="form-required">*</span></label>
+                        {{ form.name }}
+                        <span class="form-help-text">A farm name (e.g. East borewell).</span>
+                        {% for error in form.name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.source.id_for_label }}">Source type <span class="form-required">*</span></label>
+                        {{ form.source }}
+                        <span class="form-help-text">Borewell, open well, pond, rain, river, canal, or other.</span>
+                        {% for error in form.source.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'farm:land_list' %}?tab=water" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if water %}Update water{% else %}Save water{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

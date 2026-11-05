@@ -1,0 +1,6 @@
+<nav class="report-tabs">
+    <a href="{% url 'reports:overview' %}" class="{% if active_report == 'overview' %}is-active{% endif %}">Farm pulse</a>
+    <a href="{% url 'reports:sales' %}" class="{% if active_report == 'sales' %}is-active{% endif %}">Sales</a>
+    <a href="{% url 'reports:milk' %}" class="{% if active_report == 'milk' %}is-active{% endif %}">Goat milk</a>
+    <a href="{% url 'reports:weight' %}" class="{% if active_report == 'weight' %}is-active{% endif %}">Goat weight</a>
+</nav>

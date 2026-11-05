@@ -1,192 +1,92 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Death Goat Records
-{% endblock %}
+{% block title %}Death register{% endblock %}
+{% block page_title %}Death register{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet"
-      href="{% static 'css/death_goat.css' %}">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="death-goat-page">
-
-    <!-- HEADER -->
-    <div class="death-goat-page-header">
-
-        <div>
-
-            <h3>Death Goat Records</h3>
-
-            <p>
-                Manage goat death records for {{ business.name }}.
-            </p>
-
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Death register</h2>
+                <p>{{ business.name }} · recorded losses</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'goats:death_goat_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add record
+                </a>
+            </div>
         </div>
-
-        <a href="{% url 'goats:death_goat_create' %}"
-           class="death-goat-add-btn">
-
-            <i class="bi bi-plus-lg"></i>
-            Add Death Record
-
-        </a>
-
-    </div>
-
-
-    <!-- LIST CARD -->
-    <div class="death-goat-list-card">
-
-        <div class="death-goat-table-wrapper">
-
-            <table class="death-goat-table">
-
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if deaths %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
                 <thead>
-
                     <tr>
-
                         <th>Goat</th>
                         <th>Disease</th>
-                        <th>Died Date</th>
+                        <th>Died</th>
                         <th>Comment</th>
-                        <th>Created By</th>
+                        <th>Created by</th>
                         <th>Actions</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     {% for death in deaths %}
-
                     <tr>
-
-                        <!-- GOAT -->
-
+                        <td><span class="ingredient-name">{{ death.goat.token_no }}</span></td>
+                        <td>{% if death.disease %}{{ death.disease.name }}{% else %}—{% endif %}</td>
+                        <td>{{ death.died_date|date:"d M Y" }}</td>
+                        <td>{% if death.comment %}{{ death.comment|truncatechars:60 }}{% else %}—{% endif %}</td>
+                        <td>{{ death.created_by|default:"—" }}</td>
                         <td>
-
-                            <span class="death-goat-token">
-                                {{ death.goat.token_no }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- DISEASE -->
-
-                        <td>
-
-                            {% if death.disease %}
-
-                                <span class="death-goat-disease">
-                                    {{ death.disease.name }}
-                                </span>
-
-                            {% else %}
-
-                                <span class="death-goat-muted">
-                                    —
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- DATE -->
-
-                        <td>
-
-                            {{ death.died_date|date:"d-m-Y" }}
-
-                        </td>
-
-
-                        <!-- COMMENT -->
-
-                        <td>
-
-                            {% if death.comment %}
-
-                                {{ death.comment }}
-
-                            {% else %}
-
-                                <span class="death-goat-muted">
-                                    —
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- CREATED BY -->
-
-                        <td>
-
-                            {{ death.created_by }}
-
-                        </td>
-
-
-                        <!-- ACTIONS -->
-
-                        <td>
-
-                            <div class="death-goat-actions">
-
-                                <a href="{% url 'goats:death_goat_update' death.id %}"
-                                   class="death-goat-edit">
-
-                                    <i class="bi bi-pencil"></i>
-                                    Edit
-
-                                </a>
-
-
-                                <a href="{% url 'goats:death_goat_delete' death.id %}"
-                                   class="death-goat-delete">
-
-                                    <i class="bi bi-trash"></i>
-                                    Delete
-
-                                </a>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'goats:death_goat_update' death.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'goats:death_goat_delete' death.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
                             </div>
-
                         </td>
-
                     </tr>
-
-                    {% empty %}
-
-                    <tr>
-
-                        <td colspan="6"
-                            class="death-goat-empty">
-
-                            No death goat records found.
-
-                        </td>
-
-                    </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
+        <div class="ingredient-cards">
+            {% for death in deaths %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ death.goat.token_no }}</div>
+                        <div class="ingredient-code">{{ death.died_date|date:"d M Y" }}{% if death.disease %} · {{ death.disease.name }}{% endif %}</div>
+                    </div>
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'goats:death_goat_update' death.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'goats:death_goat_delete' death.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-clipboard-x"></i></div>
+            <h3>No death records yet</h3>
+            <p>Register a loss to mark the goat not live.</p>
+            <a href="{% url 'goats:death_goat_create' %}" class="ingredient-primary-btn">Add record</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
-
 {% endblock %}

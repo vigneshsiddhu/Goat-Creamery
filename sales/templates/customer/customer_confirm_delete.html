@@ -1,0 +1,2 @@
+{% url 'sales:customer_list' as cancel_url %}
+{% include "farm/_delete.html" with farm_title="Delete customer?" object_label=customer.name %}

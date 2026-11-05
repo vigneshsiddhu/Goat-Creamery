@@ -298,6 +298,38 @@ textarea.form-input {
     color: #6B7280;
 }
 
+.form-section-title {
+    margin: 22px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ececf3;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.02em;
+}
+
+.form-section-title:first-of-type {
+    margin-top: 0;
+}
+
+.form-section-title small {
+    font-weight: 500;
+    color: #9ca3af;
+}
+
+.form-readonly-value {
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    background: #f9fafb;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 600;
+}
+
 
 /* =========================================================
    FIELD ERRORS

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ farm_title }}{% endblock %}
+{% block page_title %}{{ farm_title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <div class="ingredient-card" style="max-width: 520px; margin: 0 auto;">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ farm_title }}</h2>
+                <p>{{ object_label }}</p>
+            </div>
+        </div>
+        <div class="ingredient-detail-body">
+            <p style="margin: 0 0 18px; color: #4b5563;">This cannot be undone.</p>
+            <form method="post" class="ingredient-detail-actions">
+                {% csrf_token %}
+                <a href="{{ cancel_url }}" class="ingredient-btn ingredient-btn-view">Cancel</a>
+                <button type="submit" class="ingredient-btn ingredient-btn-edit" style="background:#b91c1c;border-color:#b91c1c;color:#fff;">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

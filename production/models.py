@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal, ROUND_HALF_UP
 from django.conf import settings
 from django.db import models
 from goats.models import Goat
@@ -116,7 +117,6 @@ class GoatMilkTest(models.Model):
 class Product(models.Model):
     STATUS_CHOICES = [("active","Active"),("inactive","Inactive"),]
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
-    goat_milk_batch = models.ForeignKey(GoatMilkBatch,on_delete=models.SET_NULL,null=True,blank=True,related_name="products",)
     code_sku = models.CharField(max_length=100,blank=True,editable=False,)
     type = models.CharField(max_length=100)
     variant = models.CharField(max_length=100,blank=True,null=True,)
@@ -133,7 +133,13 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True,)
     class Meta:
         ordering = ["type","code_sku"]
-        constraints = [models.UniqueConstraint(fields=["business","code_sku"],name="unique_product_sku_per_business")]
+        constraints = [
+            models.UniqueConstraint(fields=["business","code_sku"],name="unique_product_sku_per_business"),
+            models.UniqueConstraint(
+                fields=["business", "type", "variant"],
+                name="unique_product_type_variant_per_business",
+            ),
+        ]
     def save(self,*args,**kwargs):
         if not self.code_sku:
             prefix_map = {"goat_milk":"GM","cheese":"CH","gelato":"GEL","yogurt":"YOG","kefir":"KEF","milkshake":"MS","ghee":"GHEE",}
@@ -146,9 +152,15 @@ class Product(models.Model):
                 next_number = 1
             self.code_sku = f"{prefix}-{next_number:03d}"
         super().save(*args,**kwargs)
+    @property
+    def flavour_display(self):
+        if not self.variant:
+            return ""
+        return self.variant.replace("_", " ").title()
+
     def __str__(self):
         if self.variant:
-            return f"{self.code_sku} - {self.type} - {self.variant}"
+            return f"{self.code_sku} - {self.type} - {self.flavour_display}"
         return self.code_sku
 
 
@@ -188,8 +200,13 @@ class Ingredient(models.Model):
     updated_at = models.DateTimeField(auto_now=True,)
     class Meta:
         ordering = ["name"]
-        constraints = [models.UniqueConstraint(fields=["business","code"],name="unique_ingredient_code_per_business",)]
+        constraints = [
+            models.UniqueConstraint(fields=["business","code"],name="unique_ingredient_code_per_business",),
+            models.UniqueConstraint(fields=["business","name"],name="unique_ingredient_name_per_business",),
+        ]
     def save(self,*args,**kwargs):
+        if self.name:
+            self.name = " ".join(self.name.strip().split()).title()
         if not self.code:
             prefix = "ING"
             last_ingredient = (Ingredient.objects.filter(business=self.business,code__startswith=f"{prefix}-").order_by("-code").first())
@@ -229,6 +246,32 @@ class IngredientPrice(models.Model):
         return f"{self.ingredient.name} - ₹{self.mrp}"
 
 
+def recipe_item_grams(quantity, unit):
+    qty = Decimal(quantity or 0)
+    unit = (unit or "").strip().lower()
+    if unit in ("kg", "litre"):
+        return qty * Decimal("1000")
+    if unit in ("gram", "ml"):
+        return qty
+    return Decimal("0")
+
+
+def quantity_in_unit(quantity, from_unit, to_unit):
+    source_grams = recipe_item_grams(quantity, from_unit)
+    target_grams = recipe_item_grams(Decimal("1"), to_unit)
+    if target_grams <= 0:
+        return Decimal("0")
+    return source_grams / target_grams
+
+
+def latest_ingredient_price(ingredient):
+    prices = ingredient.prices.all()
+    active = [price for price in prices if price.status == "active"]
+    if active:
+        return active[0]
+    return prices[0] if prices else None
+
+
 # ============================================================
 # RECIPE
 # ============================================================
@@ -237,13 +280,56 @@ class Recipe(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,)
     date = models.DateField()
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name="recipes",)
+    type = models.CharField(max_length=100,)
     procedure = models.TextField(blank=True,null=True,)
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default="draft",)
+    weight = models.DecimalField(max_digits=12,decimal_places=3,default=0,help_text="Total recipe weight in grams",)
+    cost = models.DecimalField(max_digits=14,decimal_places=2,default=0,help_text="Total recipe cost from ingredient prices",)
+    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default="active",)
     business = models.ForeignKey(Business,on_delete=models.CASCADE,related_name="recipes",)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="created_recipes",)
     created_at = models.DateTimeField(auto_now_add=True,)
     updated_at = models.DateTimeField(auto_now=True,)
-    def __str__(self):return f"{self.product.code_sku} {self.product.type} - Recipe"
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["business", "product"],
+                name="unique_recipe_per_product",
+            ),
+        ]
+    def save(self, *args, **kwargs):
+        if self.product_id:
+            self.type = self.product.type
+        super().save(*args, **kwargs)
+
+    def refresh_weight(self):
+        return self.refresh_totals()
+
+    def refresh_totals(self):
+        weight = Decimal("0")
+        cost = Decimal("0")
+        items = (
+            RecipeItem.objects.filter(recipe_id=self.pk, status=True)
+            .select_related("ingredient")
+            .prefetch_related(
+                models.Prefetch(
+                    "ingredient__prices",
+                    queryset=IngredientPrice.objects.order_by("-date", "-created_at"),
+                )
+            )
+        )
+        for item in items:
+            weight += recipe_item_grams(item.quantity, item.unit)
+            price = latest_ingredient_price(item.ingredient)
+            if not price or not price.quantity or price.quantity <= 0:
+                continue
+            qty = quantity_in_unit(item.quantity, item.unit, price.unit)
+            cost += qty * (price.mrp / price.quantity)
+        self.weight = weight.quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
+        self.cost = cost.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        self.save(update_fields=["weight", "cost", "updated_at"])
+        return self.weight
+
+    def __str__(self):return f"{self.product.code_sku} {self.type} - Recipe"
 
 # ============================================================
 # RECIPE ITEM
@@ -254,12 +340,22 @@ class RecipeItem(models.Model):
     ingredient = models.ForeignKey(Ingredient,on_delete=models.CASCADE,related_name="recipe_items",)
     unit = models.CharField(max_length=20,default="kg",)
     quantity = models.DecimalField(max_digits=12,decimal_places=3,)
+    status = models.BooleanField(default=True,)
     business = models.ForeignKey(Business,on_delete=models.CASCADE,related_name="recipe_items",)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,null=True,blank=True,related_name="created_recipe_items",)
     created_at = models.DateTimeField(auto_now_add=True,)
     updated_at = models.DateTimeField(auto_now=True,)
     class Meta:
         ordering = ["created_at"]
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.recipe_id:
+            self.recipe.refresh_weight()
+    def delete(self, *args, **kwargs):
+        recipe = self.recipe
+        super().delete(*args, **kwargs)
+        if recipe:
+            recipe.refresh_weight()
     def __str__(self):
         return f"{self.recipe} - {self.ingredient.name}"
 
@@ -271,7 +367,6 @@ class ProductBatch(models.Model):
     QC_STATUS_CHOICES = [("pending", "Pending"),("passed", "Passed"),("failed", "Failed"),]
     UNIT_CHOICES = [("kg","Kg"),("gram","Gram"),("litre","Litre"),("ml","Ml"),("piece","Piece"),("pack","Pack"),("pocket","Pocket"),("box","Box"),("bottle","Bottle"),("cup","Cup"),("container","Container"),]
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False,)
-    goat_milk_batch = models.ForeignKey(GoatMilkBatch,on_delete=models.SET_NULL,null=True,blank=True,related_name="product_batches",)
     product = models.ForeignKey(Product,on_delete=models.PROTECT,related_name="batches",)
     recipe = models.ForeignKey(Recipe,on_delete=models.SET_NULL,null=True,blank=True,related_name="product_batches",)
     location = models.ForeignKey(Location,on_delete=models.PROTECT,related_name="area", null=True,blank=True)
@@ -310,3 +405,19 @@ class ProductBatch(models.Model):
     def __str__(self):
 
         return self.batch_number
+
+
+class ProductBatchMilk(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    product_batch = models.ForeignKey(
+        ProductBatch,
+        on_delete=models.CASCADE,
+        related_name="milk_links",
+    )
+    goat_milk_batch = models.ForeignKey(
+        GoatMilkBatch,
+        on_delete=models.PROTECT,
+        related_name="product_batch_links",
+    )
+    def __str__(self):
+        return f"{self.product_batch.batch_number} · {self.goat_milk_batch.batch_number}"

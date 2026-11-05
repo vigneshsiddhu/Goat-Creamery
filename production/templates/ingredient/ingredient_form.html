@@ -1,47 +1,159 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
+
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
+<div class="ingredient-form-page">
+    <a href="{% url 'production:ingredient_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to ingredients
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
                 <h3>{{ title|default:"Create Ingredient" }}</h3>
-                <p>Manage ingredient details used in production.</p>
+                <p>
+                    {% if ingredient %}
+                        Update details or add stock. Names are unique and saved A–Z.
+                    {% else %}
+                        Add ingredient name, stock quantity, and price in one step.
+                    {% endif %}
+                </p>
             </div>
+            <a href="{% url 'production:ingredient_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-        <div class="form-body">
-            <form method="post">
+
+        <div class="ingredient-form-body">
+            <form method="post" id="ingredient-form" novalidate>
                 {% csrf_token %}
+
                 {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {{ form.non_field_errors }}
-                    </div>
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-                <div class="form-row">
-                    <div class="form-group">
+
+                <h4 class="ingredient-form-section">Ingredient Details</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.name.id_for_label }}">Ingredient Name <span class="form-required">*</span></label>
                         {{ form.name }}
-                        {% for error in form.name.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <span class="form-help-text">Unique name, saved alphabetically (e.g. Goat Milk).</span>
+                        {% if ingredient %}
+                        <span class="form-help-text">Code: {{ ingredient.code }}</span>
+                        {% endif %}
+                        {% for error in form.name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.details.id_for_label }}">Details</label>
                         {{ form.details }}
-                        {% for error in form.details.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.details.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-actions">
+
+                <h4 class="ingredient-form-section">{% if ingredient %}Add Stock & Price{% else %}Stock & Price{% endif %}</h4>
+                {% if ingredient %}
+                <p class="form-help-text" style="margin-bottom: 12px;">Price changes create a new history record.</p>
+                {% endif %}
+
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.quantity.id_for_label }}">{% if ingredient %}Add Quantity{% else %}Quantity{% endif %} <span class="form-required">*</span></label>
+                        <div class="qty-unit-field">
+                            {{ form.quantity }}
+                            {{ form.unit }}
+                        </div>
+                        {% if ingredient %}<span class="form-help-text">Added to current stock.</span>{% endif %}
+                        {% for error in form.quantity.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                        {% for error in form.unit.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.mrp.id_for_label }}">MRP <span class="form-required">*</span></label>
+                        {{ form.mrp }}
+                        {% for error in form.mrp.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.gst.id_for_label }}">GST (%) <span class="form-required">*</span></label>
+                        {{ form.gst }}
+                        {% for error in form.gst.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
+                        {{ form.date }}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% if form.status %}
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.status.id_for_label }}">Status <span class="form-required">*</span></label>
+                        {{ form.status }}
+                        {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label>Stock After Save</label>
+                        <div class="ingredient-readonly">
+                            <span id="computed-stock-value">{% if ingredient %}{{ previous_stock }}{% else %}0{% endif %}</span>
+                            <span id="computed-stock-unit" style="margin-left:6px;color:#6b7280;font-weight:500;"></span>
+                        </div>
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label>Stock Price After Save</label>
+                        <div class="ingredient-readonly" id="computed-stock-price">
+                            {% if ingredient %}₹{{ previous_stock_price|floatformat:2 }}{% else %}₹0.00{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if price_history %}
+                <h4 class="ingredient-form-section">Price History</h4>
+                <div class="ingredient-table-wrap" style="margin-bottom: 16px;">
+                    <table class="ingredient-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Qty</th>
+                                <th>Stock</th>
+                                <th>Unit</th>
+                                <th>MRP</th>
+                                <th>Stock Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for price in price_history %}
+                            <tr>
+                                <td>{{ price.date|date:"d M Y" }}</td>
+                                <td>{{ price.quantity }}</td>
+                                <td>{{ price.stock }}</td>
+                                <td>{{ price.unit }}</td>
+                                <td>₹{{ price.mrp|floatformat:2 }}</td>
+                                <td>₹{{ price.stock_price|floatformat:2 }}</td>
+                                <td>{{ price.get_status_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                <div class="ingredient-form-actions">
                     <a href="{% url 'production:ingredient_list' %}" class="form-back-btn">
                         <i class="bi bi-arrow-left"></i>
                         Back
                     </a>
-                    <button type="submit" class="form-save-btn">
+                    <button type="submit" class="form-save-btn" id="ingredient-save-btn">
                         <i class="bi bi-check-lg"></i>
                         Save
                     </button>
@@ -50,4 +162,49 @@
         </div>
     </div>
 </div>
+
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="ingredient-form">Save Ingredient</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const quantityInput = document.getElementById("id_quantity");
+    const mrpInput = document.getElementById("id_mrp");
+    const unitInput = document.getElementById("id_unit");
+    const stockValueDisplay = document.getElementById("computed-stock-value");
+    const stockUnitDisplay = document.getElementById("computed-stock-unit");
+    const stockPriceDisplay = document.getElementById("computed-stock-price");
+    if (!quantityInput || !mrpInput || !stockValueDisplay || !stockPriceDisplay) return;
+
+    const isEdit = {{ ingredient|yesno:"true,false" }};
+    const previousStock = parseFloat("{{ previous_stock }}") || 0;
+    const previousStockPrice = parseFloat("{{ previous_stock_price }}") || 0;
+
+    function formatMoney(value) {
+        return "₹" + value.toFixed(2);
+    }
+
+    function updateComputedValues() {
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const mrp = parseFloat(mrpInput.value) || 0;
+        const unitText = unitInput && unitInput.value ? unitInput.options[unitInput.selectedIndex].text : "";
+
+        if (isEdit) {
+            stockValueDisplay.textContent = (previousStock + quantity).toFixed(3);
+            if (stockUnitDisplay) stockUnitDisplay.textContent = unitText;
+            stockPriceDisplay.textContent = formatMoney((previousStockPrice + mrp) / 2);
+        } else {
+            stockValueDisplay.textContent = quantity.toFixed(3);
+            if (stockUnitDisplay) stockUnitDisplay.textContent = unitText;
+            stockPriceDisplay.textContent = formatMoney(mrp);
+        }
+    }
+
+    quantityInput.addEventListener("input", updateComputedValues);
+    mrpInput.addEventListener("input", updateComputedValues);
+    if (unitInput) unitInput.addEventListener("change", updateComputedValues);
+    updateComputedValues();
+});
+</script>
 {% endblock %}

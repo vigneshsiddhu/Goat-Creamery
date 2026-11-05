@@ -1,223 +1,82 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}
-    {% if business %}
-        Edit Business
-    {% else %}
-        Add Business
-    {% endif %}
+{% block title %}{% if business %}Edit business{% else %}Add business{% endif %}{% endblock %}
+{% block page_title %}{% if business %}Edit business{% else %}Add business{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
-
 {% block content %}
-
-<div class="business-page">
-
-    <div class="business-form-card">
-
-        <!-- =========================================
-             FORM HEADER
-        ========================================== -->
-
-        <div class="business-form-header">
-
-            <div class="business-form-header-content">
-
-                <div>
-
-                    <h5>
-                        {% if business %}
-                            Edit Business
-                        {% else %}
-                            Business Information
-                        {% endif %}
-                    </h5>
-
-                    <p>
-                        {% if business %}
-                            Update the business details below.
-                        {% else %}
-                            Enter the business details below.
-                        {% endif %}
-                    </p>
-
-                </div>
-
-
-                <!-- Back Button -->
-
-                <a href="{% url 'business:list' %}"
-                   class="business-back-btn">
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Back
-
-                </a>
-
+<div class="ingredient-form-page">
+    <a href="{% url 'business:list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to business
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if business %}Edit business{% else %}Add business{% endif %}</h3>
+                <p>Name is required. Address, GSTIN, and phone are optional.</p>
             </div>
-
+            <a href="{% url 'business:list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-
-
-        <!-- =========================================
-             FORM BODY
-        ========================================== -->
-
-        <div class="business-form-body">
-
-            <form method="POST">
-
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
                 {% csrf_token %}
-
-
-                <!-- Business Name -->
-
-                <div class="business-form-group">
-
-                    <label for="{{ form.name.id_for_label }}">
-                        Business Name
-                    </label>
-
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Profile</h4>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.name.id_for_label }}">Name <span class="form-required">*</span></label>
                     {{ form.name }}
-
-                    {% if form.name.errors %}
-                        <div class="business-form-error">
-                            {{ form.name.errors }}
-                        </div>
-                    {% endif %}
-
+                    {% for error in form.name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- Address -->
-
-                <div class="business-form-group">
-
-                    <label for="{{ form.address.id_for_label }}">
-                        Address
-                    </label>
-
+                <div class="ingredient-form-group">
+                    <label for="{{ form.address.id_for_label }}">Address</label>
                     {{ form.address }}
-
-                    {% if form.address.errors %}
-                        <div class="business-form-error">
-                            {{ form.address.errors }}
-                        </div>
-                    {% endif %}
-
+                    {% for error in form.address.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- GSTIN + Phone -->
-
-                <div class="business-form-row">
-
-                    <div class="business-form-group">
-
-                        <label for="{{ form.gstn.id_for_label }}">
-                            GSTIN
-                        </label>
-
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.gstn.id_for_label }}">GSTIN</label>
                         {{ form.gstn }}
-
-                        {% if form.gstn.errors %}
-                            <div class="business-form-error">
-                                {{ form.gstn.errors }}
-                            </div>
-                        {% endif %}
-
+                        {% for error in form.gstn.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-
-
-                    <div class="business-form-group">
-
-                        <label for="{{ form.phone_number.id_for_label }}">
-                            Phone Number
-                        </label>
-
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.phone_number.id_for_label }}">Phone</label>
                         {{ form.phone_number }}
-
-                        {% if form.phone_number.errors %}
-                            <div class="business-form-error">
-                                {{ form.phone_number.errors }}
-                            </div>
-                        {% endif %}
-
+                        {% for error in form.phone_number.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-
-                </div>
-
-
-                <!-- Owner + Status -->
-
-                <div class="business-form-row">
-
-                    <div class="business-form-group">
-
-                        <label for="{{ form.owner.id_for_label }}">
-                            Business Owner
-                        </label>
-
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.owner.id_for_label }}">Owner <span class="form-required">*</span></label>
                         {{ form.owner }}
-
-                        {% if form.owner.errors %}
-                            <div class="business-form-error">
-                                {{ form.owner.errors }}
-                            </div>
-                        {% endif %}
-
+                        {% for error in form.owner.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-
-
-                    <div class="business-form-group">
-
-                        <label for="{{ form.status.id_for_label }}">
-                            Status
+                    <div class="ingredient-form-group">
+                        <label>Status</label>
+                        <label class="farm-checkbox-row" for="{{ form.status.id_for_label }}">
+                            {{ form.status }}
+                            <span>Active</span>
                         </label>
-
-                        {{ form.status }}
-
-                        {% if form.status.errors %}
-                            <div class="business-form-error">
-                                {{ form.status.errors }}
-                            </div>
-                        {% endif %}
-
+                        {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-
                 </div>
-                <!-- Form Actions -->
-                <div class="business-form-actions">
-                    <a href="{% url 'business:list' %}"
-                       class="business-cancel-btn">
-                        Cancel
-                    </a>
-                    <button type="submit"
-                            class="business-save-btn">
-
-                        {% if business %}
-
-                            <i class="bi bi-check-lg"></i>
-                            Update Business
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-                            Add Business
-
-                        {% endif %}
-
+                <div class="form-actions">
+                    <a href="{% url 'business:list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if business %}Update business{% else %}Save business{% endif %}
                     </button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}

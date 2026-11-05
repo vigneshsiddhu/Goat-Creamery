@@ -1,300 +1,101 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Goat Health
-{% endblock %}
+{% block title %}Goat health{% endblock %}
+{% block page_title %}Goat health{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/list.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
 {% block content %}
-
-<div class="list-page">
-
-
-    <!-- =====================================================
-         PAGE HEADER
-    ====================================================== -->
-
-    <div class="list-page-header">
-
-        <div class="list-page-header-content">
-
-            <h3>
-                Goat Health
-            </h3>
-
-            <p>
-                Manage goat health records for {{ business.name }}.
-            </p>
-
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Goat health</h2>
+                <p>{{ business.name }} · treatments</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'goats:goat_health_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add record
+                </a>
+            </div>
         </div>
-
-
-        <a
-            href="{% url 'goats:goat_health_create' %}"
-            class="list-add-btn"
-        >
-
-            <i class="bi bi-plus-lg"></i>
-
-            Add Health Record
-
-        </a>
-
-    </div>
-
-
-    <!-- =====================================================
-         LIST CARD
-    ====================================================== -->
-
-    <div class="list-card">
-
-
-        <!-- =================================================
-             TABLE
-        ================================================== -->
-
-        <div class="list-table-wrapper">
-
-            <table class="list-table">
-
-
-                <!-- =========================================
-                     HEADER
-                ========================================== -->
-
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if health_records %}
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
                 <thead>
-
                     <tr>
-
-                        <th>
-                            Goat
-                        </th>
-
-                        <th>
-                            Disease
-                        </th>
-
-                        <th>
-                            Health Status
-                        </th>
-
-                        <th>
-                            Date
-                        </th>
-
-                        <th>
-                            Notes
-                        </th>
-
-                        <th>
-                            Created By
-                        </th>
-
-                        <th>
-                            Actions
-                        </th>
-
+                        <th>Goat</th>
+                        <th>Disease</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Notes</th>
+                        <th>Created by</th>
+                        <th>Actions</th>
                     </tr>
-
                 </thead>
-
-
-                <!-- =========================================
-                     BODY
-                ========================================== -->
-
                 <tbody>
-
                     {% for health in health_records %}
-
                     <tr>
-
-
-                        <!-- GOAT -->
-
+                        <td><span class="ingredient-name">{{ health.goat }}</span></td>
+                        <td>{{ health.disease.name }}</td>
                         <td>
-
-                            <span class="list-name">
-
-                                {{ health.goat }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- DISEASE -->
-
-                        <td>
-
-                            <span class="list-name">
-
-                                {{ health.disease.name }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            {% if health.status %}
-
-                                <span class="list-status">
-
-                                    {{ health.status }}
-
-                                </span>
-
-                            {% else %}
-
-                                —
-
+                            {% if health.status == "under_treatment" %}Under treatment
+                            {% elif health.status == "recovered" %}Recovered
+                            {% elif health.status == "critical" %}Critical
+                            {% else %}{{ health.status|default:"—" }}
                             {% endif %}
-
                         </td>
-
-
-                        <!-- DATE -->
-
+                        <td>{{ health.date|date:"d M Y" }}</td>
+                        <td>{% if health.comment %}{{ health.comment|truncatechars:60 }}{% else %}—{% endif %}</td>
+                        <td>{{ health.created_by|default:"—" }}</td>
                         <td>
-
-                            {{ health.date|date:"d M Y" }}
-
-                        </td>
-
-
-                        <!-- COMMENT -->
-
-                        <td>
-
-                            {% if health.comment %}
-
-                                {{ health.comment|truncatechars:80 }}
-
-                            {% else %}
-
-                                —
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- CREATED BY -->
-
-                        <td>
-
-                            {% if health.created_by %}
-
-                                {{ health.created_by }}
-
-                            {% else %}
-
-                                —
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- ACTIONS -->
-
-                        <td>
-
-                            <div class="list-actions">
-
-                                <!-- EDIT -->
-
-                                <a
-
-                                    href="{% url 'goats:goat_health_update' health.id %}"
-
-                                    class="list-edit-btn"
-
-                                >
-
-                                    <i class="bi bi-pencil"></i>
-
-                                    Edit
-
-                                </a>
-
-                                <!-- DELETE -->
-
-                                <form
-
-                                    method="post"
-
-                                    action="{% url 'goats:goat_health_delete' health.id %}"
-
-                                    class="list-delete-form"
-
-                                >
-
-                                    {% csrf_token %}
-
-                                    <button
-
-                                        type="submit"
-
-                                        class="list-delete-btn"
-
-                                    >
-
-                                        <i class="bi bi-trash"></i>
-
-                                        Delete
-
-                                    </button>
-
-                                </form>
-
+                            <div class="ingredient-actions">
+                                <a href="{% url 'goats:goat_health_update' health.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'goats:goat_health_delete' health.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
                             </div>
-
                         </td>
-
-
                     </tr>
-
-                    {% empty %}
-
-
-                    <!-- =====================================
-                         EMPTY
-                    ====================================== -->
-
-                    <tr>
-
-                        <td
-                            colspan="7"
-                            class="list-empty"
-                        >
-
-                            No goat health records found.
-
-                        </td>
-
-                    </tr>
-
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
-
+        <div class="ingredient-cards">
+            {% for health in health_records %}
+            <div class="ingredient-card-item">
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ health.goat }}</div>
+                        <div class="ingredient-code">{{ health.disease.name }} · {{ health.date|date:"d M Y" }}</div>
+                    </div>
+                    <span class="ingredient-stock-pill">{% if health.status == "under_treatment" %}Under treatment{% elif health.status == "recovered" %}Recovered{% elif health.status == "critical" %}Critical{% else %}{{ health.status }}{% endif %}</span>
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'goats:goat_health_update' health.id %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'goats:goat_health_delete' health.id %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-heart-pulse"></i></div>
+            <h3>No health records yet</h3>
+            <p>Log a goat, disease, and status.</p>
+            <a href="{% url 'goats:goat_health_create' %}" class="ingredient-primary-btn">Add record</a>
+        </div>
+        {% endif %}
     </div>
-
 </div>
-
 {% endblock %}

@@ -1,67 +1,384 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+<style>
+.recipe-items-section { margin-top: 24px; }
+.recipe-items-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.recipe-items-header h4 { margin: 0; }
+.recipe-add-item-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+}
+.recipe-add-item-btn:hover { background: #f9fafb; }
+.recipe-item-row {
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: #fafafa;
+}
+.recipe-item-row.has-errors { border-color: #fca5a5; background: #fef2f2; }
+.recipe-item-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.recipe-item-top .recipe-item-grid { flex: 1; min-width: 0; }
+.recipe-item-remove {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    color: #6b7280;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    margin-top: 24px;
+}
+.recipe-item-remove:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+.recipe-item-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr 0.8fr;
+    gap: 12px;
+}
+@media (max-width: 768px) {
+    .recipe-item-grid { grid-template-columns: 1fr; }
+}
+.recipe-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.recipe-history-table th,
+.recipe-history-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+.recipe-history-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.recipe-history-badge.active { background: #dcfce7; color: #166534; }
+.recipe-history-badge.inactive { background: #f3f4f6; color: #6b7280; }
+.recipe-history-panel {
+    margin-top: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fafafa;
+    overflow: hidden;
+}
+.recipe-history-panel summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.recipe-history-panel summary::-webkit-details-marker { display: none; }
+.recipe-history-panel summary::before {
+    content: "▸";
+    font-size: 12px;
+    transition: transform 0.15s ease;
+}
+.recipe-history-panel[open] summary::before {
+    transform: rotate(90deg);
+}
+.recipe-history-panel summary:hover { background: #f3f4f6; }
+.recipe-history-panel-body {
+    padding: 0 16px 16px;
+    border-top: 1px solid #e5e7eb;
+}
+</style>
 {% endblock %}
+
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
+<div class="ingredient-form-page">
+    <a href="{% url 'production:recipe_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to recipes
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
                 <h3>{{ title|default:"Create Recipe" }}</h3>
-                <p>Manage product recipe and preparation procedure.</p>
+                <p>
+                    {% if recipe %}
+                        Update recipe details and ingredients. One recipe per product flavour.
+                    {% else %}
+                        Add recipe for a product. Each flavour can have its own recipe.
+                    {% endif %}
+                </p>
             </div>
+            <a href="{% url 'production:recipe_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-        <div class="form-body">
-            <form method="post">
+
+        <div class="ingredient-form-body">
+            <form method="post" id="recipe-form" novalidate>
                 {% csrf_token %}
+
                 {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {{ form.non_field_errors }}
-                    </div>
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-                <div class="form-row">
-                    <div class="form-group">
+
+                {% if formset.non_form_errors %}
+                <div class="form-non-field-errors">{{ formset.non_form_errors }}</div>
+                {% endif %}
+
+                <h4 class="ingredient-form-section">Recipe Details</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
                         {{ form.date }}
-                        {% for error in form.date.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.product.id_for_label }}">Product <span class="form-required">*</span></label>
                         {{ form.product }}
-                        {% for error in form.product.errors %}
-                            <div class="form-error">{{ error }}</div>
+                        <span class="form-help-text" id="recipe-product-type-help">Choose any product — recipe applies to its type.</span>
+                        {% for error in form.product.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-group">
+                    <label for="{{ form.procedure.id_for_label }}">Procedure</label>
+                    {{ form.procedure }}
+                    {% for error in form.procedure.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+
+                {% if form.status %}
+                <div class="ingredient-form-group">
+                    <label for="{{ form.status.id_for_label }}">Status <span class="form-required">*</span></label>
+                    {{ form.status }}
+                    {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="recipe-items-section">
+                    <div class="recipe-items-header">
+                        <h4 class="ingredient-form-section" style="margin:0;">Recipe Items</h4>
+                        <button type="button" class="recipe-add-item-btn" id="add-recipe-item-btn">
+                            <i class="bi bi-plus-lg"></i>
+                            Add Item
+                        </button>
+                    </div>
+                    <p class="form-help-text">Weight and cost are calculated from items. Item grams are converted to kg against the ingredient’s kg price.</p>
+
+                    {{ formset.management_form }}
+
+                    <div id="recipe-items">
+                        {% for item_form in formset %}
+                            {% include "recipe/_recipe_item_row.html" with item_form=item_form %}
                         {% endfor %}
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="{{ form.procedure.id_for_label }}">Procedure <span class="form-required">*</span></label>
-                    {{ form.procedure }}
-                    {% for error in form.procedure.errors %}
-                        <div class="form-error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.status.id_for_label }}">Status <span class="form-required">*</span></label>
-                    {{ form.status }}
-                    {% for error in form.status.errors %}
-                        <div class="form-error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                <div class="form-actions">
+
+                <div class="form-actions" style="margin-top: 20px;">
                     <a href="{% url 'production:recipe_list' %}" class="form-back-btn">
                         <i class="bi bi-arrow-left"></i>
-                        Back
+                        Cancel
                     </a>
                     <button type="submit" class="form-save-btn">
                         <i class="bi bi-check-lg"></i>
-                        Save
+                        Save Recipe
                     </button>
                 </div>
             </form>
+
+            {% if item_history %}
+            <details class="recipe-history-panel">
+                <summary>Show previous recipe items ({{ item_history|length }})</summary>
+                <div class="recipe-history-panel-body">
+                    <p class="form-help-text" style="margin: 12px 0;">Older versions from past edits. Current items are in the form above.</p>
+                    <div class="ingredient-table-wrap">
+                        <table class="recipe-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Ingredient</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Recorded</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in item_history %}
+                                <tr>
+                                    <td>{{ item.ingredient.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.get_unit_display|default:item.unit }}</td>
+                                    <td>{{ item.created_at|date:"d M Y, H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </details>
+            {% endif %}
         </div>
     </div>
+
+    <template id="recipe-empty-form">
+        {% include "recipe/_recipe_item_row.html" with item_form=formset.empty_form %}
+    </template>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const recipeForm = document.getElementById("recipe-form");
+    const addBtn = document.getElementById("add-recipe-item-btn");
+    const itemsContainer = document.getElementById("recipe-items");
+    const emptyTemplate = document.getElementById("recipe-empty-form");
+    const totalFormsInput = recipeForm ? recipeForm.querySelector('input[name$="-TOTAL_FORMS"]') : null;
+
+    if (!recipeForm || !addBtn || !itemsContainer || !emptyTemplate || !totalFormsInput) {
+        return;
+    }
+
+    function isRowActive(row) {
+        if (!row || row.style.display === "none") {
+            return false;
+        }
+        const deleteInput = row.querySelector('input[name$="-DELETE"]');
+        return !(deleteInput && deleteInput.checked);
+    }
+
+    function getSelectedIngredientIds(excludeSelect) {
+        const ids = new Set();
+        itemsContainer.querySelectorAll(".recipe-item-row").forEach(function (row) {
+            if (!isRowActive(row)) {
+                return;
+            }
+            const select = row.querySelector(".recipe-item-ingredient");
+            if (!select || select === excludeSelect || !select.value) {
+                return;
+            }
+            ids.add(select.value);
+        });
+        return ids;
+    }
+
+    function refreshIngredientOptions() {
+        itemsContainer.querySelectorAll(".recipe-item-row").forEach(function (row) {
+            if (!isRowActive(row)) {
+                return;
+            }
+            const select = row.querySelector(".recipe-item-ingredient");
+            if (!select) {
+                return;
+            }
+            const selectedElsewhere = getSelectedIngredientIds(select);
+            const currentValue = select.value;
+            Array.from(select.options).forEach(function (option) {
+                if (!option.value) {
+                    option.hidden = false;
+                    return;
+                }
+                const taken = selectedElsewhere.has(option.value) && option.value !== currentValue;
+                option.hidden = taken;
+            });
+        });
+    }
+
+    function bindRowEvents(row) {
+        const removeBtn = row.querySelector(".remove-recipe-item-btn");
+        const ingredientSelect = row.querySelector(".recipe-item-ingredient");
+
+        if (ingredientSelect) {
+            ingredientSelect.addEventListener("change", refreshIngredientOptions);
+        }
+
+        if (removeBtn) {
+            removeBtn.addEventListener("click", function () {
+                const deleteInput = row.querySelector('input[name$="-DELETE"]');
+                if (deleteInput) {
+                    deleteInput.checked = true;
+                }
+                row.querySelectorAll("select, input").forEach(function (field) {
+                    if (field === deleteInput) {
+                        return;
+                    }
+                    if (field.type === "hidden" && field.name && field.name.endsWith("-id")) {
+                        return;
+                    }
+                    if (field.tagName === "SELECT") {
+                        field.selectedIndex = 0;
+                    } else if (field.type !== "hidden") {
+                        field.value = "";
+                    }
+                });
+                row.style.display = "none";
+                refreshIngredientOptions();
+            });
+        }
+    }
+
+    itemsContainer.querySelectorAll(".recipe-item-row").forEach(bindRowEvents);
+    refreshIngredientOptions();
+
+    const productSelect = document.getElementById("id_recipe_product");
+    const productTypeHelp = document.getElementById("recipe-product-type-help");
+    if (productSelect && productTypeHelp) {
+        function updateProductTypeHelp() {
+            const selected = productSelect.options[productSelect.selectedIndex];
+            if (!selected || !selected.value) {
+                productTypeHelp.textContent = "Choose any product — recipe applies to its type.";
+                return;
+            }
+            productTypeHelp.textContent = "Recipe will apply to all products of this type: " + selected.textContent.trim();
+        }
+        productSelect.addEventListener("change", updateProductTypeHelp);
+        updateProductTypeHelp();
+    }
+
+    addBtn.addEventListener("click", function () {
+        const index = parseInt(totalFormsInput.value, 10);
+        const html = emptyTemplate.innerHTML.replace(/__prefix__/g, index);
+        itemsContainer.insertAdjacentHTML("beforeend", html);
+        totalFormsInput.value = index + 1;
+        const lastRow = itemsContainer.lastElementChild;
+        bindRowEvents(lastRow);
+        refreshIngredientOptions();
+        const ingredientSelect = lastRow ? lastRow.querySelector(".recipe-item-ingredient") : null;
+        if (ingredientSelect) {
+            ingredientSelect.focus();
+        }
+    });
+});
+</script>
 {% endblock %}

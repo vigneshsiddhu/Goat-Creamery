@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ vehicle.number }}{% endblock %}
+{% block page_title %}Vehicle{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'inventory:vehicle_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to vehicles
+    </a>
+
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ vehicle.number }}</h2>
+                <p>
+                    {% if vehicle.name %}{{ vehicle.name }} · {% endif %}
+                    {{ vehicle.vehicle_type|title }} · {{ business.name }}
+                </p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">
+                {% if vehicle.status == "active" %}Active{% else %}Inactive{% endif %}
+            </span>
+        </div>
+
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Capacity</span>
+                    <strong>{% if vehicle.capacity %}{{ vehicle.capacity }} {{ vehicle.unit }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Vehicle Type</span>
+                    <strong>{{ vehicle.vehicle_type|title }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Display Name</span>
+                    <strong>{% if vehicle.name %}{{ vehicle.name }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Location Records</span>
+                    <strong>{{ vehicle.locations.count }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Added</span>
+                    <strong>{{ vehicle.created_at|date:"d M Y, H:i" }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Last Updated</span>
+                    <strong>{{ vehicle.updated_at|date:"d M Y, H:i" }}</strong>
+                </div>
+            </div>
+
+            {% if vehicle.locations.all %}
+            <h3 class="ingredient-form-section" style="margin-top: 8px;">Recent locations</h3>
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in vehicle.locations.all|slice:":5" %}
+                        <tr>
+                            <td>{{ record.date|date:"d M Y" }}{% if record.time %} · {{ record.time|time:"H:i" }}{% endif %}</td>
+                            <td>{{ record.location }}</td>
+                            <td>{% if record.status %}Active{% else %}Inactive{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <div class="ingredient-detail-actions">
+                <a href="{% url 'inventory:vehicle_edit' vehicle.pk %}" class="ingredient-btn ingredient-btn-edit">Edit Vehicle</a>
+                <a href="{% url 'inventory:vehicle_location_create' %}" class="ingredient-btn ingredient-btn-view">Log Location</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

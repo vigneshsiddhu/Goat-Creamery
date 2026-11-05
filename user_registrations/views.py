@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from goats.models import Goat
+from reports.pages import milk_report, sales_report, weight_report
+from reports.stats import overview_cards
 
 from .forms import LoginForm, SignupForm
-import pdb
 from myfarm.permissions import permission_required
 
 
@@ -97,11 +101,36 @@ def logout_view(request):
 
 @permission_required("dashboard.view")
 def dashboard(request):
-    return render(
-        request,
-        "user_registrations/dashboard.html",
-        {
-            "business": request.business,
-            "business_user": request.business_user,
-        }
-    )
+    business = getattr(request, "business", None)
+    context = {
+        "business": business,
+        "business_user": getattr(request, "business_user", None),
+    }
+    if business:
+        today = timezone.localdate()
+        pulse = overview_cards(business, today)
+        sales = sales_report(business, today)
+        milk = milk_report(business, today)
+        weight = weight_report(business, today)
+        cards = {card["key"]: card for card in pulse["cards"]}
+        context.update(
+            {
+                "period_start": pulse["period_start"],
+                "period_end": pulse["period_end"],
+                "live_goats": Goat.objects.filter(business=business, live=True).count(),
+                "milk_card": cards.get("milk"),
+                "sales_card": cards.get("sales"),
+                "weight_card": cards.get("weight"),
+                "sales_map": sales["map"],
+                "milk_tiles": milk["tiles"],
+                "weight_tiles": weight["tiles"],
+                "mix_charts": {
+                    "mix": {
+                        "labels": milk["charts"]["daily"]["labels"],
+                        "milk": milk["charts"]["daily"]["values"],
+                        "sales": sales["charts"]["daily"]["values"],
+                    }
+                },
+            }
+        )
+    return render(request, "user_registrations/dashboard.html", context)

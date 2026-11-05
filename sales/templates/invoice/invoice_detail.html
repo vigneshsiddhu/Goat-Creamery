@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Invoice {{ invoice.number }}{% endblock %}
+{% block page_title %}Invoice {{ invoice.number }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/invoice_list.css' %}?v=4">
+{% endblock %}
+
+{% block content %}
+<div class="invoice-detail-page">
+    <div class="invoice-detail-toolbar">
+        <a href="{% url 'sales:invoice_list' %}" class="invoice-detail-back-top">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to invoices</span>
+        </a>
+    </div>
+
+    <div class="invoice-detail-card">
+
+        <div class="invoice-detail-header">
+            <div class="invoice-detail-header-top">
+                <div>
+                    <h2>{{ invoice.number }}</h2>
+                    <p>
+                        {{ invoice.date|date:"d M Y" }}
+                        {% if invoice.time %}· {{ invoice.time|time:"H:i" }}{% endif %}
+                        · {{ business.name }}
+                    </p>
+                </div>
+                <span class="invoice-list-status invoice-list-status-{% if invoice.payment_status %}{{ invoice.payment_status }}{% else %}empty{% endif %}">
+                    {{ invoice.get_payment_status_display|default:"—" }}
+                </span>
+            </div>
+        </div>
+
+        <div class="invoice-detail-body">
+
+            <div class="invoice-detail-grid">
+                <div class="invoice-detail-field">
+                    <span>Customer</span>
+                    <strong>{% if invoice.customer %}{{ invoice.customer.name }}{% else %}Walk-in customer{% endif %}</strong>
+                </div>
+                {% if invoice.customer %}
+                <div class="invoice-detail-field">
+                    <span>Phone</span>
+                    <strong><a href="tel:{{ invoice.customer.number }}" class="invoice-detail-phone">{{ invoice.customer.number }}</a></strong>
+                </div>
+                {% endif %}
+                <div class="invoice-detail-field">
+                    <span>Payment method</span>
+                    <strong>{{ invoice.get_payment_method_display|default:"—" }}</strong>
+                </div>
+                <div class="invoice-detail-field">
+                    <span>Items</span>
+                    <strong>{{ invoice.items.count }}</strong>
+                </div>
+                <div class="invoice-detail-field">
+                    <span>Created</span>
+                    <strong>{{ invoice.created_at|date:"d M Y, H:i" }}</strong>
+                </div>
+            </div>
+
+            <h3 class="invoice-detail-items-title">Order items</h3>
+            <div class="invoice-detail-items-wrap">
+                <table class="invoice-detail-items">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Unit</th>
+                            <th>Rate</th>
+                            <th>Discount</th>
+                            <th>GST</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in invoice.items.all %}
+                        <tr>
+                            <td>{{ line.item }}</td>
+                            <td>{{ line.quantity }}</td>
+                            <td>{{ line.unit }}</td>
+                            <td>₹{{ line.price|floatformat:2 }}</td>
+                            <td>₹{{ line.discount|floatformat:2 }}</td>
+                            <td>₹{{ line.gst|floatformat:2 }}</td>
+                            <td><strong>₹{{ line.total|floatformat:2 }}</strong></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No items on this invoice.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="invoice-detail-totals">
+                <div class="invoice-detail-total-row">
+                    <span>Sub total</span>
+                    <strong>₹{{ invoice.sub_total|floatformat:2 }}</strong>
+                </div>
+                <div class="invoice-detail-total-row">
+                    <span>Discount</span>
+                    <strong>₹{{ invoice.discount|floatformat:2 }}</strong>
+                </div>
+                <div class="invoice-detail-total-row">
+                    <span>GST</span>
+                    <strong>₹{{ invoice.gst|floatformat:2 }}</strong>
+                </div>
+                <div class="invoice-detail-total-row grand">
+                    <span>Grand total</span>
+                    <strong>₹{{ invoice.grand_total|floatformat:2 }}</strong>
+                </div>
+            </div>
+
+            {% if invoice.notes %}
+            <div class="invoice-detail-notes">
+                <strong>Notes</strong><br>
+                {{ invoice.notes }}
+            </div>
+            {% endif %}
+
+            <div class="invoice-detail-actions">
+                <a href="{% url 'sales:invoice_edit' invoice.pk %}" class="invoice-list-btn invoice-list-btn-edit">Edit</a>
+                <a href="{% url 'sales:invoice_delete' invoice.pk %}" class="invoice-list-btn invoice-list-btn-delete">Delete</a>
+            </div>
+
+            {% with invoice_location=invoice.locations.first %}
+            {% if invoice_location %}
+            {% if invoice_location.location or invoice_location.latitude and invoice_location.longitude %}
+            <p class="invoice-detail-location-foot">
+                {% if invoice_location.location %}
+                    {{ invoice_location.location }}
+                {% endif %}
+                {% if invoice_location.latitude and invoice_location.longitude %}
+                    {% if invoice_location.location %} · {% endif %}
+                    <a href="https://www.google.com/maps?q={{ invoice_location.latitude }},{{ invoice_location.longitude }}" target="_blank" rel="noopener">{{ invoice_location.latitude }}, {{ invoice_location.longitude }}</a>
+                {% endif %}
+            </p>
+            {% endif %}
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+{% endblock %}

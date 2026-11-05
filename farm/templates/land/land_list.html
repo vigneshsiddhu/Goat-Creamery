@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Land & Water{% endblock %}
+{% block page_title %}Land & Water{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Land & Water</h2>
+                <p>{{ business.name }} · parcels, sources, and irrigation links</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                {% if active_tab == "water" %}
+                <a href="{% url 'farm:water_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add water
+                </a>
+                {% elif active_tab == "map" %}
+                <a href="{% url 'farm:land_water_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    New mapping
+                </a>
+                {% else %}
+                <a href="{% url 'farm:land_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add land
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <nav class="farm-switch" aria-label="Land and water sections">
+            <a href="?tab=land" class="farm-switch-item{% if active_tab == 'land' %} is-active{% endif %}">
+                <span class="farm-switch-icon"><i class="bi bi-map"></i></span>
+                <span class="farm-switch-copy">
+                    <strong>Land</strong>
+                    <small>{{ lands|length }} parcel{{ lands|length|pluralize }}</small>
+                </span>
+            </a>
+            <a href="?tab=water" class="farm-switch-item{% if active_tab == 'water' %} is-active{% endif %}">
+                <span class="farm-switch-icon"><i class="bi bi-droplet"></i></span>
+                <span class="farm-switch-copy">
+                    <strong>Water</strong>
+                    <small>{{ waters|length }} source{{ waters|length|pluralize }}</small>
+                </span>
+            </a>
+            <a href="?tab=map" class="farm-switch-item{% if active_tab == 'map' %} is-active{% endif %}">
+                <span class="farm-switch-icon"><i class="bi bi-moisture"></i></span>
+                <span class="farm-switch-copy">
+                    <strong>Map</strong>
+                    <small>{{ records|length }} link{{ records|length|pluralize }}</small>
+                </span>
+            </a>
+        </nav>
+
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if active_tab == "land" %}
+            {% if lands %}
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Area</th>
+                            <th>Soil</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for land in lands %}
+                        <tr>
+                            <td><span class="ingredient-name">{{ land.name }}</span></td>
+                            <td>{{ land.area }} {{ land.get_unit_display }}</td>
+                            <td>{{ land.get_soil_type_display|default:"—" }}</td>
+                            <td>{{ land.location.name|default:"—" }}</td>
+                            <td>
+                                <div class="ingredient-actions">
+                                    <a href="{% url 'farm:land_edit' land.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                    <a href="{% url 'farm:land_delete' land.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="ingredient-cards">
+                {% for land in lands %}
+                <div class="ingredient-card-item">
+                    <div class="ingredient-card-top">
+                        <div>
+                            <div class="ingredient-name">{{ land.name }}</div>
+                            <div class="ingredient-code">{{ land.location.name|default:"No location" }}</div>
+                        </div>
+                    </div>
+                    <div class="ingredient-card-metrics">
+                        <div class="ingredient-metric">
+                            <span>Area</span>
+                            <strong>{{ land.area }} {{ land.get_unit_display }}</strong>
+                        </div>
+                        <div class="ingredient-metric">
+                            <span>Soil</span>
+                            <strong>{{ land.get_soil_type_display|default:"—" }}</strong>
+                        </div>
+                    </div>
+                    <div class="ingredient-actions">
+                        <a href="{% url 'farm:land_edit' land.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                        <a href="{% url 'farm:land_delete' land.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ingredient-empty">
+                <div class="ingredient-empty-icon"><i class="bi bi-map"></i></div>
+                <h3>No land yet</h3>
+                <p>Add a parcel to start mapping water and farm work.</p>
+                <a href="{% url 'farm:land_create' %}" class="ingredient-primary-btn">Add land</a>
+            </div>
+            {% endif %}
+        {% elif active_tab == "water" %}
+            {% if waters %}
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Source</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for water in waters %}
+                        <tr>
+                            <td><span class="ingredient-name">{{ water.name }}</span></td>
+                            <td>{{ water.get_source_display }}</td>
+                            <td>
+                                <div class="ingredient-actions">
+                                    <a href="{% url 'farm:water_edit' water.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                    <a href="{% url 'farm:water_delete' water.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="ingredient-cards">
+                {% for water in waters %}
+                <div class="ingredient-card-item">
+                    <div class="ingredient-card-top">
+                        <div>
+                            <div class="ingredient-name">{{ water.name }}</div>
+                            <div class="ingredient-code">{{ water.get_source_display }}</div>
+                        </div>
+                    </div>
+                    <div class="ingredient-actions">
+                        <a href="{% url 'farm:water_edit' water.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                        <a href="{% url 'farm:water_delete' water.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ingredient-empty">
+                <div class="ingredient-empty-icon"><i class="bi bi-droplet"></i></div>
+                <h3>No water sources yet</h3>
+                <p>Add borewells, ponds, or other sources used on the farm.</p>
+                <a href="{% url 'farm:water_create' %}" class="ingredient-primary-btn">Add water</a>
+            </div>
+            {% endif %}
+        {% else %}
+            {% if records %}
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Land</th>
+                            <th>Water</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td>{{ record.date }}</td>
+                            <td>{{ record.land.name }}</td>
+                            <td>{{ record.water.name }}</td>
+                            <td>{% if record.status %}Active{% else %}Inactive{% endif %}</td>
+                            <td>
+                                <div class="ingredient-actions">
+                                    <a href="{% url 'farm:land_water_edit' record.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                    <a href="{% url 'farm:land_water_delete' record.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="ingredient-cards">
+                {% for record in records %}
+                <div class="ingredient-card-item">
+                    <div class="ingredient-card-top">
+                        <div>
+                            <div class="ingredient-name">{{ record.land.name }} → {{ record.water.name }}</div>
+                            <div class="ingredient-code">{{ record.date }}</div>
+                        </div>
+                        {% if record.status %}
+                        <span class="ingredient-stock-pill">Active</span>
+                        {% else %}
+                        <span class="ingredient-stock-pill empty">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="ingredient-actions">
+                        <a href="{% url 'farm:land_water_edit' record.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                        <a href="{% url 'farm:land_water_delete' record.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ingredient-empty">
+                <div class="ingredient-empty-icon"><i class="bi bi-moisture"></i></div>
+                <h3>No mappings yet</h3>
+                <p>Link a land parcel to a water source.</p>
+                <a href="{% url 'farm:land_water_create' %}" class="ingredient-primary-btn">New mapping</a>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

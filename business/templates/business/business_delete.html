@@ -1,22 +1,2 @@
-{% extends "base.html" %}
-{% block title %}
-Delete Business
-{% endblock %}
-{% block content %}
-<h1>Delete Business</h1>
-<p>
-    Are you sure you want to delete:
-</p>
-<h3>
-    {{ business.name }}
-</h3>
-<form method="POST">
-    {% csrf_token %}
-    <button type="submit">
-        Yes, Delete
-    </button>
-    <a href="{% url 'business:list' %}">
-        Cancel
-    </a>
-</form>
-{% endblock %}
+{% url 'business:list' as cancel_url %}
+{% include "farm/_delete.html" with farm_title="Delete business?" object_label=business.name %}

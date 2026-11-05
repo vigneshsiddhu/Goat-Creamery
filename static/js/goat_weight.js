@@ -1,578 +1,248 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("goat-weight-form");
+    const goatSelect = document.getElementById("id_goat");
+    let weightInput = document.getElementById("id_weight");
+    const confirmationPopup = document.getElementById("weight-voice-confirmation");
+    const voiceText = document.getElementById("weight-voice-text");
+    const confirmationGoat = document.getElementById("weight-confirmation-goat");
+    const confirmationWeight = document.getElementById("weight-confirmation-value");
+    const changeButton = document.getElementById("weight-confirmation-cancel");
+    const saveButton = document.getElementById("weight-confirmation-save");
+    const confirmButtons = document.querySelectorAll("[data-weight-confirm]");
+    const displayValue = document.getElementById("weight-display-value");
+    const displayGoat = document.getElementById("weight-display-goat");
+    const keypad = document.getElementById("weight-keypad");
+    const keypadDisplay = document.getElementById("weight-keypad-display");
 
-    console.log("Goat Weight Voice JS loaded");
+    const MIN_WEIGHT = 0.1;
+    const MAX_WEIGHT = 80;
 
-
-    /* =========================================================
-       ELEMENTS
-    ========================================================= */
-
-    const form =
-        document.getElementById("goat-weight-form");
-
-    const goatSelect =
-        document.getElementById("id_goat");
-
-    const weightRadios =
-        document.querySelectorAll(
-            'input[name="weight"]'
-        );
-
-    const confirmationPopup =
-        document.getElementById(
-            "weight-voice-confirmation"
-        );
-
-    const voiceText =
-        document.getElementById(
-            "weight-voice-text"
-        );
-
-    const confirmationGoat =
-        document.getElementById(
-            "weight-confirmation-goat"
-        );
-
-    const confirmationWeight =
-        document.getElementById(
-            "weight-confirmation-value"
-        );
-
-    const changeButton =
-        document.getElementById(
-            "weight-confirmation-cancel"
-        );
-
-    const saveButton =
-        document.getElementById(
-            "weight-confirmation-save"
-        );
-
-
-    /* =========================================================
-       CHECK ELEMENTS
-    ========================================================= */
-
-    if (!form) {
-        console.error("Goat weight form not found");
+    if (!form || !goatSelect) {
         return;
     }
 
-    if (!goatSelect) {
-        console.error("Goat select not found");
-        return;
+    if (!weightInput) {
+        weightInput = document.createElement("input");
+        weightInput.type = "hidden";
+        weightInput.name = "weight";
+        weightInput.id = "id_weight";
+        form.appendChild(weightInput);
     }
 
-    if (!confirmationPopup) {
-        console.error(
-            "Weight confirmation popup not found"
-        );
-        return;
+    let typingBuffer = "";
+    let typingMode = false;
+    let currentWeight = 0;
+
+    if (window.speechSynthesis) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = function () {
+            window.speechSynthesis.getVoices();
+        };
     }
 
+    function clampWeight(value) {
+        if (isNaN(value)) return 0;
+        return Math.min(MAX_WEIGHT, Math.max(0, Math.round(value * 10) / 10));
+    }
 
-    /* =========================================================
-       TAMIL VOICE
-    ========================================================= */
+    function formatWeight(value) {
+        return clampWeight(value).toFixed(1);
+    }
 
-    function speakTamil(text) {
+    function setDisplay(text) {
+        if (displayValue) displayValue.textContent = text || "0";
+    }
 
-        if (!("speechSynthesis" in window)) {
+    function setTyping(isTyping) {
+        if (keypadDisplay) keypadDisplay.classList.toggle("is-typing", isTyping);
+    }
 
-            console.warn(
-                "Speech synthesis is not supported"
-            );
+    function commitWeight(value) {
+        typingMode = false;
+        typingBuffer = "";
+        setTyping(false);
+        currentWeight = clampWeight(value);
+        setDisplay(formatWeight(currentWeight));
+        weightInput.value = currentWeight >= MIN_WEIGHT ? formatWeight(currentWeight) : "";
+    }
 
+    function updateFromBuffer() {
+        setTyping(true);
+        setDisplay(typingBuffer || "0");
+        const parsed = parseFloat(typingBuffer);
+        if (isNaN(parsed)) {
+            currentWeight = 0;
+            weightInput.value = "";
             return;
         }
-
-
-        // Stop previous speech
-
-        window.speechSynthesis.cancel();
-
-
-        const utterance =
-            new SpeechSynthesisUtterance(text);
-
-
-        // Tamil India
-
-        utterance.lang = "ta-IN";
-
-        utterance.rate = 0.9;
-
-        utterance.pitch = 1;
-
-        utterance.volume = 1;
-
-
-        window.speechSynthesis.speak(
-            utterance
-        );
+        currentWeight = clampWeight(parsed);
+        weightInput.value = currentWeight >= MIN_WEIGHT ? formatWeight(currentWeight) : "";
     }
-
-
-    /* =========================================================
-       STOP VOICE
-    ========================================================= */
-
-    function stopVoice() {
-
-        if ("speechSynthesis" in window) {
-
-            window.speechSynthesis.cancel();
-
-        }
-    }
-
-
-    /* =========================================================
-       GET SELECTED GOAT
-    ========================================================= */
 
     function getSelectedGoat() {
-
-        if (
-            !goatSelect.value ||
-            goatSelect.selectedIndex < 0
-        ) {
-
-            return null;
-
-        }
-
-
-        const option =
-            goatSelect.options[
-                goatSelect.selectedIndex
-            ];
-
-
-        return {
-
-            value: goatSelect.value,
-
-            text: option.textContent.trim()
-
-        };
+        if (!goatSelect.value) return null;
+        const option = goatSelect.options[goatSelect.selectedIndex];
+        if (!option) return null;
+        return { value: goatSelect.value, text: option.textContent.trim() };
     }
-
-
-    /* =========================================================
-       GET SELECTED WEIGHT
-    ========================================================= */
 
     function getSelectedWeight() {
-
-        const selected =
-            document.querySelector(
-                'input[name="weight"]:checked'
-            );
-
-
-        if (!selected) {
-
-            return null;
-
-        }
-
-
-        let labelText = "";
-
-
-        /*
-         * Try to get the text from the label.
-         */
-
-        const label =
-            selected.closest(
-                ".weight-quantity-option"
-            );
-
-
-        if (label) {
-
-            const span =
-                label.querySelector("span");
-
-
-            if (span) {
-
-                labelText =
-                    span.textContent.trim();
-
-            }
-
-        }
-
-
-        /*
-         * Fallback to radio value
-         */
-
-        if (!labelText) {
-
-            labelText =
-                selected.value;
-
-        }
-
-
-        /*
-         * Remove kg if already present.
-         */
-
-        labelText =
-            labelText
-                .replace(/\s*kg\s*/gi, "")
-                .trim();
-
-
-        return {
-
-            value: selected.value,
-
-            text: labelText
-
-        };
-
+        const value = parseFloat(weightInput.value);
+        if (isNaN(value) || value < MIN_WEIGHT) return null;
+        return { value: formatWeight(value), text: formatWeight(value) };
     }
 
+    function speakMessage(tamilText, englishText) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const voices = window.speechSynthesis.getVoices() || [];
+        const tamilVoice = voices.find(function (voice) {
+            return (voice.lang || "").toLowerCase().indexOf("ta") === 0;
+        });
+        const utterance = new SpeechSynthesisUtterance(tamilVoice ? tamilText : englishText);
+        utterance.lang = tamilVoice ? (tamilVoice.lang || "ta-IN") : "en-IN";
+        utterance.rate = 0.9;
+        if (tamilVoice) utterance.voice = tamilVoice;
+        window.speechSynthesis.speak(utterance);
+    }
 
-    /* =========================================================
-       OPEN CONFIRMATION POPUP
-    ========================================================= */
+    function applyGoatSelection() {
+        const goat = getSelectedGoat();
+        if (!goat) {
+            if (displayGoat) displayGoat.textContent = "Select Token ID";
+            return;
+        }
+        if (displayGoat) displayGoat.textContent = goat.text;
+        const option = goatSelect.options[goatSelect.selectedIndex];
+        const lastWeight = parseFloat(option.getAttribute("data-last-weight"));
+        if (!isNaN(lastWeight) && lastWeight > 0) {
+            commitWeight(lastWeight);
+        }
+    }
 
     function openConfirmation() {
-
-        const goat =
-            getSelectedGoat();
-
-
-        const weight =
-            getSelectedWeight();
-
-
-        /*
-         * Both fields are required.
-         */
-
-        if (!goat || !weight) {
-
+        const goat = getSelectedGoat();
+        const weight = getSelectedWeight();
+        if (!goat) {
+            if (displayGoat) displayGoat.textContent = "Select Token ID first";
+            goatSelect.focus();
             return;
-
+        }
+        if (!weight) {
+            if (displayGoat) displayGoat.textContent = goat.text + " · enter kg";
+            return;
         }
 
-
-        /* =====================================================
-           DISPLAY DETAILS
-        ===================================================== */
-
-        confirmationGoat.textContent =
-            goat.text;
-
-
-        confirmationWeight.textContent =
-            `${weight.text} kg`;
-
-
-        /* =====================================================
-           TAMIL MESSAGE
-        ===================================================== */
-
-        const tamilMessage =
-            `எடை ${weight.text} கிலோ. சரியா?`;
-
-
-        voiceText.textContent =
-            tamilMessage;
-
-
-        /* =====================================================
-           SHOW POPUP
-        ===================================================== */
-
-        confirmationPopup.style.display =
-            "flex";
-
-
-        /*
-         * Prevent background scrolling
-         */
-
-        document.body.style.overflow =
-            "hidden";
-
-
-        /* =====================================================
-           SPEAK TAMIL
-        ===================================================== */
-
-        setTimeout(function () {
-
-            speakTamil(tamilMessage);
-
-        }, 200);
-
+        confirmationGoat.textContent = goat.text;
+        confirmationWeight.textContent = weight.text + " kg";
+        const tamilMessage = "எடை " + weight.text + " கிலோ. சரியா?";
+        const englishMessage = "Weight " + weight.text + " kilogram. Confirm?";
+        if (voiceText) voiceText.textContent = tamilMessage;
+        if (confirmationPopup) {
+            confirmationPopup.classList.add("is-open");
+            confirmationPopup.style.display = "flex";
+        }
+        document.body.style.overflow = "hidden";
+        speakMessage(tamilMessage, englishMessage);
     }
-
-
-    /* =========================================================
-       CLOSE CONFIRMATION POPUP
-    ========================================================= */
 
     function closeConfirmation() {
-
-        stopVoice();
-
-
-        confirmationPopup.style.display =
-            "none";
-
-
-        /*
-         * Restore scrolling
-         */
-
-        document.body.style.overflow =
-            "";
-
-
-        /*
-         * Do NOT clear the selected values.
-         *
-         * User can change goat or weight.
-         */
-
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        if (confirmationPopup) {
+            confirmationPopup.classList.remove("is-open");
+            confirmationPopup.style.display = "none";
+        }
+        document.body.style.overflow = "";
     }
 
+    function submitForm() {
+        const goat = getSelectedGoat();
+        const weight = getSelectedWeight();
+        if (!goat || !weight) return;
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        weightInput.value = weight.value;
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.textContent = "Saving...";
+        }
+        if (typeof form.requestSubmit === "function") {
+            form.requestSubmit();
+        } else {
+            form.submit();
+        }
+    }
 
-    /* =========================================================
-       GOAT CHANGE
-    ========================================================= */
+    goatSelect.addEventListener("change", applyGoatSelection);
 
-    goatSelect.addEventListener(
-        "change",
-        function () {
+    if (keypad) {
+        keypad.addEventListener("click", function (event) {
+            const button = event.target.closest("[data-key]");
+            if (!button) return;
+            const key = button.getAttribute("data-key");
 
-            /*
-             * Only open popup when both
-             * goat and weight are selected.
-             */
-
-            const weight =
-                getSelectedWeight();
-
-
-            if (this.value && weight) {
-
-                openConfirmation();
-
+            if (!typingMode) {
+                typingBuffer = "";
+                typingMode = true;
             }
 
-        }
-    );
-
-
-    /* =========================================================
-       WEIGHT CHANGE
-    ========================================================= */
-
-    weightRadios.forEach(
-        function (radio) {
-
-            radio.addEventListener(
-                "change",
-                function () {
-
-                    /*
-                     * Only open when goat
-                     * is selected.
-                     */
-
-                    if (goatSelect.value) {
-
-                        openConfirmation();
-
-                    }
-
+            if (key === "back") {
+                typingBuffer = typingBuffer.slice(0, -1);
+            } else if (key === ".") {
+                if (typingBuffer.indexOf(".") === -1) {
+                    typingBuffer = typingBuffer ? typingBuffer + "." : "0.";
                 }
-            );
+            } else {
+                const parts = typingBuffer.split(".");
+                if (parts[1] && parts[1].length >= 1) return;
+                if (parts[0].replace(/^0+/, "").length >= 2 && typingBuffer.indexOf(".") === -1) return;
+                typingBuffer += key;
+            }
+            updateFromBuffer();
+        });
+    }
 
-        }
-    );
-
-
-    /* =========================================================
-       CHANGE BUTTON
-    ========================================================= */
+    confirmButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            openConfirmation();
+        });
+    });
 
     if (changeButton) {
-
-        changeButton.addEventListener(
-            "click",
-            function () {
-
-                closeConfirmation();
-
-
-                /*
-                 * Focus goat select so user
-                 * can change the selection.
-                 */
-
-                goatSelect.focus();
-
-            }
-        );
-
+        changeButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            closeConfirmation();
+        });
     }
-
-
-    /* =========================================================
-       CONFIRM & SAVE
-    ========================================================= */
 
     if (saveButton) {
-
-        saveButton.addEventListener(
-            "click",
-            function () {
-
-                const goat =
-                    getSelectedGoat();
-
-
-                const weight =
-                    getSelectedWeight();
-
-
-                /*
-                 * Safety check
-                 */
-
-                if (!goat || !weight) {
-
-                    return;
-
-                }
-
-
-                /* =============================================
-                   STOP VOICE
-                ============================================= */
-
-                stopVoice();
-
-
-                /* =============================================
-                   DISABLE BUTTON
-                ============================================= */
-
-                saveButton.disabled =
-                    true;
-
-
-                saveButton.innerHTML =
-                    `
-                    <i class="bi bi-hourglass-split"></i>
-                    Saving...
-                    `;
-
-
-                /* =============================================
-                   SUBMIT FORM
-                ============================================= */
-
-                form.submit();
-
-            }
-        );
-
+        saveButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            submitForm();
+        });
     }
 
-
-    /* =========================================================
-       PREVENT ENTER FROM SUBMITTING DIRECTLY
-       ========================================================= */
-
-    form.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                confirmationPopup.style.display !== "flex"
-            ) {
-
-                event.preventDefault();
-
-            }
-
+    form.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            openConfirmation();
         }
-    );
+    });
 
+    if (confirmationPopup) {
+        confirmationPopup.addEventListener("click", function (event) {
+            if (event.target === confirmationPopup) closeConfirmation();
+        });
+    }
 
-    /* =========================================================
-       CLICK OUTSIDE POPUP
-       ========================================================= */
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeConfirmation();
+    });
 
-    confirmationPopup.addEventListener(
-        "click",
-        function (event) {
+    window.addEventListener("beforeunload", function () {
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+    });
 
-            /*
-             * Do not close when clicking
-             * inside popup.
-             */
-
-            if (
-                event.target ===
-                confirmationPopup
-            ) {
-
-                closeConfirmation();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       ESC KEY
-    ========================================================= */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Escape" &&
-                confirmationPopup.style.display === "flex"
-            ) {
-
-                closeConfirmation();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       CLEANUP WHEN LEAVING PAGE
-    ========================================================= */
-
-    window.addEventListener(
-        "beforeunload",
-        function () {
-
-            stopVoice();
-
-        }
-    );
-
-
+    commitWeight(0);
+    applyGoatSelection();
 });

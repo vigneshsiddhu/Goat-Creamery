@@ -1,77 +1,74 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ title }}{% endblock %}
+
+{% block title %}{% if customer %}Edit customer{% else %}Add customer{% endif %}{% endblock %}
+{% block page_title %}{% if customer %}Edit customer{% else %}Add customer{% endif %}{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
+
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
-                <h3>{{ title }}</h3>
-                <p>Enter customer information below.</p>
+<div class="ingredient-form-page">
+    <a href="{% url 'sales:customer_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to customers
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if customer %}Edit customer{% else %}Add customer{% endif %}</h3>
+                <p>Name and phone are required. Gender, age, and address are optional.</p>
             </div>
+            <a href="{% url 'sales:customer_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-        <form method="post" novalidate>
-            {% csrf_token %}
-            <div class="form-body">
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
                 {% if form.non_field_errors %}
-                <div class="form-non-field-errors">
-                    {{ form.non_field_errors }}
-                </div>
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.name.id_for_label }}">
-                            Customer Name
-                            <span class="form-required">*</span>
-                        </label>
+                <h4 class="ingredient-form-section">Contact</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.name.id_for_label }}">Name <span class="form-required">*</span></label>
                         {{ form.name }}
-                        {% for error in form.name.errors %}
-                        <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.name.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.number.id_for_label }}">
-                            Phone Number
-                            <span class="form-required">*</span>
-                        </label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.number.id_for_label }}">Phone <span class="form-required">*</span></label>
                         {{ form.number }}
-                        {% for error in form.number.errors %}
-                        <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.number.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                </div>
-                <div class="form-row-3">
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.gender.id_for_label }}">Gender</label>
                         {{ form.gender }}
-                        {% for error in form.gender.errors %}
-                        <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.gender.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
+                    <div class="ingredient-form-group">
                         <label for="{{ form.age.id_for_label }}">Age</label>
                         {{ form.age }}
-                        {% for error in form.age.errors %}
-                        <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        {% for error in form.age.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="ingredient-form-group">
                     <label for="{{ form.address.id_for_label }}">Address</label>
                     {{ form.address }}
-                    {% for error in form.address.errors %}
-                    <div class="form-error">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.address.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
                 <div class="form-actions">
-                    <a href="{% url 'sales:customer_list' %}" class="form-back-btn">Back</a>
-                    <button type="submit" class="form-save-btn">Save Customer</button>
+                    <a href="{% url 'sales:customer_list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if customer %}Update customer{% else %}Save customer{% endif %}
+                    </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

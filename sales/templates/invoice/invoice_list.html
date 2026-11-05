@@ -1,42 +1,53 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Invoices{% endblock %}
+{% block page_title %}Invoices{% endblock %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/list.css' %}">
+<link rel="stylesheet" href="{% static 'css/invoice_list.css' %}?v=1">
 {% endblock %}
 
 {% block content %}
-<div class="list-page">
-    <div class="list-page-header">
-        <div class="list-page-header-content">
-            <h2>Invoices</h2>
-            <p>Manage customer invoices and invoice items.</p>
+<div class="invoice-list-page">
+    <div class="invoice-list-card">
+
+        <div class="invoice-list-header">
+            <div>
+                <h2>Invoices</h2>
+                <p>View and manage all bills for {{ business.name }}.</p>
+            </div>
+            <div class="invoice-list-header-actions">
+                <a href="{% url 'sales:invoice_create' %}" class="invoice-list-create-btn">+ New Bill</a>
+            </div>
         </div>
-        <div class="list-page-header-actions">
-            <a href="{% url 'sales:invoice_create' %}" class="list-add-btn">+ Create Invoice</a>
+
+        {% if messages %}
+        <div class="invoice-list-messages">
+            {% for message in messages %}
+            <div class="invoice-list-message invoice-list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
         </div>
-    </div>
-    {% if messages %}
-    <div class="list-messages">
-        {% for message in messages %}
-        <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div class="list-card">
+        {% endif %}
+
         {% if invoices %}
-        <div class="list-table-wrapper">
-            <table class="list-table" id="invoice-table">
+        <div class="invoice-list-toolbar">
+            <label class="invoice-list-search" for="invoice-search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="invoice-search" placeholder="Search invoice, customer, payment..." autocomplete="off">
+            </label>
+            <span class="invoice-list-count">{{ invoices|length }} invoice{{ invoices|length|pluralize }}</span>
+        </div>
+
+        <div class="invoice-list-table-wrap">
+            <table class="invoice-list-table" id="invoice-table">
                 <thead>
                     <tr>
                         <th>Invoice</th>
                         <th>Date</th>
                         <th>Customer</th>
-                        <th>Payment</th>
+                        <th>Status</th>
                         <th>Method</th>
-                        <th>Subtotal</th>
-                        <th>Discount</th>
-                        <th>GST</th>
                         <th>Grand Total</th>
                         <th>Items</th>
                         <th>Actions</th>
@@ -44,26 +55,23 @@
                 </thead>
                 <tbody>
                     {% for invoice in invoices %}
-                    <tr>
-                        <td class="list-name">{{ invoice.number }}</td>
-                        <td>{{ invoice.date|date:"d-m-Y" }}</td>
-                        <td class="list-user">{{ invoice.customer.name }}</td>
+                    <tr data-invoice-row>
+                        <td class="invoice-list-number">{{ invoice.number }}</td>
+                        <td>{{ invoice.date|date:"d M Y" }}{% if invoice.time %}<br><small>{{ invoice.time|time:"H:i" }}</small>{% endif %}</td>
+                        <td>{% if invoice.customer %}{{ invoice.customer.name }}{% else %}Walk-in{% endif %}</td>
                         <td>
-                            <span class="list-status {% if invoice.payment_status == 'paid' %}list-status-active{% elif invoice.payment_status == 'cancelled' %}list-status-danger{% else %}list-status-warning{% endif %}">
-                                <span class="list-status-dot"></span>
-                                {{ invoice.get_payment_status_display|default:invoice.payment_status }}
+                            <span class="invoice-list-status invoice-list-status-{% if invoice.payment_status %}{{ invoice.payment_status }}{% else %}empty{% endif %}">
+                                {{ invoice.get_payment_status_display|default:"—" }}
                             </span>
                         </td>
-                        <td>{{ invoice.get_payment_method_display|default:invoice.payment_method }}</td>
-                        <td class="list-value">₹{{ invoice.sub_total|floatformat:2 }}</td>
-                        <td class="list-value">₹{{ invoice.discount|floatformat:2 }}</td>
-                        <td class="list-value">₹{{ invoice.gst|floatformat:2 }}</td>
-                        <td class="list-value">₹{{ invoice.grand_total|floatformat:2 }}</td>
+                        <td>{{ invoice.get_payment_method_display|default:"—" }}</td>
+                        <td class="invoice-list-amount">₹{{ invoice.grand_total|floatformat:2 }}</td>
                         <td>{{ invoice.items.count }}</td>
                         <td>
-                            <div class="list-actions">
-                                <a href="{% url 'sales:invoice_edit' invoice.pk %}" class="list-edit-btn">Edit</a>
-                                <a href="{% url 'sales:invoice_delete' invoice.pk %}" class="list-delete-btn">Delete</a>
+                            <div class="invoice-list-actions">
+                                <a href="{% url 'sales:invoice_detail' invoice.pk %}" class="invoice-list-btn invoice-list-btn-view">View</a>
+                                <a href="{% url 'sales:invoice_edit' invoice.pk %}" class="invoice-list-btn invoice-list-btn-edit">Edit</a>
+                                <a href="{% url 'sales:invoice_delete' invoice.pk %}" class="invoice-list-btn invoice-list-btn-delete">Delete</a>
                             </div>
                         </td>
                     </tr>
@@ -71,29 +79,71 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="invoice-list-cards" id="invoice-cards">
+            {% for invoice in invoices %}
+            <article class="invoice-list-card-item" data-invoice-card>
+                <div class="invoice-list-card-top">
+                    <div>
+                        <strong>{{ invoice.number }}</strong>
+                        <div style="font-size:0.8rem;color:#6b7280;margin-top:4px;">{{ invoice.date|date:"d M Y" }}{% if invoice.time %} · {{ invoice.time|time:"H:i" }}{% endif %}</div>
+                    </div>
+                    <span class="invoice-list-status invoice-list-status-{% if invoice.payment_status %}{{ invoice.payment_status }}{% else %}empty{% endif %}">
+                        {{ invoice.get_payment_status_display|default:"—" }}
+                    </span>
+                </div>
+                <div class="invoice-list-card-meta">
+                    <span>Customer<strong>{% if invoice.customer %}{{ invoice.customer.name }}{% else %}Walk-in{% endif %}</strong></span>
+                    <span>Method<strong>{{ invoice.get_payment_method_display|default:"—" }}</strong></span>
+                    <span>Items<strong>{{ invoice.items.count }}</strong></span>
+                    <span>GST<strong>₹{{ invoice.gst|floatformat:2 }}</strong></span>
+                </div>
+                <div class="invoice-list-card-total">
+                    <span>Grand total</span>
+                    <strong>₹{{ invoice.grand_total|floatformat:2 }}</strong>
+                </div>
+                <div class="invoice-list-actions">
+                    <a href="{% url 'sales:invoice_detail' invoice.pk %}" class="invoice-list-btn invoice-list-btn-view">View</a>
+                    <a href="{% url 'sales:invoice_edit' invoice.pk %}" class="invoice-list-btn invoice-list-btn-edit">Edit</a>
+                    <a href="{% url 'sales:invoice_delete' invoice.pk %}" class="invoice-list-btn invoice-list-btn-delete">Delete</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
         {% else %}
-        <div class="list-empty">
-            <div class="list-empty-icon">🧾</div>
-            <div class="list-empty-title">No invoices found</div>
-            <div class="list-empty-text">Create your first invoice to get started.</div>
-            <a href="{% url 'sales:invoice_create' %}" class="list-empty-btn">Create Invoice</a>
+        <div class="invoice-list-empty">
+            <div class="invoice-list-empty-icon">🧾</div>
+            <h3>No invoices yet</h3>
+            <p>Create your first bill to start tracking sales.</p>
+            <a href="{% url 'sales:invoice_create' %}" class="invoice-list-create-btn">+ New Bill</a>
         </div>
         {% endif %}
+        {% include "includes/pagination.html" %}
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.addEventListener("DOMContentLoaded",function(){
-    const search=document.getElementById("invoice-search");
-    const rows=document.querySelectorAll("#invoice-table tbody tr");
-    if(!search)return;
-    search.addEventListener("input",function(){
-        const value=this.value.toLowerCase().trim();
-        rows.forEach(row=>{
-            row.style.display=row.textContent.toLowerCase().includes(value)?"":"none";
+document.addEventListener("DOMContentLoaded", function () {
+    const search = document.getElementById("invoice-search");
+    const rows = document.querySelectorAll("[data-invoice-row]");
+    const cards = document.querySelectorAll("[data-invoice-card]");
+    if (!search) return;
+
+    function filterInvoices(value) {
+        const query = value.toLowerCase().trim();
+        rows.forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(query) ? "" : "none";
         });
+        cards.forEach(function (card) {
+            card.style.display = card.textContent.toLowerCase().includes(query) ? "" : "none";
+        });
+    }
+
+    search.addEventListener("input", function () {
+        filterInvoices(this.value);
     });
 });
 </script>

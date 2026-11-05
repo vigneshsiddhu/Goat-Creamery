@@ -2,126 +2,101 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
 {% endblock %}
 
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <div class="form-header-content">
+<div class="ingredient-form-page">
+    <a href="{% url 'production:product_price_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to product prices
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
                 <h3>{{ title|default:"Product Price" }}</h3>
-                <p>Create or update product pricing details.</p>
+                <p>Set MRP, GST, and pack size for a product.</p>
             </div>
+            <a href="{% url 'production:product_price_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-        <div class="form-body">
-            <form method="post">
+
+        <div class="ingredient-form-body">
+            <form method="post" id="product-price-form" novalidate>
                 {% csrf_token %}
+
                 {% if form.non_field_errors %}
-                    <div class="form-non-field-errors">
-                        {% for error in form.non_field_errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
                 {% endif %}
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label for="{{ form.product.id_for_label }}">
-                            Product
-                            {% if form.product.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+
+                <h4 class="ingredient-form-section">Price Details</h4>
+
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.product.id_for_label }}">Product <span class="form-required">*</span></label>
                         {{ form.product }}
-                        {% for error in form.product.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.product.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.mrp.id_for_label }}">
-                            MRP
-                            {% if form.mrp.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                </div>
+
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.mrp.id_for_label }}">MRP <span class="form-required">*</span></label>
                         {{ form.mrp }}
-                        {% for error in form.mrp.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.mrp.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                    <div class="form-group">
-                        <label for="{{ form.gst.id_for_label }}">
-                            GST (%)
-                            {% if form.gst.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.gst.id_for_label }}">GST (%) <span class="form-required">*</span></label>
                         {{ form.gst }}
-                        {% for error in form.gst.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.gst.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
-                </div>
-                <div class="form-row-4">
-                    <div class="form-group">
-                        <label for="{{ form.date.id_for_label }}">
-                            Date
-                            {% if form.date.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.date.id_for_label }}">Date <span class="form-required">*</span></label>
                         {{ form.date }}
-                        {% for error in form.date.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.quantity.id_for_label }}">
-                            Quantity
-                            {% if form.quantity.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
-                        {{ form.quantity }}
-                        {% for error in form.quantity.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.unit.id_for_label }}">
-                            Unit
-                            {% if form.unit.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
-                        {{ form.unit }}
-                        {% for error in form.unit.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.status.id_for_label }}">
-                            Status
-                            {% if form.status.field.required %}
-                                <span class="form-required">*</span>
-                            {% endif %}
-                        </label>
-                        {{ form.status }}
-                        {% for error in form.status.errors %}
-                            <span class="form-error">{{ error }}</span>
-                        {% endfor %}
+                        {% for error in form.date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                     </div>
                 </div>
-                <div class="form-actions">
-                    <a href="{% url 'production:product_price_list' %}" class="form-cancel-btn">
-                        Cancel
+
+                <div class="ingredient-form-grid ingredient-form-grid-3">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.quantity.id_for_label }}">Pack Quantity <span class="form-required">*</span></label>
+                        {{ form.quantity }}
+                        {% for error in form.quantity.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.unit.id_for_label }}">Unit <span class="form-required">*</span></label>
+                        {{ form.unit }}
+                        {% for error in form.unit.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% if form.status %}
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.status.id_for_label }}">Status <span class="form-required">*</span></label>
+                        {{ form.status }}
+                        {% for error in form.status.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="ingredient-form-actions">
+                    <a href="{% url 'production:product_price_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Back
                     </a>
                     <button type="submit" class="form-save-btn">
-                        Save Product Price
+                        <i class="bi bi-check-lg"></i>
+                        Save Price
                     </button>
                 </div>
             </form>
         </div>
     </div>
+</div>
+
+<div class="ingredient-mobile-bar">
+    <button type="submit" form="product-price-form">Save Price</button>
 </div>
 {% endblock %}

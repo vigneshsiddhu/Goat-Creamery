@@ -1,236 +1,135 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block title %}Goat Milk Batches{% endblock %}
+{% block page_title %}Goat Milk Batches{% endblock %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/list.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
 {% endblock %}
+
 {% block content %}
-
-<div class="list-page">
-
-    <div class="list-page-header">
-        <div class="list-page-header-content">
-            <h3>Goat Milk Batches</h3>
-            <p>Manage collected and packed goat milk batches.</p>
-        </div>
-
-        <div class="list-page-header-actions">
-            <a
-                href="{% url 'production:goat_milk_batch_create' %}"
-                class="list-add-btn"
-            >
-                <i class="bi bi-plus-lg"></i>
-                Add Milk Batch
-            </a>
-        </div>
-    </div>
-
-    {% if messages %}
-        <div class="list-messages">
-            {% for message in messages %}
-                <div class="list-message list-message-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <div class="list-card">
-
-        {% if objects %}
-
-            <div class="list-table-wrapper">
-                <table class="list-table" id="milk-batch-table">
-
-                    <thead>
-                        <tr>
-                            <th>Batch Number</th>
-                            <th>Date</th>
-                            <th>Milk Time</th>
-                            <th>Milk Quantity</th>
-                            <th>Wastage</th>
-                            <th>Status</th>
-                            <th>Packed Date</th>
-                            <th>Expiry Date</th>
-                            <th>QR Code</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        {% for batch in objects %}
-                            <tr>
-
-                                <td>
-                                    <span class="list-name">
-                                        {{ batch.batch_number }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="list-value">
-                                        {{ batch.date|date:"d M Y" }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="list-value">
-                                        {{ batch.get_milk_time_display }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="list-value">
-                                        {{ batch.milk_quantity }} L
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="list-value">
-                                        {{ batch.wastage }} L
-                                    </span>
-                                </td>
-
-                                <td>
-                                    {% if batch.status %}
-                                        <span class="list-status list-status-active">
-                                            <span class="list-status-dot"></span>
-                                            {{ batch.status }}
-                                        </span>
-                                    {% else %}
-                                        <span class="list-status list-status-inactive">
-                                            <span class="list-status-dot"></span>
-                                            Inactive
-                                        </span>
-                                    {% endif %}
-                                </td>
-
-                                <td>
-                                    {% if batch.packed_date %}
-                                        <span class="list-secondary">
-                                            {{ batch.packed_date|date:"d M Y H:i" }}
-                                        </span>
-                                    {% else %}
-                                        <span class="list-secondary">
-                                            —
-                                        </span>
-                                    {% endif %}
-                                </td>
-
-                                <td>
-                                    {% if batch.exp_date %}
-                                        <span class="list-secondary">
-                                            {{ batch.exp_date|date:"d M Y H:i" }}
-                                        </span>
-                                    {% else %}
-                                        <span class="list-secondary">
-                                            —
-                                        </span>
-                                    {% endif %}
-                                </td>
-
-                                <td>
-                                    {% if batch.qr_code %}
-                                        <span class="list-secondary">
-                                            {{ batch.qr_code }}
-                                        </span>
-                                    {% else %}
-                                        <span class="list-secondary">
-                                            —
-                                        </span>
-                                    {% endif %}
-                                </td>
-
-                                <td>
-                                    <div class="list-actions">
-
-                                        <a
-                                            href="{% url 'production:goat_milk_batch_edit' batch.id %}"
-                                            class="list-edit-btn"
-                                        >
-                                            <i class="bi bi-pencil"></i>
-                                            Edit
-                                        </a>
-
-                                        <form
-                                            method="post"
-                                            action="{% url 'production:goat_milk_batch_delete' batch.id %}"
-                                            class="list-delete-form"
-                                            onsubmit="return confirm('Are you sure you want to delete this milk batch?');"
-                                        >
-                                            {% csrf_token %}
-
-                                            <button
-                                                type="submit"
-                                                class="list-delete-btn"
-                                            >
-                                                <i class="bi bi-trash"></i>
-                                                Delete
-                                            </button>
-                                        </form>
-
-                                    </div>
-                                </td>
-
-                            </tr>
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
+<div class="ingredient-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Goat Milk Batches</h2>
+                <p>Collected and packed milk for {{ business.name }}</p>
             </div>
-
-        {% else %}
-
-            <div class="list-empty">
-                <div class="list-empty-icon">
-                    <i class="bi bi-droplet"></i>
-                </div>
-
-                <div class="list-empty-title">
-                    No Goat Milk Batches Found
-                </div>
-
-                <div class="list-empty-text">
-                    Start by creating your first goat milk batch.
-                </div>
-
-                <a
-                    href="{% url 'production:goat_milk_batch_create' %}"
-                    class="list-empty-btn"
-                >
+            <div class="ingredient-header-actions">
+                <a href="{% url 'production:goat_milk_batch_farm_create' %}" class="ingredient-secondary-btn">
+                    <i class="bi bi-truck"></i>
+                    Farm Batch
+                </a>
+                <a href="{% url 'production:goat_milk_batch_create' %}" class="ingredient-primary-btn">
                     <i class="bi bi-plus-lg"></i>
                     Add Milk Batch
                 </a>
             </div>
+        </div>
 
+        {% if messages %}
+        <div style="padding: 12px 18px 0;">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
         {% endif %}
 
-    </div>
+        {% if objects %}
+        <div class="ingredient-toolbar">
+            <label class="ingredient-search" for="milk-batch-search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="milk-batch-search" placeholder="Search batch number, date, QR..." autocomplete="off">
+            </label>
+            <span class="ingredient-count">{{ objects|length }} batch{{ objects|length|pluralize:"es" }}</span>
+        </div>
 
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table" id="milk-batch-table">
+                <thead>
+                    <tr>
+                        <th>Batch</th>
+                        <th>Date</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for batch in objects %}
+                    <tr data-batch-row>
+                        <td>
+                            <span class="ingredient-name">{{ batch.batch_number }}</span>
+                            <span class="ingredient-code">{{ batch.get_milk_time_display }}</span>
+                        </td>
+                        <td>{{ batch.date|date:"d M Y" }}</td>
+                        <td>
+                            <span class="ingredient-stock-pill">{{ batch.milk_quantity }} L</span>
+                        </td>
+                        <td>
+                            <span class="ingredient-stock-pill{% if not batch.status %} empty{% endif %}">{{ batch.status|default:"—" }}</span>
+                        </td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'production:goat_milk_batch_detail' batch.pk %}" class="ingredient-btn ingredient-btn-view">View</a>
+                                <a href="{% url 'production:goat_milk_batch_edit' batch.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="ingredient-cards" id="milk-batch-cards">
+            {% for batch in objects %}
+            <div class="ingredient-card-item" data-batch-card>
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ batch.batch_number }}</div>
+                        <div class="ingredient-code">{{ batch.date|date:"d M Y" }} · {{ batch.get_milk_time_display }}</div>
+                    </div>
+                    <span class="ingredient-stock-pill">{{ batch.milk_quantity }} L</span>
+                </div>
+                <div class="ingredient-card-meta">
+                    <span>Status: {{ batch.status|default:"—" }}</span>
+                    {% if batch.qr_code %}<span>QR: {{ batch.qr_code }}</span>{% endif %}
+                </div>
+                <div class="ingredient-card-actions">
+                    <a href="{% url 'production:goat_milk_batch_detail' batch.pk %}" class="ingredient-btn ingredient-btn-view">View</a>
+                    <a href="{% url 'production:goat_milk_batch_edit' batch.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-droplet"></i></div>
+            <h3>No milk batches yet</h3>
+            <p>Start by recording your first goat milk batch.</p>
+            <a href="{% url 'production:goat_milk_batch_create' %}" class="ingredient-primary-btn">Add Milk Batch</a>
+        </div>
+        {% endif %}
+    </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("list-search-input");
-    const table = document.getElementById("milk-batch-table");
-
-    if (!searchInput || !table) {
-        return;
-    }
-
-    const rows = table.querySelectorAll("tbody tr");
-
-    searchInput.addEventListener("input", function () {
-        const searchValue = this.value.toLowerCase().trim();
-
+    const search = document.getElementById("milk-batch-search");
+    if (!search) return;
+    const rows = document.querySelectorAll("[data-batch-row]");
+    const cards = document.querySelectorAll("[data-batch-card]");
+    search.addEventListener("input", function () {
+        const q = search.value.trim().toLowerCase();
         rows.forEach(function (row) {
-            row.style.display = row.textContent.toLowerCase().includes(searchValue)
-                ? ""
-                : "none";
+            row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+        cards.forEach(function (card) {
+            card.style.display = card.textContent.toLowerCase().includes(q) ? "" : "none";
         });
     });
 });
 </script>
-
+{% include "includes/pagination.html" %}
 {% endblock %}

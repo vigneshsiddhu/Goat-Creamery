@@ -11,7 +11,9 @@ urlpatterns = [
     # ITEM    
     # # ========================================================
     path("items/",views.item_list,name="item_list"),
+    path("items/inactive/",views.item_inactive,name="item_inactive"),
     path("items/create/",views.item_create,name="item_create"),
+    path("items/<uuid:pk>/",views.item_detail,name="item_detail"),
     path("items/<uuid:pk>/edit/",views.item_edit,name="item_edit"),
     path("items/<uuid:pk>/delete/",views.item_delete,name="item_delete"),
 
@@ -21,6 +23,7 @@ urlpatterns = [
     # # ========================================================
     path("vehicles/",views.vehicle_list,name="vehicle_list"),
     path("vehicles/create/",views.vehicle_create,name="vehicle_create"),
+    path("vehicles/<uuid:pk>/",views.vehicle_detail,name="vehicle_detail"),
     path("vehicles/<uuid:pk>/edit/",views.vehicle_edit,name="vehicle_edit"),
     path("vehicles/<uuid:pk>/delete/",views.vehicle_delete,name="vehicle_delete"),
 

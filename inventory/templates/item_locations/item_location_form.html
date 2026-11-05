@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title|default:"Item Location" }}{% endblock %}
+{% block page_title %}{{ title|default:"Item Location" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-form-page">
+    <a href="{% url 'inventory:item_location_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to item locations
+    </a>
+
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{{ title }}</h3>
+                <p>Pick the item first. City and vehicle are optional — add either or both. Previous active records for the same item are archived automatically.</p>
+            </div>
+            <a href="{% url 'inventory:item_location_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
+        </div>
+
+        <div class="ingredient-form-body">
+            <form method="post" id="item-location-form" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <h4 class="ingredient-form-section">Item</h4>
+                <div class="ingredient-form-group">
+                    <label for="{{ form.item.id_for_label }}">Item <span class="form-required">*</span></label>
+                    {{ form.item }}
+                    {% for error in form.item.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+
+                <h4 class="ingredient-form-section">Where is it? <small>(optional)</small></h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.location.id_for_label }}">City</label>
+                        {{ form.location }}
+                        <span class="form-help-text">Assign to a city when not on a vehicle yet.</span>
+                        {% for error in form.location.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.vehicle.id_for_label }}">Vehicle</label>
+                        {{ form.vehicle }}
+                        <span class="form-help-text">Assign when loaded on a delivery vehicle.</span>
+                        {% for error in form.vehicle.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <p class="form-help-text" style="margin: 0 0 16px;">Loaded time, status, and timestamps are saved automatically in the background.</p>
+
+                <div class="form-actions">
+                    <a href="{% url 'inventory:item_location_list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        Save Location
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

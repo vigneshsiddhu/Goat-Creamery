@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" href="{% static 'icons/icon-192.png' %}">
     <title>{% block title %}Goat Creamery{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{% static 'css/base.css'%}?v=2">
+    <link rel="stylesheet" href="{% static 'css/base.css'%}?v=7">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -25,53 +25,155 @@
             <i class="bi bi-speedometer2"></i>
             <span>Dashboard</span>
         </a>
-        <!-- FARM -->
         <div class="menu-dropdown">
-            <button type="button" class="menu-dropdown-btn">
-                <i class="bi bi-tree"></i>
-                <span>Farm</span>
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-cup-straw"></i>
+                <span>Goat Milk</span>
                 <i class="bi bi-chevron-down menu-dropdown-icon"></i>
             </button>
             <div class="menu-dropdown-content">
-                <a href="{% url 'farm:land_list' %}"><i class="bi bi-map"></i><span>Land</span></a>
-                <a href="{% url 'farm:water_list' %}"><i class="bi bi-droplet"></i><span>Water</span></a>
-                <a href="{% url 'farm:land_water_list' %}"><i class="bi bi-moisture"></i><span>Land Water</span></a>
-                <a href="{% url 'farm:feedstock_list' %}"><i class="bi bi-box-seam"></i><span>Feed Stock</span></a>
-                <a href="{% url 'farm:feedstock_transaction_list' %}"><i class="bi bi-arrow-left-right"></i><span>Feed Transactions</span></a>
-                <a href="{% url 'farm:feed_consumption_list' %}"><i class="bi bi-basket"></i><span>Feed Consumption</span></a>
-                <a href="{% url 'goats:list' %}"><i class="bi bi-git"></i><span>Goats</span></a>
-                <a href="{% url 'breeding:mating_list' %}"><i class="bi bi-heart"></i><span>Breeding</span></a>
-                <a href="{% url 'breeding:parent_mapping_list' %}"><i class="bi bi-diagram-3"></i><span>Parent Mapping</span></a>
                 <a href="{% url 'production:goat_milk_list' %}"><i class="bi bi-cup-straw"></i><span>Goat Milk</span></a>
                 <a href="{% url 'production:goat_weight_list' %}"><i class="bi bi-speedometer2"></i><span>Goat Weight</span></a>
-                <a href="{% url 'goats:disease_list' %}"><i class="bi bi-bandaid"></i><span>Disease</span></a>
-                <a href="{% url 'goats:goat_health_list' %}"><i class="bi bi-heart-pulse"></i><span>Goat Health</span></a>
-                <a href="{% url 'goats:death_goat_list' %}"><i class="bi bi-heartbreak"></i><span>Death Register</span></a>
-                <a href="{% url 'finance:farm_spend_book_list' %}"><i class="bi bi-journal-richtext"></i><span>Farm Spend Book</span></a>
-                <a href="{% url 'finance:farm_expense_list' %}"><i class="bi bi-cash-stack"></i><span>Farm Expenses</span></a>
             </div>
         </div>
-        <!-- Product -->
         <div class="menu-dropdown">
-            <button type="button" class="menu-dropdown-btn">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
                 <i class="bi bi-box2"></i>
                 <span>Product</span>
                 <i class="bi bi-chevron-down menu-dropdown-icon"></i>
             </button>
             <div class="menu-dropdown-content">
-                <!-- PRODUCTION -->
-                <a href="{% url 'production:product_list' %}"><i class="bi bi-box2"></i><span>Products</span></a>
-                <a href="{% url 'production:product_price_list' %}"><i class="bi bi-tag"></i><span>Product Prices</span></a>
                 <a href="{% url 'production:ingredient_list' %}"><i class="bi bi-egg"></i><span>Ingredients</span></a>
-                <a href="{% url 'production:ingredient_price_list' %}"><i class="bi bi-tags"></i><span>Ingredient Prices</span></a>
+                <a href="{% url 'production:product_list' %}"><i class="bi bi-box2"></i><span>Products</span></a>
                 <a href="{% url 'production:recipe_list' %}"><i class="bi bi-journal-text"></i><span>Recipes</span></a>
-                <a href="{% url 'production:recipe_item_list' %}"><i class="bi bi-list-check"></i><span>Recipe Items</span></a>
-                <a href="{% url 'production:recipe_item_list' %}"><i class="bi bi-list-check"></i><span>Recipe Items</span></a>
             </div>
         </div>
-        <!-- BUSINESS -->
+
         <div class="menu-dropdown">
-            <button type="button" class="menu-dropdown-btn">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-building"></i>
+                <span>Production</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'production:goat_milk_batch_list' %}"><i class="bi bi-box"></i><span>Milk Batches</span></a>
+                <a href="{% url 'production:product_batch_list' %}"><i class="bi bi-boxes"></i><span>Product Runs</span></a>
+                <a href="{% url 'inventory:item_list' %}"><i class="bi bi-box-seam"></i><span>Items</span></a>
+            </div>
+        </div>
+
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-receipt"></i>
+                <span>Invoice</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'sales:invoice_list' %}"><i class="bi bi-receipt"></i><span>Invoices</span></a>
+                <a href="{% url 'sales:customer_list' %}"><i class="bi bi-person-lines-fill"></i><span>Customers</span></a>
+            </div>
+        </div>
+
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-bar-chart"></i>
+                <span>Reports</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'reports:overview' %}"><i class="bi bi-bar-chart"></i><span>Farm pulse</span></a>
+                <a href="{% url 'reports:sales' %}"><i class="bi bi-receipt"></i><span>Sales</span></a>
+                <a href="{% url 'reports:milk' %}"><i class="bi bi-cup-straw"></i><span>Goat milk</span></a>
+                <a href="{% url 'reports:weight' %}"><i class="bi bi-speedometer2"></i><span>Goat weight</span></a>
+            </div>
+        </div>
+
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-pin-map"></i>
+                <span>Tracking</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'inventory:item_location_list' %}"><i class="bi bi-pin-map"></i><span>Item Locations</span></a>
+            </div>
+        </div>
+
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-journal-text"></i>
+                <span>Finance Book</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'finance:employee_list' %}"><i class="bi bi-person-badge"></i><span>Employees</span></a>
+                <a href="{% url 'finance:employee_salary_list' %}"><i class="bi bi-cash"></i><span>Employee Salary</span></a>
+                <a href="{% url 'finance:business_spend_book_list' %}"><i class="bi bi-journal-text"></i><span>Business Spend Book</span></a>
+                <a href="{% url 'finance:business_expense_list' %}"><i class="bi bi-wallet2"></i><span>Business Expenses</span></a>
+            </div>
+        </div>
+
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                <i class="bi bi-tree"></i>
+                <span>Farm</span>
+                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+            </button>
+            <div class="menu-dropdown-content">
+                <a href="{% url 'goats:list' %}"><i class="bi bi-git"></i><span>Goats</span></a>
+                <a href="{% url 'farm:land_list' %}"><i class="bi bi-map"></i><span>Land & Water</span></a>
+                <a href="{% url 'farm:feedstock_list' %}"><i class="bi bi-box-seam"></i><span>Feed</span></a>
+                <div class="menu-dropdown">
+                    <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                        <i class="bi bi-heart"></i>
+                        <span>Breeding</span>
+                        <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+                    </button>
+                    <div class="menu-dropdown-content">
+                        <a href="{% url 'breeding:mating_list' %}"><i class="bi bi-heart"></i><span>Breeding</span></a>
+                        <a href="{% url 'breeding:parent_mapping_list' %}"><i class="bi bi-diagram-3"></i><span>Parent Mapping</span></a>
+                    </div>
+                </div>
+                <div class="menu-dropdown">
+                    <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                        <i class="bi bi-cup-straw"></i>
+                        <span>Milk & Weight</span>
+                        <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+                    </button>
+                    <div class="menu-dropdown-content">
+                        <a href="{% url 'production:goat_milk_list' %}"><i class="bi bi-cup-straw"></i><span>Goat Milk</span></a>
+                        <a href="{% url 'production:goat_weight_list' %}"><i class="bi bi-speedometer2"></i><span>Goat Weight</span></a>
+                        <a href="{% url 'production:goat_milk_test_list' %}"><i class="bi bi-clipboard2-pulse"></i><span>Milk Tests</span></a>
+                    </div>
+                </div>
+                <div class="menu-dropdown">
+                    <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                        <i class="bi bi-heart-pulse"></i>
+                        <span>Health</span>
+                        <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+                    </button>
+                    <div class="menu-dropdown-content">
+                        <a href="{% url 'goats:disease_list' %}"><i class="bi bi-bandaid"></i><span>Disease</span></a>
+                        <a href="{% url 'goats:goat_health_list' %}"><i class="bi bi-heart-pulse"></i><span>Goat Health</span></a>
+                        <a href="{% url 'goats:death_goat_list' %}"><i class="bi bi-heartbreak"></i><span>Death Register</span></a>
+                    </div>
+                </div>
+                <div class="menu-dropdown">
+                    <button type="button" class="menu-dropdown-btn" aria-expanded="false">
+                        <i class="bi bi-journal-richtext"></i>
+                        <span>Farm Finance</span>
+                        <i class="bi bi-chevron-down menu-dropdown-icon"></i>
+                    </button>
+                    <div class="menu-dropdown-content">
+                        <a href="{% url 'finance:farm_spend_book_list' %}"><i class="bi bi-journal-richtext"></i><span>Farm Spend Book</span></a>
+                        <a href="{% url 'finance:farm_expense_list' %}"><i class="bi bi-cash-stack"></i><span>Farm Expenses</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-dropdown">
+            <button type="button" class="menu-dropdown-btn" aria-expanded="false">
                 <i class="bi bi-building"></i>
                 <span>Business</span>
                 <i class="bi bi-chevron-down menu-dropdown-icon"></i>
@@ -79,69 +181,9 @@
             <div class="menu-dropdown-content">
                 <a href="{% url 'business:list' %}"><i class="bi bi-building"></i><span>Businesses</span></a>
                 <a href="{% url 'business:business_user_list' %}"><i class="bi bi-people"></i><span>Business Users</span></a>
-                <!-- PRODUCTION -->
-                <a href="{% url 'production:goat_milk_batch_list' %}"><i class="bi bi-box"></i><span>Milk Batches</span></a>
-                <a href="{% url 'production:product_batch_list' %}"><i class="bi bi-boxes"></i><span>Product Batches</span></a>
-                <!-- INVENTORY -->
-                <a href="{% url 'inventory:item_list' %}"><i class="bi bi-box-seam"></i><span>Items</span></a>
-                <a href="{% url 'production:goat_milk_test_list' %}"><i class="bi bi-clipboard2-pulse"></i><span>Milk Tests</span></a>
-            </div>
-        </div>
-        <div class="menu-dropdown">
-            <button type="button" class="menu-dropdown-btn">
-                <i class="bi bi-receipt"></i>
-                <span>Invoice</span>
-                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
-            </button>
-            <div class="menu-dropdown-content">
-                <!-- FINANCE -->
-                <a href="{% url 'sales:customer_list' %}"><i class="bi bi-person-lines-fill"></i><span>Customers</span></a>
-                <a href="{% url 'sales:invoice_list' %}"><i class="bi bi-receipt"></i><span>Invoices</span></a>
-                <a href="{% url 'sales:invoice_location_list' %}"><i class="bi bi-geo"></i><span>Invoice Locations</span></a>
-                <!-- SALES -->
-            </div>
-        </div>
-        <div class="menu-dropdown">
-            <button type="button" class="menu-dropdown-btn">
-                <i class="bi bi-pin-map"></i>
-                <span>Company Traction</span>
-                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
-            </button>
-            <div class="menu-dropdown-content">
-                <!-- FINANCE -->
-               <a href="{% url 'inventory:vehicle_list' %}"><i class="bi bi-truck"></i><span>Vehicles</span></a>
+                <a href="{% url 'inventory:vehicle_list' %}"><i class="bi bi-truck"></i><span>Vehicles</span></a>
                 <a href="{% url 'inventory:vehicle_location_list' %}"><i class="bi bi-geo-alt"></i><span>Vehicle Locations</span></a>
-                <a href="{% url 'inventory:item_location_list' %}"><i class="bi bi-pin-map"></i><span>Item Locations</span></a>
-                <!-- LOCATION -->
                 <a href="{% url 'business:location_list' %}"><i class="bi bi-geo-alt-fill"></i><span>Locations</span></a>
-                <!-- SALES -->
-            </div>
-        </div>
-        <div class="menu-dropdown">
-            <button type="button" class="menu-dropdown-btn">
-                <i class="bi bi-journal-text"></i>
-                <span>Finance Book</span>
-                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
-            </button>
-            <div class="menu-dropdown-content">
-                <!-- FINANCE -->
-                <a href="{% url 'finance:employee_list' %}"><i class="bi bi-person-badge"></i><span>Employees</span></a>
-                <a href="{% url 'finance:employee_salary_list' %}"><i class="bi bi-cash"></i><span>Employee Salary</span></a>
-                <a href="{% url 'finance:business_spend_book_list' %}"><i class="bi bi-journal-text"></i><span>Business Spend Book</span></a>
-                <a href="{% url 'finance:business_expense_list' %}"><i class="bi bi-wallet2"></i><span>Business Expenses</span></a>
-                <!-- SALES -->
-            </div>
-        </div>
-        <div class="menu-dropdown"></div>
-            <button type="button" class="menu-dropdown-btn">
-                <i class="bi bi-bar-chart"></i>
-                <span>Reports</span>
-                <i class="bi bi-chevron-down menu-dropdown-icon"></i>
-            </button>
-            <div class="menu-dropdown-content">
-                <!-- REPORTS -->
-                <a href="#"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
-                <!-- SALES -->
             </div>
         </div>
     </nav>
@@ -192,7 +234,7 @@
         {% block content %}{% endblock %}
     </main>
 </div>
-<script src="{% static 'js/base.js' %}?v=2"></script>
+<script src="{% static 'js/base.js' %}?v=7"></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

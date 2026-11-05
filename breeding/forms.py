@@ -17,41 +17,25 @@ class MatingForm(forms.ModelForm):
         ]
 
         widgets = {
-            "male": forms.Select(
-                attrs={
-                    "class": "breeding-form-input",
-                }
-            ),
-
-            "female": forms.Select(
-                attrs={
-                    "class": "breeding-form-input",
-                }
-            ),
-
-            "mating_date": forms.DateInput(
-                attrs={
-                    "class": "breeding-form-input",
-                    "type": "date",
-                }
-            ),
-
-            "comment": forms.Textarea(
-                attrs={
-                    "class": "breeding-form-input",
-                    "rows": 3,
-                    "placeholder": "Enter comment",
-                }
-            ),
+            "male": forms.Select(attrs={"class": "form-input"}),
+            "female": forms.Select(attrs={"class": "form-input"}),
+            "mating_date": forms.DateInput(attrs={"class": "form-input", "type": "date"}),
+            "comment": forms.Textarea(attrs={
+                "class": "form-input",
+                "rows": 3,
+                "placeholder": "Optional note",
+            }),
         }
 
     def __init__(self, *args, business=None, **kwargs):
 
         super().__init__(*args, **kwargs)
 
-        # Default: don't show any goats
         self.fields["male"].queryset = Goat.objects.none()
         self.fields["female"].queryset = Goat.objects.none()
+        self.fields["male"].empty_label = "Select male"
+        self.fields["female"].empty_label = "Select female"
+        self.fields["comment"].required = False
 
         if business:
 
@@ -95,17 +79,8 @@ class ParentMappingForm(forms.ModelForm):
         ]
 
         widgets = {
-            "child": forms.Select(
-                attrs={
-                    "class": "breeding-form-input",
-                }
-            ),
-
-            "parent": forms.Select(
-                attrs={
-                    "class": "breeding-form-input",
-                }
-            ),
+            "child": forms.Select(attrs={"class": "form-input"}),
+            "parent": forms.Select(attrs={"class": "form-input"}),
         }
 
     def __init__(self, *args, business=None, **kwargs):
@@ -114,6 +89,8 @@ class ParentMappingForm(forms.ModelForm):
 
         self.fields["child"].queryset = Goat.objects.none()
         self.fields["parent"].queryset = Goat.objects.none()
+        self.fields["child"].empty_label = "Select kid"
+        self.fields["parent"].empty_label = "Select dam"
 
         if business:
             goats = Goat.objects.filter(

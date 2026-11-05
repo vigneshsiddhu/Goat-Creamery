@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vehicles{% endblock %}
+{% block page_title %}Vehicles{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Vehicles</h2>
+                <p>{{ business.name }} · delivery fleet</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                <a href="{% url 'inventory:vehicle_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add vehicle
+                </a>
+            </div>
+        </div>
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if objects %}
+        <div class="ingredient-toolbar">
+            <label class="ingredient-search" for="vehicle-search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="vehicle-search" placeholder="Search number, name, type..." autocomplete="off">
+            </label>
+            <span class="ingredient-count">{{ objects|length }} on this page</span>
+        </div>
+        <div class="ingredient-table-wrap">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Type</th>
+                        <th>Capacity</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in objects %}
+                    <tr data-vehicle-row>
+                        <td>
+                            <span class="ingredient-name">{{ object.number }}</span>
+                            {% if object.name %}<div class="ingredient-code">{{ object.name }}</div>{% endif %}
+                        </td>
+                        <td>{{ object.vehicle_type|title }}</td>
+                        <td>{% if object.capacity %}{{ object.capacity }} {{ object.unit }}{% else %}—{% endif %}</td>
+                        <td>
+                            {% if object.status == "active" %}
+                            <span class="ingredient-stock-pill">Active</span>
+                            {% else %}
+                            <span class="ingredient-stock-pill empty">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="ingredient-actions">
+                                <a href="{% url 'inventory:vehicle_detail' object.pk %}" class="ingredient-btn ingredient-btn-view">View</a>
+                                <a href="{% url 'inventory:vehicle_edit' object.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                <a href="{% url 'inventory:vehicle_delete' object.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="ingredient-cards">
+            {% for object in objects %}
+            <div class="ingredient-card-item" data-vehicle-card>
+                <div class="ingredient-card-top">
+                    <div>
+                        <div class="ingredient-name">{{ object.number }}</div>
+                        <div class="ingredient-code">{{ object.vehicle_type|title }}{% if object.name %} · {{ object.name }}{% endif %}</div>
+                    </div>
+                    {% if object.status == "active" %}
+                    <span class="ingredient-stock-pill">Active</span>
+                    {% else %}
+                    <span class="ingredient-stock-pill empty">Inactive</span>
+                    {% endif %}
+                </div>
+                <div class="ingredient-actions">
+                    <a href="{% url 'inventory:vehicle_detail' object.pk %}" class="ingredient-btn ingredient-btn-view">View</a>
+                    <a href="{% url 'inventory:vehicle_edit' object.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                    <a href="{% url 'inventory:vehicle_delete' object.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" %}
+        {% else %}
+        <div class="ingredient-empty">
+            <div class="ingredient-empty-icon"><i class="bi bi-truck"></i></div>
+            <h3>No vehicles yet</h3>
+            <p>Add a van, truck, or bike used for delivery.</p>
+            <a href="{% url 'inventory:vehicle_create' %}" class="ingredient-primary-btn">Add vehicle</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if objects %}
+<script>
+(function () {
+    const search = document.getElementById("vehicle-search");
+    if (!search) return;
+    const rows = document.querySelectorAll("[data-vehicle-row]");
+    const cards = document.querySelectorAll("[data-vehicle-card]");
+    search.addEventListener("input", function () {
+        const q = search.value.trim().toLowerCase();
+        rows.forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+        cards.forEach(function (card) {
+            card.style.display = card.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.code_sku }}{% endblock %}
+{% block page_title %}{{ product.type|title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page">
+    <a href="{% url 'production:product_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to products
+    </a>
+
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>{{ product.type|title }}{% if product.variant %} · {{ product.variant|title }}{% endif %}</h2>
+                <p>{{ product.code_sku }} · {{ business.name }}</p>
+            </div>
+            <span class="ingredient-secondary-btn" style="pointer-events:none;">
+                {{ product.get_status_display }}
+            </span>
+        </div>
+
+        <div class="ingredient-detail-body">
+            <div class="ingredient-detail-grid">
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>MRP</span>
+                    <strong>{% if latest_price %}₹{{ latest_price.mrp|floatformat:2 }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field ingredient-detail-highlight">
+                    <span>Pack Size</span>
+                    <strong>
+                        {% if latest_price %}
+                            {{ latest_price.quantity }} {{ latest_price.unit }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>GST</span>
+                    <strong>{% if latest_price %}{{ latest_price.gst }}%{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Price Date</span>
+                    <strong>{% if latest_price %}{{ latest_price.date|date:"d M Y" }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Storage</span>
+                    <strong>{{ product.storage_type|title }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Temperature</span>
+                    <strong>
+                        {% if product.storage_temp_min is not None or product.storage_temp_max is not None %}
+                            {% if product.storage_temp_min is not None %}{{ product.storage_temp_min }}°C{% else %}—{% endif %}
+                            –
+                            {% if product.storage_temp_max is not None %}{{ product.storage_temp_max }}°C{% else %}—{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Shelf Life</span>
+                    <strong>
+                        {% if product.life_span_value %}
+                            {{ product.life_span_value }} {{ product.life_span_unit }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Product Type</span>
+                    <strong>{{ product.type|title }}</strong>
+                </div>
+                <div class="ingredient-detail-field">
+                    <span>Recipe</span>
+                    <strong>
+                        {% if product_recipe %}
+                            <a href="{% url 'production:recipe_detail' product_recipe.pk %}">View recipe</a>
+                        {% else %}
+                            Not created
+                        {% endif %}
+                    </strong>
+                </div>
+            </div>
+
+            {% if product.description %}
+            <div class="ingredient-detail-field" style="margin-bottom: 18px;">
+                <span>Description</span>
+                <strong>{{ product.description }}</strong>
+            </div>
+            {% endif %}
+
+            {% if price_history %}
+            <h4 class="ingredient-form-section">Price History</h4>
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>MRP</th>
+                            <th>GST</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for price in price_history %}
+                        <tr>
+                            <td>{{ price.date|date:"d M Y" }}</td>
+                            <td>₹{{ price.mrp|floatformat:2 }}</td>
+                            <td>{{ price.gst }}%</td>
+                            <td>{{ price.quantity }}</td>
+                            <td>{{ price.unit }}</td>
+                            <td>{{ price.get_status_display }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <div class="ingredient-detail-actions">
+                {% if product_recipe %}
+                <a href="{% url 'production:recipe_detail' product_recipe.pk %}" class="ingredient-btn ingredient-btn-view">View Recipe</a>
+                {% else %}
+                <a href="{% url 'production:recipe_create' %}" class="ingredient-btn ingredient-btn-view">Add Recipe</a>
+                {% endif %}
+                <a href="{% url 'production:product_price_create' %}?product={{ product.pk }}" class="ingredient-btn ingredient-btn-view">Add Price</a>
+                <a href="{% url 'production:product_edit' product.pk %}" class="ingredient-btn ingredient-btn-edit">Edit Product</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

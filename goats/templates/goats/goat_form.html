@@ -1,344 +1,105 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    {% if goat %}
-        Edit Goat
-    {% else %}
-        Add Goat
-    {% endif %}
-{% endblock %}
+{% block title %}{% if goat %}Edit goat{% else %}Add goat{% endif %}{% endblock %}
+{% block page_title %}{% if goat %}Edit goat{% else %}Add goat{% endif %}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/goat_form.css' %}">
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=4">
 {% endblock %}
 
 {% block content %}
-
-<div class="goat-page">
-
-    <div class="goat-form-card">
-
-        <!-- FORM HEADER -->
-        <div class="goat-form-header">
-
-            <div class="goat-form-header-content">
-
-                <div>
-                    <h5>
-                        {% if goat %}
-                            Edit Goat
-                        {% else %}
-                            Goat Information
-                        {% endif %}
-                    </h5>
-
-                    <p>
-                        {% if goat %}
-                            Update the goat details below.
-                        {% else %}
-                            Enter the goat details below.
-                        {% endif %}
-                    </p>
-                </div>
-
-                <a href="{% url 'goats:list' %}"
-                   class="goat-back-btn">
-
-                    <i class="bi bi-arrow-left"></i>
-                    Back
-
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <!-- FORM BODY -->
-        <div class="goat-form-body">
-
-            <form method="POST">
-
-                {% csrf_token %}
-
-
-                <!-- TOKEN + RFID -->
-                <div class="goat-form-row">
-
-                    <div class="goat-form-group">
-
-                        <label for="{{ form.token_no.id_for_label }}">
-                            Token Number
-                        </label>
-
-                        {{ form.token_no }}
-
-                        {% if form.token_no.errors %}
-                            <div class="goat-form-error">
-                                {{ form.token_no.errors }}
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-
-                    <div class="goat-form-group">
-
-                        <label for="{{ form.rfid.id_for_label }}">
-                            RFID Number
-                        </label>
-
-                        {{ form.rfid }}
-
-                        {% if form.rfid.errors %}
-                            <div class="goat-form-error">
-                                {{ form.rfid.errors }}
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- BREED + GENDER -->
-                <div class="goat-form-row">
-
-
-                    <!-- BREED -->
-                    <div class="goat-form-group">
-
-                        <label for="id_breed_variety">
-                            Breed Variety
-                        </label>
-
-                        <select
-                            name="breed_variety"
-                            id="id_breed_variety"
-                            class="goat-form-input"
-                        >
-
-                            <option value="">
-                                Select Breed
-                            </option>
-
-                            <option value="Jakharana"
-                                {% if form.breed_variety.value == "Jakharana" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Jakharana
-                            </option>
-
-                            <option value="Thalacherry"
-                                {% if form.breed_variety.value == "Thalacherry" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Thalacherry
-                            </option>
-
-                            <option value="Boer"
-                                {% if form.breed_variety.value == "Boer" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Boer
-                            </option>
-
-                            <option value="Sirohi"
-                                {% if form.breed_variety.value == "Sirohi" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Sirohi
-                            </option>
-
-                            <option value="Sojat"
-                                {% if form.breed_variety.value == "Sojat" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Sojat
-                            </option>
-
-                        </select>
-
-                        {% if form.breed_variety.errors %}
-                            <div class="goat-form-error">
-                                {{ form.breed_variety.errors }}
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-                    <!-- Maturitty -->
-                    <div class="goat-form-group">
-
-                        <label for="id_maturity">
-                            Maturity
-                        </label>
-
-                        <select
-                            name="maturity"
-                            id="id_maturity"
-                            class="goat-form-input"
-                        >
-
-                            <option value="">
-                                Select Maturity
-                            </option>
-
-                            <option value="ADULT"
-                                {% if form.maturity.value == "ADULT" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Goat
-                            </option>
-
-                            <option value="KID"
-                                {% if form.maturity.value == "KID" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Kid
-                            </option>
-
-                        </select>
-
-                        {% if form.maturity.errors %}
-                            <div class="goat-form-error">
-                                {{ form.maturity.errors }}
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-                
-
-
-                    <!-- GENDER -->
-                    <div class="goat-form-group">
-
-                        <label for="id_gender">
-                            Gender
-                        </label>
-
-                        <select
-                            name="gender"
-                            id="id_gender"
-                            class="goat-form-input"
-                        >
-
-                            <option value="">
-                                Select Gender
-                            </option>
-
-                            <option value="MALE"
-                                {% if form.gender.value == "MALE" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Male
-                            </option>
-
-                            <option value="FEMALE"
-                                {% if form.gender.value == "FEMALE" %}
-                                    selected
-                                {% endif %}
-                            >
-                                Female
-                            </option>
-
-                        </select>
-
-                        {% if form.gender.errors %}
-                            <div class="goat-form-error">
-                                {{ form.gender.errors }}
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-                    
-                    
-                    <!-- DOB -->
-                    <div class="goat-form-group">
-                        
-                        <label for="{{ form.dob.id_for_label }}">
-                            Date of Birth
-                        </label>
-                        
-                        {{ form.dob }}
-                        
-                        {% if form.dob.errors %}
-                        <div class="goat-form-error">
-                            {{ form.dob.errors }}
-                        </div>
-                        {% endif %}
-                        
-                    </div> 
-                    
-                </div>
-                    <!-- LIVE -->
-                <div class="goat-form-group">
-
-                    <div class="goat-checkbox-wrapper">
-
-                        {{ form.live }}
-
-                        <label for="{{ form.live.id_for_label }}">
-                            Live Goat
-                        </label>
-
-                    </div>
-
-                    {% if form.live.errors %}
-                        <div class="goat-form-error">
-                            {{ form.live.errors }}
-                        </div>
+<div class="ingredient-form-page">
+    <a href="{% url 'goats:list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to goats
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if goat %}Edit goat{% else %}Add goat{% endif %}</h3>
+                <p>
+                    {% if goat %}
+                    Update token, breed, maturity, and live status.
+                    {% else %}
+                    Token is required. RFID, date of birth, and live status are optional.
                     {% endif %}
-
-                </div>
-
-
-                <!-- ACTIONS -->
-                <div class="goat-form-actions">
-
-                    <a href="{% url 'goats:list' %}"
-                       class="goat-cancel-btn">
-
-                        Cancel
-
-                    </a>
-
-                    <button type="submit"
-                            class="goat-save-btn">
-
-                        {% if goat %}
-
-                            <i class="bi bi-check-lg"></i>
-                            Update Goat
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-                            Add Goat
-
-                        {% endif %}
-
-                    </button>
-
-                </div>
-
-            </form>
-
+                </p>
+            </div>
+            <a href="{% url 'goats:list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
 
+                <h4 class="ingredient-form-section">Identity</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.token_no.id_for_label }}">Token number <span class="form-required">*</span></label>
+                        {{ form.token_no }}
+                        <span class="form-help-text">Unique farm ID (e.g. GC-F-001).</span>
+                        {% for error in form.token_no.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.rfid.id_for_label }}">RFID</label>
+                        {{ form.rfid }}
+                        <span class="form-help-text">Optional ear or collar tag.</span>
+                        {% for error in form.rfid.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <h4 class="ingredient-form-section">Animal</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.breed_variety.id_for_label }}">Breed <span class="form-required">*</span></label>
+                        {{ form.breed_variety }}
+                        {% for error in form.breed_variety.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.maturity.id_for_label }}">Maturity <span class="form-required">*</span></label>
+                        {{ form.maturity }}
+                        {% for error in form.maturity.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.gender.id_for_label }}">Gender <span class="form-required">*</span></label>
+                        {{ form.gender }}
+                        {% for error in form.gender.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.dob.id_for_label }}">Date of birth</label>
+                        {{ form.dob }}
+                        {% for error in form.dob.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="ingredient-form-group">
+                    <label>Status</label>
+                    <label class="farm-checkbox-row" for="{{ form.live.id_for_label }}">
+                        {{ form.live }}
+                        <span>Live goat</span>
+                    </label>
+                    {% for error in form.live.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'goats:list' %}" class="form-back-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if goat %}Update goat{% else %}Save goat{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
 </div>
-
 {% endblock %}

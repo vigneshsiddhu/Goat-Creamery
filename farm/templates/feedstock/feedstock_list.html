@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Feed{% endblock %}
+{% block page_title %}Feed{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=4">
+{% endblock %}
+
+{% block content %}
+<div class="ingredient-page farm-hub-page">
+    <div class="ingredient-card">
+        <div class="ingredient-header">
+            <div>
+                <h2>Feed</h2>
+                <p>{{ business.name }} · daily feeding, stock, and adjustments</p>
+            </div>
+            <div class="ingredient-header-actions farm-hub-actions">
+                {% if active_tab == "adjust" %}
+                <a href="{% url 'farm:feedstock_transaction_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add adjustment
+                </a>
+                {% elif active_tab == "stock" %}
+                <a href="{% url 'farm:feedstock_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add stock
+                </a>
+                {% else %}
+                <a href="{% url 'farm:feed_consumption_create' %}" class="ingredient-primary-btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add feeding
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <nav class="farm-switch" aria-label="Feed sections">
+            <a href="?tab=daily" class="farm-switch-item{% if active_tab == 'daily' %} is-active{% endif %}">
+                <span class="farm-switch-icon"><i class="bi bi-basket"></i></span>
+                <span class="farm-switch-copy">
+                    <strong>Daily</strong>
+                    <small>{{ consumptions|length }} record{{ consumptions|length|pluralize }}</small>
+                </span>
+            </a>
+            <a href="?tab=stock" class="farm-switch-item{% if active_tab == 'stock' %} is-active{% endif %}">
+                <span class="farm-switch-icon"><i class="bi bi-box-seam"></i></span>
+                <span class="farm-switch-copy">
+                    <strong>Stock</strong>
+                    <small>{{ feedstocks|length }} lot{{ feedstocks|length|pluralize }}</small>
+                </span>
+            </a>
+            <a href="?tab=adjust" class="farm-switch-item{% if active_tab == 'adjust' %} is-active{% endif %}">
+                <span class="farm-switch-icon"><i class="bi bi-sliders"></i></span>
+                <span class="farm-switch-copy">
+                    <strong class="farm-switch-long">Stock adjustment</strong>
+                    <strong class="farm-switch-short">Adjust</strong>
+                    <small>{{ transactions|length }} record{{ transactions|length|pluralize }}</small>
+                </span>
+            </a>
+        </nav>
+
+        {% if messages %}
+        <div class="farm-hub-messages">
+            {% for message in messages %}
+            <div class="list-message list-message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if active_tab == "stock" %}
+            {% if feedstocks %}
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Variety</th>
+                            <th>Stock kg</th>
+                            <th>Current kg</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in feedstocks %}
+                        <tr>
+                            <td>{{ stock.date }}</td>
+                            <td><span class="ingredient-name">{{ stock.get_fodder_variety_display }}</span></td>
+                            <td>{{ stock.stock_weight }}</td>
+                            <td>{{ stock.current_stock_kg }}</td>
+                            <td>₹{{ stock.rate }}</td>
+                            <td>₹{{ stock.total_amount }}</td>
+                            <td>
+                                <div class="ingredient-actions">
+                                    <a href="{% url 'farm:feedstock_edit' stock.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                    <a href="{% url 'farm:feedstock_delete' stock.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="ingredient-cards">
+                {% for stock in feedstocks %}
+                <div class="ingredient-card-item">
+                    <div class="ingredient-card-top">
+                        <div>
+                            <div class="ingredient-name">{{ stock.get_fodder_variety_display }}</div>
+                            <div class="ingredient-code">{{ stock.date }}</div>
+                        </div>
+                    </div>
+                    <div class="ingredient-card-metrics">
+                        <div class="ingredient-metric">
+                            <span>Current</span>
+                            <strong>{{ stock.current_stock_kg }} kg</strong>
+                        </div>
+                        <div class="ingredient-metric">
+                            <span>Amount</span>
+                            <strong>₹{{ stock.total_amount }}</strong>
+                        </div>
+                    </div>
+                    <div class="ingredient-actions">
+                        <a href="{% url 'farm:feedstock_edit' stock.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                        <a href="{% url 'farm:feedstock_delete' stock.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ingredient-empty">
+                <div class="ingredient-empty-icon"><i class="bi bi-box-seam"></i></div>
+                <h3>No feed stock yet</h3>
+                <p>Record fodder variety, weight, and rate.</p>
+                <a href="{% url 'farm:feedstock_create' %}" class="ingredient-primary-btn">Add stock</a>
+            </div>
+            {% endif %}
+        {% elif active_tab == "adjust" %}
+            {% if transactions %}
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Stock</th>
+                            <th>Type</th>
+                            <th>Qty kg</th>
+                            <th>Note</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in transactions %}
+                        <tr>
+                            <td>{{ item.date }}</td>
+                            <td>{{ item.feed_stock.get_fodder_variety_display }}</td>
+                            <td>{{ item.get_transaction_type_display }}</td>
+                            <td>{{ item.quantity_kg }}</td>
+                            <td>{{ item.note|default:"—" }}</td>
+                            <td>
+                                <div class="ingredient-actions">
+                                    <a href="{% url 'farm:feedstock_transaction_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                    <a href="{% url 'farm:feedstock_transaction_delete' item.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="ingredient-cards">
+                {% for item in transactions %}
+                <div class="ingredient-card-item">
+                    <div class="ingredient-card-top">
+                        <div>
+                            <div class="ingredient-name">{{ item.feed_stock.get_fodder_variety_display }}</div>
+                            <div class="ingredient-code">{{ item.date }} · {{ item.get_transaction_type_display }}</div>
+                        </div>
+                        <span class="ingredient-stock-pill">{{ item.quantity_kg }} kg</span>
+                    </div>
+                    <div class="ingredient-actions">
+                        <a href="{% url 'farm:feedstock_transaction_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                        <a href="{% url 'farm:feedstock_transaction_delete' item.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ingredient-empty">
+                <div class="ingredient-empty-icon"><i class="bi bi-arrow-left-right"></i></div>
+                <h3>No stock adjustments yet</h3>
+                <p>Log purchases, feeding, or adjustments against a stock lot.</p>
+                <a href="{% url 'farm:feedstock_transaction_create' %}" class="ingredient-primary-btn">Add adjustment</a>
+            </div>
+            {% endif %}
+        {% else %}
+            {% if consumptions %}
+            <div class="ingredient-table-wrap">
+                <table class="ingredient-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Concentrate</th>
+                            <th>Dry fodder</th>
+                            <th>Silage</th>
+                            <th>Wastage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in consumptions %}
+                        <tr>
+                            <td>{{ item.date }}</td>
+                            <td>{{ item.get_feed_time_display }}</td>
+                            <td>{{ item.concentrate }}</td>
+                            <td>{{ item.dry_fodder }}</td>
+                            <td>{{ item.silage }}</td>
+                            <td>{{ item.wastage }}</td>
+                            <td>
+                                <div class="ingredient-actions">
+                                    <a href="{% url 'farm:feed_consumption_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                                    <a href="{% url 'farm:feed_consumption_delete' item.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="ingredient-cards">
+                {% for item in consumptions %}
+                <div class="ingredient-card-item">
+                    <div class="ingredient-card-top">
+                        <div>
+                            <div class="ingredient-name">{{ item.get_feed_time_display }}</div>
+                            <div class="ingredient-code">{{ item.date }}</div>
+                        </div>
+                    </div>
+                    <div class="ingredient-card-metrics">
+                        <div class="ingredient-metric">
+                            <span>Concentrate</span>
+                            <strong>{{ item.concentrate }} kg</strong>
+                        </div>
+                        <div class="ingredient-metric">
+                            <span>Dry fodder</span>
+                            <strong>{{ item.dry_fodder }} kg</strong>
+                        </div>
+                        <div class="ingredient-metric">
+                            <span>Silage</span>
+                            <strong>{{ item.silage }} kg</strong>
+                        </div>
+                        <div class="ingredient-metric">
+                            <span>Wastage</span>
+                            <strong>{{ item.wastage }} kg</strong>
+                        </div>
+                    </div>
+                    <div class="ingredient-actions">
+                        <a href="{% url 'farm:feed_consumption_edit' item.pk %}" class="ingredient-btn ingredient-btn-edit">Edit</a>
+                        <a href="{% url 'farm:feed_consumption_delete' item.pk %}" class="ingredient-btn ingredient-btn-view">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="ingredient-empty">
+                <div class="ingredient-empty-icon"><i class="bi bi-basket"></i></div>
+                <h3>No daily feeding yet</h3>
+                <p>Record morning, afternoon, or evening feeding.</p>
+                <a href="{% url 'farm:feed_consumption_create' %}" class="ingredient-primary-btn">Add feeding</a>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

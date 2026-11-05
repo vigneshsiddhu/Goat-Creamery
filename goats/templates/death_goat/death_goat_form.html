@@ -1,207 +1,69 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-
-    {% if death %}
-        Edit Death Record
-    {% else %}
-        Add Death Record
-    {% endif %}
-
-{% endblock %}
-
+{% block title %}{% if death %}Edit death record{% else %}Add death record{% endif %}{% endblock %}
+{% block page_title %}{% if death %}Edit death record{% else %}Add death record{% endif %}{% endblock %}
 
 {% block extra_css %}
-
-<link rel="stylesheet"
-      href="{% static 'css/death_goat.css' %}">
-
+<link rel="stylesheet" href="{% static 'css/form.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/ingredient.css' %}?v=5">
 {% endblock %}
 
-
 {% block content %}
-
-<div class="death-goat-page">
-
-    <div class="death-goat-form-card">
-
-
-        <!-- FORM HEADER -->
-
-        <div class="death-goat-form-header">
-
-            <div class="death-goat-form-header-content">
-
-                <div>
-
-                    <h5>
-
-                        {% if death %}
-                            Edit Death Record
-                        {% else %}
-                            Goat Death Information
-                        {% endif %}
-
-                    </h5>
-
-
-                    <p>
-
-                        {% if death %}
-                            Update the death record details below.
-                        {% else %}
-                            Enter the goat death details below.
-                        {% endif %}
-
-                    </p>
-
-                </div>
-
-
-                <a href="{% url 'goats:death_goat_list' %}"
-                   class="death-goat-back-btn">
-
-                    <i class="bi bi-arrow-left"></i>
-                    Back
-
-                </a>
-
+<div class="ingredient-form-page">
+    <a href="{% url 'goats:death_goat_list' %}" class="ingredient-back-top">
+        <i class="bi bi-arrow-left"></i>
+        Back to death register
+    </a>
+    <div class="ingredient-form-card">
+        <div class="ingredient-form-header">
+            <div>
+                <h3>{% if death %}Edit death record{% else %}Add death record{% endif %}</h3>
+                <p>Goat and date are required. Disease and comment are optional.</p>
             </div>
-
+            <a href="{% url 'goats:death_goat_list' %}" class="form-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
-
-
-        <!-- FORM BODY -->
-
-        <div class="death-goat-form-body">
-
-            <form method="POST">
-
+        <div class="ingredient-form-body">
+            <form method="post" novalidate>
                 {% csrf_token %}
-
-
-                <!-- GOAT -->
-
-                <div class="death-goat-form-group">
-
-                    <label for="{{ form.goat.id_for_label }}">
-                        Goat
-                    </label>
-
-                    {{ form.goat }}
-
-                    {% if form.goat.errors %}
-
-                        <div class="death-goat-form-error">
-                            {{ form.goat.errors }}
-                        </div>
-
-                    {% endif %}
-
+                {% if form.non_field_errors %}
+                <div class="form-non-field-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <h4 class="ingredient-form-section">Record</h4>
+                <div class="ingredient-form-grid">
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.goat.id_for_label }}">Goat <span class="form-required">*</span></label>
+                        {{ form.goat }}
+                        {% for error in form.goat.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.disease.id_for_label }}">Disease</label>
+                        {{ form.disease }}
+                        {% for error in form.disease.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="ingredient-form-group">
+                        <label for="{{ form.died_date.id_for_label }}">Died date <span class="form-required">*</span></label>
+                        {{ form.died_date }}
+                        {% for error in form.died_date.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+                    </div>
                 </div>
-
-
-                <!-- DISEASE -->
-
-                <div class="death-goat-form-group">
-
-                    <label for="{{ form.disease.id_for_label }}">
-                        Disease
-                    </label>
-
-                    {{ form.disease }}
-
-                    {% if form.disease.errors %}
-
-                        <div class="death-goat-form-error">
-                            {{ form.disease.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- DATE -->
-
-                <div class="death-goat-form-group">
-
-                    <label for="{{ form.died_date.id_for_label }}">
-                        Died Date
-                    </label>
-
-                    {{ form.died_date }}
-
-                    {% if form.died_date.errors %}
-
-                        <div class="death-goat-form-error">
-                            {{ form.died_date.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- COMMENT -->
-
-                <div class="death-goat-form-group">
-
-                    <label for="{{ form.comment.id_for_label }}">
-                        Comment
-                    </label>
-
+                <div class="ingredient-form-group">
+                    <label for="{{ form.comment.id_for_label }}">Comment</label>
                     {{ form.comment }}
-
-                    {% if form.comment.errors %}
-
-                        <div class="death-goat-form-error">
-                            {{ form.comment.errors }}
-                        </div>
-
-                    {% endif %}
-
+                    {% for error in form.comment.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
                 </div>
-
-
-                <!-- ACTIONS -->
-
-                <div class="death-goat-form-actions">
-
-                    <a href="{% url 'goats:death_goat_list' %}"
-                       class="death-goat-cancel-btn">
-
-                        Cancel
-
-                    </a>
-
-
-                    <button type="submit"
-                            class="death-goat-save-btn">
-
-                        {% if death %}
-
-                            <i class="bi bi-check-lg"></i>
-                            Update Death Record
-
-                        {% else %}
-
-                            <i class="bi bi-plus-lg"></i>
-                            Add Death Record
-
-                        {% endif %}
-
+                <div class="form-actions">
+                    <a href="{% url 'goats:death_goat_list' %}" class="form-back-btn">Cancel</a>
+                    <button type="submit" class="form-save-btn">
+                        <i class="bi bi-check-lg"></i>
+                        {% if death %}Update record{% else %}Save record{% endif %}
                     </button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}
